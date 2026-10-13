@@ -207,9 +207,9 @@ public class MainActivity extends AppCompatActivity {
         @JavascriptInterface
         public void syncNativeReverb(String mode) {
             short preset = PresetReverb.PRESET_NONE;
-            if ("hall".equalsIgnoreCase(mode)) preset = PresetReverb.PRESET_CONCERTHALL;
+            if ("hall".equalsIgnoreCase(mode)) preset = PresetReverb.PRESET_LARGEHALL;
             else if ("room".equalsIgnoreCase(mode)) preset = PresetReverb.PRESET_LARGEROOM;
-            else if ("studio".equalsIgnoreCase(mode)) preset = PresetReverb.PRESET_MEDIUMHALL;
+            else if ("studio".equalsIgnoreCase(mode)) preset = PresetReverb.PRESET_MEDIUMROOM;
             else if ("arena".equalsIgnoreCase(mode)) preset = PresetReverb.PRESET_PLATE;
             PioneerAudioEffectManager.getInstance().setPresetReverb(preset);
         }
