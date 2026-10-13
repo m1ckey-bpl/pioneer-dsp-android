@@ -49,32 +49,30 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: v4.0.0
-          name: "Pioneer DSP Android v4.0.0 (Master Redesign Edition)"
+          tag_name: v4.1.0
+          name: "Pioneer DSP Android v4.1.0 (YouTube Playback & LRCLIB Lyrics Edition)"
           body: |
-            ## 🎵 Pioneer DSP for Android v4.0.0 — Master Redesign Edition
+            ## 🎵 Pioneer DSP for Android v4.1.0 — YouTube Streaming & LRCLIB Lyrics Edition
             
             ### 📦 Direct Download:
-            * 🤖 **Android APK**: `Pioneer_DSP.apk` (Direct install, 100% free)
+            * 📱 **Android APK**: `Pioneer_DSP.apk` (Direct install, 100% free)
 
-            ### 🚀 Highlights in this Release:
-            1. **Complete UI Redesign**:
-               - Modern dark obsidian aesthetic (`#080a0f`, `#10141d`, `#181d29`).
-               - Standard 5-Tab Ergonomic Navigation (`Home`, `Search`, `Library`, `Equalizer`, `Settings`).
-               - Persistent Mini-Player Dock on all tabs with seek progress line.
-               - Dedicated Full-Screen Now Playing overlay with high-res artwork, accurate timer, shuffle, repeat, and DSP shortcuts.
-            2. **Real Audible Audio DSP Engine**:
-               - Fixed Convolver bug: Disabled auto L2-normalization so Concert Hall, Room, Studio, and Arena reverbs are richly and audibly rendered.
-               - Dual-stage Todoroki Super Bass (80Hz low-shelf + 60Hz punch peaking filter).
-               - Deep Sub-Bass (35Hz foundation filter).
-               - Musical soft-knee limiter at -1.0dBFS preventing digital distortion without dynamic volume pumping.
-            3. **Spotify Integration & Search**:
-               - Debounced live search across Spotify (Tracks, Artists, Albums, Playlists) and local files.
-               - Seamless playback control via Spotify Connect devices.
-               - Defensive HTTP 204 No Content handling resolving JSON parsing exceptions.
-               - Android AudioEffect session receiver hooking into Spotify's `DISPLAY_AUDIO_EFFECT_CONTROL_PANEL`.
-            4. **Permanent Local Library**:
-               - IndexedDB and localStorage synchronization ensuring stored songs never vanish on restart.
-               - Background MediaStore discovery with modern Android permissions (`READ_MEDIA_AUDIO` / `READ_EXTERNAL_STORAGE`).
+            ### ✨ Key Upgrades in this Release:
+            1. **YouTube Data API v3 & Streaming Engine**:
+               - Integrated YouTube Data API v3 for high-fidelity music search and rich track metadata.
+               - Optional Google Cloud API Key configuration in Settings with automatic high-speed public music gateway failover.
+               - Authorized audio-streaming source integration.
+            2. **HTML5 Audio API + 32-Bit Float WebAudio DSP Pipeline**:
+               - Streaming audio connects directly into the Pioneer WebAudio DSP graph.
+               - All audio effects (10-Band Graphic EQ, Todoroki Super Bass, Deep Sub-Bass, Concert Hall Reverb, Limiter) apply audibly in real time.
+            3. **W3C Media Session API**:
+               - Full lock-screen and notification shade controls (Play, Pause, Prev, Next, Scrub/Seek).
+               - Live position state telemetry (`navigator.mediaSession.setPositionState`).
+            4. **LRCLIB API Synchronized Lyrics**:
+               - Real-time lyrics lookup via LRCLIB API (`/api/get` & `/api/search`).
+               - Synced lyric line highlighting with smooth auto-scroll.
+               - Interactive timestamp jumping on lyric line tap.
+            5. **Preserved UI & Performance**:
+               - 100% layout integrity across all 5 navigation tabs.
           files: |
             Pioneer_DSP.apk

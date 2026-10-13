@@ -155,6 +155,7 @@
       <!-- Filter Pills -->
       <div class="search-filter-pills">
         <button class="chip-btn active" id="filter-all" onclick="setSearchFilter('all')">All</button>
+        <button class="chip-btn" id="filter-youtube" onclick="setSearchFilter('youtube')">YouTube Music</button>
         <button class="chip-btn" id="filter-spotify" onclick="setSearchFilter('spotify')">Spotify</button>
         <button class="chip-btn" id="filter-local" onclick="setSearchFilter('local')">Local Files</button>
       </div>
@@ -415,6 +416,33 @@
         </div>
       </div>
 
+      <!-- YouTube Streaming & Music APIs -->
+      <div class="settings-group">
+        <div class="settings-group-title">YouTube Streaming & Music APIs</div>
+
+        <div class="settings-item">
+          <div class="settings-item-info">
+            <h4 id="settings-yt-status-title">High-Speed Music Gateway</h4>
+            <p id="settings-yt-status-desc">Active (Auto Public Failover + Official API Key)</p>
+          </div>
+          <span class="source-badge youtube" style="font-size: 10px; padding: 3px 8px;">ACTIVE</span>
+        </div>
+
+        <div class="card" style="margin-top: 10px;">
+          <div class="card-header">
+            <div class="card-title" style="font-size: 11px;">YouTube Data API v3 Key (Optional)</div>
+          </div>
+          <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Enter your Google Cloud YouTube Data API v3 key to use your dedicated developer quota for music search & metadata. When empty, high-speed public music gateways are used automatically.</p>
+          <div style="margin-bottom: 10px;">
+            <input type="password" class="search-input" id="cfg-yt-api-key" placeholder="AIzaSy... (Leave empty for auto public gateway)" style="height: 40px; font-size: 12px; font-family: var(--font-mono);">
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-primary" onclick="saveYouTubeConfig()" style="height: 36px; flex: 1;">Save API Key</button>
+            <button class="btn-secondary" onclick="clearYouTubeConfig()" style="height: 36px; width: auto; padding: 0 12px;">Clear</button>
+          </div>
+        </div>
+      </div>
+
       <!-- DSP Engine Specifications -->
       <div class="settings-group">
         <div class="settings-group-title">Audio DSP Specifications</div>
@@ -575,24 +603,36 @@
         <span class="source-badge idle" id="np-source-badge">STANDBY</span>
       </div>
 
-      <button class="np-close-btn" onclick="closeNowPlaying(); switchTab('equalizer')">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
-          <line x1="4" y1="21" x2="4" y2="14"></line>
-          <line x1="4" y1="10" x2="4" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="12"></line>
-          <line x1="12" y1="8" x2="12" y2="3"></line>
-          <line x1="20" y1="21" x2="20" y2="16"></line>
-          <line x1="20" y1="12" x2="20" y2="3"></line>
-          <line x1="1" y1="14" x2="7" y2="14"></line>
-          <line x1="9" y1="8" x2="15" y2="8"></line>
-          <line x1="17" y1="16" x2="23" y2="16"></line>
-        </svg>
-      </button>
+      <div style="display: flex; gap: 6px;">
+        <button class="np-close-btn" id="np-lyrics-toggle-btn" onclick="toggleLyricsView()" title="Toggle LRCLIB Lyrics">
+          <svg viewBox="0 0 24 24" width="19" height="19" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M4 6h16M4 12h10M4 18h14"/>
+          </svg>
+        </button>
+        <button class="np-close-btn" onclick="closeNowPlaying(); switchTab('equalizer')" title="Equalizer">
+          <svg viewBox="0 0 24 24" width="19" height="19" stroke="currentColor" stroke-width="2" fill="none">
+            <line x1="4" y1="21" x2="4" y2="14"></line>
+            <line x1="4" y1="10" x2="4" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12" y2="3"></line>
+            <line x1="20" y1="21" x2="20" y2="16"></line>
+            <line x1="20" y1="12" x2="20" y2="3"></line>
+            <line x1="1" y1="14" x2="7" y2="14"></line>
+            <line x1="9" y1="8" x2="15" y2="8"></line>
+            <line x1="17" y1="16" x2="23" y2="16"></line>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <!-- Album Art -->
-    <div class="np-cover-wrap">
+    <!-- Album Art & LRCLIB Lyrics Flipper -->
+    <div class="np-cover-wrap" id="np-cover-wrap" onclick="toggleLyricsView()">
       <img src="assets/logo.png" alt="Now Playing Artwork" class="np-cover-art" id="np-cover-img">
+      <div class="np-lyrics-container" id="np-lyrics-container" style="display: none;">
+        <div class="np-lyrics-content" id="np-lyrics-content">
+          <div class="lyrics-status">Searching LRCLIB lyrics...</div>
+        </div>
+      </div>
     </div>
 
     <!-- Track Metadata -->
@@ -695,6 +735,7 @@
   <!-- SCRIPTS -->
   <script src="js/dsp-engine.js"></script>
   <script src="js/spotify-service.js"></script>
+  <script src="js/youtube-music-engine.js"></script>
 
   <script>
     // ==========================================================================
@@ -880,6 +921,22 @@
         document.getElementById('np-seek-slider').value = pct;
         document.getElementById('dock-progress-fill').style.width = `${pct}%`;
       }
+
+      // Live synchronized lyric scrolling
+      if (isLyricsVisible && window.syncLyricsScroll) {
+        window.syncLyricsScroll(curSec);
+      }
+
+      // W3C Media Session position telemetry
+      if ('mediaSession' in navigator && 'setPositionState' in navigator.mediaSession && isPlaying && durSec > 0) {
+        try {
+          navigator.mediaSession.setPositionState({
+            duration: durSec,
+            playbackRate: 1.0,
+            position: Math.min(durSec, Math.max(0, curSec))
+          });
+        } catch(e) {}
+      }
     }, 100);
 
     function formatTime(secs) {
@@ -932,6 +989,29 @@
         document.getElementById('np-cover-img').src = cover;
 
         updateSourceBadges('spotify');
+      } else if (currentSourceMode === 'youtube' || window.dspEngine.sourceType === 'stream') {
+        const track = window.dspEngine.activeTrack;
+        if (track) {
+          const title = track.title || 'YouTube Stream';
+          const artist = track.artist || 'YouTube Music';
+          const album = track.album || 'YouTube Music Stream';
+          const cover = track.artwork || 'assets/logo.png';
+
+          document.getElementById('hero-title').innerText = title;
+          document.getElementById('hero-artist').innerText = artist;
+          document.getElementById('hero-cover-img').src = cover;
+
+          document.getElementById('dock-title').innerText = title;
+          document.getElementById('dock-artist').querySelector('span:first-child').innerText = artist;
+          document.getElementById('dock-cover-img').src = cover;
+
+          document.getElementById('np-title').innerText = title;
+          document.getElementById('np-artist').innerText = artist;
+          document.getElementById('np-album').innerText = album;
+          document.getElementById('np-cover-img').src = cover;
+
+          updateSourceBadges('youtube');
+        }
       } else if (currentSourceMode === 'local') {
         const song = window.dspEngine.activeTrack || window.dspEngine.songs[window.dspEngine.currentIndex];
         if (song) {
@@ -978,6 +1058,9 @@
       } else if (mode === 'spotify') {
         text = 'SPOTIFY CONNECT';
         cls = 'spotify';
+      } else if (mode === 'youtube') {
+        text = 'YOUTUBE Hi-Fi';
+        cls = 'youtube';
       }
 
       [topBadge, heroBadge, dockBadge, npBadge].forEach(b => {
@@ -993,6 +1076,11 @@
       try {
         await window.dspEngine.playLocalSong(idx);
         updatePlaybackUI();
+        const s = window.dspEngine.songs[idx];
+        if (s) {
+          updateMediaSession(s);
+          loadLyricsForTrack(s);
+        }
       } catch(err) {
         alert('Could not play track: ' + err.message);
       }
@@ -1248,6 +1336,8 @@
     function setSearchFilter(filter) {
       currentSearchFilter = filter;
       document.getElementById('filter-all').classList.toggle('active', filter === 'all');
+      const ytFilter = document.getElementById('filter-youtube');
+      if (ytFilter) ytFilter.classList.toggle('active', filter === 'youtube');
       document.getElementById('filter-spotify').classList.toggle('active', filter === 'spotify');
       document.getElementById('filter-local').classList.toggle('active', filter === 'local');
       executeSearch(document.getElementById('search-input-field').value);
@@ -1265,7 +1355,7 @@
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
             <h3>Discover Music</h3>
-            <p>Search millions of tracks on Spotify and your indexed local audio library.</p>
+            <p>Search millions of tracks on YouTube, Spotify, and your indexed local audio library.</p>
           </div>
         `;
         return;
@@ -1283,21 +1373,54 @@
 
       // Query Spotify if authenticated
       let spotifyMatches = [];
-      if ((currentSearchFilter === 'all' || currentSearchFilter === 'spotify') && window.spotifyService.isAuthenticated()) {
+      if ((currentSearchFilter === 'all' || currentSearchFilter === 'spotify') && window.spotifyService && window.spotifyService.isAuthenticated()) {
         try {
           const res = await window.spotifyService.search(q, 'track');
           spotifyMatches = res.tracks || [];
         } catch(e) {}
       }
 
+      // Query YouTube Music Engine (YouTube Data API v3 + High-Speed Gateways)
+      let youtubeMatches = [];
+      if ((currentSearchFilter === 'all' || currentSearchFilter === 'youtube') && window.youtubeMusicEngine) {
+        try {
+          youtubeMatches = await window.youtubeMusicEngine.search(q);
+        } catch(e) {
+          console.warn('YouTube search notice:', e);
+        }
+      }
+
       container.innerHTML = '';
 
-      if (localMatches.length === 0 && spotifyMatches.length === 0) {
+      if (localMatches.length === 0 && spotifyMatches.length === 0 && youtubeMatches.length === 0) {
         container.innerHTML = `<div class="empty-state"><h3>No results found</h3><p>Try searching with another keyword.</p></div>`;
         return;
       }
 
-      // Render Local Matches
+      // 1. Render YouTube Matches
+      if (youtubeMatches.length > 0) {
+        const titleSec = document.createElement('div');
+        titleSec.className = 'results-section-title';
+        titleSec.innerText = `YouTube Music (${youtubeMatches.length})`;
+        container.appendChild(titleSec);
+
+        youtubeMatches.forEach((track, idx) => {
+          const row = document.createElement('div');
+          row.className = 'track-row';
+          row.onclick = () => playYouTubeTrack(track, youtubeMatches, idx);
+          row.innerHTML = `
+            <img src="${escapeHtml(track.artwork || 'assets/logo.png')}" class="track-index-cover" alt="Cover" onerror="this.src='assets/logo.png'">
+            <div class="track-meta">
+              <div class="track-title">${escapeHtml(track.title)}</div>
+              <div class="track-sub">${escapeHtml(track.artist)} • YouTube Stream</div>
+            </div>
+            <span class="track-duration">${track.duration ? formatTime(track.duration) : ''}</span>
+          `;
+          container.appendChild(row);
+        });
+      }
+
+      // 2. Render Local Matches
       if (localMatches.length > 0) {
         const titleSec = document.createElement('div');
         titleSec.className = 'results-section-title';
@@ -1325,7 +1448,7 @@
         });
       }
 
-      // Render Spotify Matches
+      // 3. Render Spotify Matches
       if (spotifyMatches.length > 0) {
         const titleSec = document.createElement('div');
         titleSec.className = 'results-section-title';
@@ -1348,6 +1471,254 @@
           `;
           container.appendChild(row);
         });
+      }
+    }
+
+    // --- YOUTUBE PLAYBACK ENGINE & AUTHORIZED AUDIO STREAMING ---
+    let currentYoutubeQueue = [];
+    let currentYoutubeIndex = -1;
+
+    async function playYouTubeTrack(track, queue = null, index = -1) {
+      try {
+        currentSourceMode = 'youtube';
+        if (spotifyIsPlaying && window.spotifyService) {
+          window.spotifyService.pause().catch(() => {});
+          spotifyIsPlaying = false;
+        }
+
+        if (queue) {
+          currentYoutubeQueue = queue;
+          currentYoutubeIndex = index;
+        }
+
+        // Immediate visual telemetry
+        document.getElementById('dock-title').innerText = track.title;
+        document.getElementById('dock-artist').querySelector('span:first-child').innerText = 'Resolving audio stream...';
+        document.getElementById('dock-cover-img').src = track.artwork || 'assets/logo.png';
+        updateSourceBadges('youtube');
+
+        // Resolve direct audio stream from authorized source
+        if (!track.streamUrl && window.youtubeMusicEngine) {
+          const resolved = await window.youtubeMusicEngine.resolveAudioStream(track.videoId || track.id);
+          Object.assign(track, resolved);
+        }
+
+        // Stream via HTML5 Audio through 32-bit float WebAudio DSP pipeline
+        await window.dspEngine.playStreamTrack(track, currentYoutubeQueue, currentYoutubeIndex);
+        updatePlaybackUI();
+        updateMediaSession(track);
+
+        // Fetch synchronized lyrics from LRCLIB API in parallel
+        loadLyricsForTrack(track);
+      } catch (err) {
+        console.error('Failed to play YouTube track:', err);
+        alert('Playback error: ' + (err.message || 'Unable to stream audio. Please try again.'));
+      }
+    }
+
+    // Global hook when queue advances
+    window.onPlaybackTrackChanged = function(track) {
+      updatePlaybackUI();
+      updateMediaSession(track);
+      loadLyricsForTrack(track);
+    };
+
+    // --- W3C MEDIA SESSION API (Lock Screen & Background Notification Controls) ---
+    function updateMediaSession(track) {
+      if (!('mediaSession' in navigator) || !track) return;
+      try {
+        const artworkUrl = track.artwork || 'assets/logo.png';
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: track.title || 'Pioneer Audio Track',
+          artist: track.artist || 'Pioneer DSP',
+          album: track.album || 'Pioneer Hi-Fi Master',
+          artwork: [
+            { src: artworkUrl, sizes: '96x96', type: 'image/png' },
+            { src: artworkUrl, sizes: '128x128', type: 'image/png' },
+            { src: artworkUrl, sizes: '192x192', type: 'image/png' },
+            { src: artworkUrl, sizes: '256x256', type: 'image/png' },
+            { src: artworkUrl, sizes: '512x512', type: 'image/png' }
+          ]
+        });
+        navigator.mediaSession.playbackState = 'playing';
+
+        navigator.mediaSession.setActionHandler('play', () => {
+          toggleMasterPlay();
+          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+          toggleMasterPlay();
+          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+        });
+        navigator.mediaSession.setActionHandler('previoustrack', () => masterStepPrev());
+        navigator.mediaSession.setActionHandler('nexttrack', () => masterStepNext());
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+          if (details.seekTime !== undefined && details.seekTime !== null) {
+            const dur = window.dspEngine.getCurrentDuration();
+            if (dur > 0) window.dspEngine.seek(details.seekTime / dur);
+          }
+        });
+        navigator.mediaSession.setActionHandler('seekforward', (details) => {
+          const skip = details.seekOffset || 10;
+          const cur = window.dspEngine.getCurrentTime();
+          const dur = window.dspEngine.getCurrentDuration();
+          if (dur > 0) window.dspEngine.seek(Math.min(dur, cur + skip) / dur);
+        });
+        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+          const skip = details.seekOffset || 10;
+          const cur = window.dspEngine.getCurrentTime();
+          const dur = window.dspEngine.getCurrentDuration();
+          if (dur > 0) window.dspEngine.seek(Math.max(0, cur - skip) / dur);
+        });
+      } catch(err) {
+        console.warn('MediaSession setup notice:', err);
+      }
+    }
+
+    // --- LRCLIB SYNCHRONIZED LYRICS ENGINE ---
+    let isLyricsVisible = false;
+    let currentLyricsData = null;
+
+    async function loadLyricsForTrack(track) {
+      currentLyricsData = null;
+      const lyricsContainer = document.getElementById('np-lyrics-content');
+      if (lyricsContainer) {
+        lyricsContainer.innerHTML = '<div class="lyrics-status">Searching LRCLIB lyrics...</div>';
+      }
+
+      if (!window.youtubeMusicEngine) return;
+
+      try {
+        const data = await window.youtubeMusicEngine.fetchLyrics(track.title, track.artist, track.duration);
+        currentLyricsData = data;
+        renderLyricsView();
+      } catch (e) {
+        if (lyricsContainer) {
+          lyricsContainer.innerHTML = '<div class="lyrics-status">No lyrics found for this track.</div>';
+        }
+      }
+    }
+
+    function toggleLyricsView() {
+      isLyricsVisible = !isLyricsVisible;
+      const coverImg = document.getElementById('np-cover-img');
+      const lyricsContainer = document.getElementById('np-lyrics-container');
+      const lyricsBtn = document.getElementById('np-lyrics-toggle-btn');
+
+      if (coverImg && lyricsContainer) {
+        if (isLyricsVisible) {
+          coverImg.style.display = 'none';
+          lyricsContainer.style.display = 'flex';
+          if (lyricsBtn) lyricsBtn.style.color = 'var(--accent-pioneer)';
+          renderLyricsView();
+        } else {
+          coverImg.style.display = 'block';
+          lyricsContainer.style.display = 'none';
+          if (lyricsBtn) lyricsBtn.style.color = '';
+        }
+      }
+    }
+
+    function renderLyricsView() {
+      const container = document.getElementById('np-lyrics-content');
+      if (!container) return;
+
+      if (!currentLyricsData) {
+        container.innerHTML = '<div class="lyrics-status">No track playing</div>';
+        return;
+      }
+
+      if (currentLyricsData.instrumental) {
+        container.innerHTML = '<div class="lyrics-status">🎵 Instrumental Track</div>';
+        return;
+      }
+
+      if (currentLyricsData.parsedSynced && currentLyricsData.parsedSynced.length > 0) {
+        let html = '<div class="lyrics-scroll-body">';
+        currentLyricsData.parsedSynced.forEach((line, idx) => {
+          html += `<div class="lyrics-line" id="lyric-line-${idx}" onclick="seekToLyricTime(${line.time})">${escapeHtml(line.text || '...')}</div>`;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+      } else if (currentLyricsData.plainLyrics) {
+        container.innerHTML = `<div class="lyrics-plain">${escapeHtml(currentLyricsData.plainLyrics)}</div>`;
+      } else {
+        container.innerHTML = '<div class="lyrics-status">No lyrics found on LRCLIB</div>';
+      }
+    }
+
+    function seekToLyricTime(time) {
+      const dur = window.dspEngine.getCurrentDuration();
+      if (dur > 0) {
+        window.dspEngine.seek(time / dur);
+      }
+    }
+
+    let lastActiveLyricIdx = -1;
+    window.syncLyricsScroll = function(curSec) {
+      if (!isLyricsVisible || !currentLyricsData || !currentLyricsData.parsedSynced || currentLyricsData.parsedSynced.length === 0) return;
+
+      const lines = currentLyricsData.parsedSynced;
+      let activeIdx = -1;
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].time <= curSec + 0.25) {
+          activeIdx = i;
+        } else {
+          break;
+        }
+      }
+
+      if (activeIdx !== lastActiveLyricIdx) {
+        if (lastActiveLyricIdx >= 0) {
+          const prevEl = document.getElementById(`lyric-line-${lastActiveLyricIdx}`);
+          if (prevEl) prevEl.classList.remove('active');
+        }
+        if (activeIdx >= 0) {
+          const curEl = document.getElementById(`lyric-line-${activeIdx}`);
+          if (curEl) {
+            curEl.classList.add('active');
+            curEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+        lastActiveLyricIdx = activeIdx;
+      }
+    };
+
+    // --- YOUTUBE CONFIGURATION CONTROLS ---
+    function saveYouTubeConfig() {
+      const input = document.getElementById('cfg-yt-api-key');
+      const val = input ? input.value.trim() : '';
+      if (window.youtubeMusicEngine) {
+        window.youtubeMusicEngine.setApiKey(val);
+      }
+      updateYouTubeConfigUI();
+      alert(val ? 'YouTube Data API v3 key saved!' : 'Custom key cleared. High-speed public gateway active.');
+    }
+
+    function clearYouTubeConfig() {
+      const input = document.getElementById('cfg-yt-api-key');
+      if (input) input.value = '';
+      if (window.youtubeMusicEngine) {
+        window.youtubeMusicEngine.setApiKey('');
+      }
+      updateYouTubeConfigUI();
+    }
+
+    function updateYouTubeConfigUI() {
+      if (!window.youtubeMusicEngine) return;
+      const input = document.getElementById('cfg-yt-api-key');
+      const key = window.youtubeMusicEngine.getApiKey();
+      if (input) input.value = key;
+      const statusTitle = document.getElementById('settings-yt-status-title');
+      const statusDesc = document.getElementById('settings-yt-status-desc');
+      if (statusTitle && statusDesc) {
+        if (key) {
+          statusTitle.innerText = 'YouTube Data API v3 (Custom Key)';
+          statusDesc.innerText = 'Dedicated Google Cloud developer quota active';
+        } else {
+          statusTitle.innerText = 'High-Speed Music Gateway (Auto)';
+          statusDesc.innerText = 'Active (Auto Public Failover)';
+        }
       }
     }
 

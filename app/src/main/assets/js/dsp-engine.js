@@ -129,7 +129,7 @@ class PioneerDSPEngine {
     this.db = new PioneerAudioDB();
 
     // Playback State
-    this.sourceType = 'none'; // 'local', 'none'
+    this.sourceType = 'none'; // 'local', 'stream', 'none'
     this.sourceNode = null;
     this.isPlaying = false;
     this.isPaused = false;
@@ -139,6 +139,14 @@ class PioneerDSPEngine {
     this.playbackRate = 1.0;
     this.isRepeat = 'off'; // 'off', 'all', 'one'
     this.isShuffle = false;
+
+    // HTML5 Audio Streaming Element (Routed into WebAudio 32-bit DSP pipeline)
+    this.audioElement = new Audio();
+    this.audioElement.crossOrigin = 'anonymous';
+    this.audioElement.preload = 'auto';
+    this.mediaElementSource = null;
+    this.streamQueue = [];
+    this.streamIndex = -1;
 
     // Track Library
     this.songs = [];
@@ -204,6 +212,16 @@ class PioneerDSPEngine {
     // 1. Preamp Gain Node (-12dB to +12dB)
     this.preampNode = this.audioCtx.createGain();
     this.preampNode.gain.value = this.dbToLinear(this.preampGain);
+
+    // Connect HTML5 Audio element to Pioneer DSP preamp
+    if (this.audioElement && !this.mediaElementSource) {
+      try {
+        this.mediaElementSource = this.audioCtx.createMediaElementSource(this.audioElement);
+        this.mediaElementSource.connect(this.preampNode);
+      } catch (err) {
+        console.warn('HTML5 Audio MediaElementSource connection notice:', err);
+      }
+    }
 
     // 2. 10-Band Graphic Equalizer Peaking Filters
     this.eqFilters = [];
@@ -567,17 +585,90 @@ class PioneerDSPEngine {
   // --- Real Media Playback Pipeline ---
 
   stopPlayback() {
+    if (this.audioElement) {
+      try {
+        this.audioElement.pause();
+        this.audioElement.removeAttribute('src');
+        this.audioElement.load();
+      } catch (e) {}
+    }
     if (this.sourceNode) {
       try {
         this.sourceNode.stop();
         this.sourceNode.disconnect();
-      } catch(e) {}
+      } catch (e) {}
       this.sourceNode = null;
     }
 
     this.isPlaying = false;
     this.isPaused = false;
     this.pauseOffset = 0;
+  }
+
+  // Play streaming audio via HTML5 Audio API routed into Pioneer DSP
+  async playStreamTrack(track, queue = null, index = -1) {
+    if (!track || !track.streamUrl) return false;
+    await this.initAudioContext();
+    this.stopPlayback();
+
+    if (Array.isArray(queue) && queue.length > 0) {
+      this.streamQueue = queue;
+      this.streamIndex = index >= 0 ? index : queue.findIndex(t => t.id === track.id);
+    }
+
+    this.sourceType = 'stream';
+    this.activeTrack = track;
+    this.duration = track.duration || 0;
+
+    if (!this.audioElement) {
+      this.audioElement = new Audio();
+      this.audioElement.crossOrigin = 'anonymous';
+      this.audioElement.preload = 'auto';
+    }
+
+    // Ensure MediaElementSource is hooked into WebAudio DSP
+    if (!this.mediaElementSource && this.preampNode) {
+      try {
+        this.mediaElementSource = this.audioCtx.createMediaElementSource(this.audioElement);
+        this.mediaElementSource.connect(this.preampNode);
+      } catch (e) {}
+    }
+
+    this.audioElement.src = track.streamUrl;
+    this.audioElement.playbackRate = this.playbackRate;
+
+    this.audioElement.onloadedmetadata = () => {
+      if (this.audioElement.duration && isFinite(this.audioElement.duration)) {
+        this.duration = this.audioElement.duration;
+        track.duration = Math.round(this.duration);
+      }
+    };
+
+    this.audioElement.onended = () => {
+      if (this.isPlaying && !this.isPaused) {
+        if (this.isRepeat === 'one') {
+          this.audioElement.currentTime = 0;
+          this.audioElement.play().catch(() => {});
+        } else {
+          this.playNext();
+        }
+      }
+    };
+
+    this.audioElement.onerror = (e) => {
+      console.error('HTML5 Audio playback stream error:', e);
+    };
+
+    try {
+      await this.audioElement.play();
+      this.isPlaying = true;
+      this.isPaused = false;
+      return true;
+    } catch (err) {
+      console.error('Failed to trigger audio stream playback:', err);
+      this.stopPlayback();
+      throw err;
+    }
   }
 
   // Play a local audio file
@@ -669,7 +760,11 @@ class PioneerDSPEngine {
   }
 
   pause() {
-    if (this.sourceNode && this.isPlaying && !this.isPaused) {
+    if (this.sourceType === 'stream' && this.audioElement) {
+      this.audioElement.pause();
+      this.isPlaying = false;
+      this.isPaused = true;
+    } else if (this.sourceNode && this.isPlaying && !this.isPaused) {
       this.pauseOffset = (this.audioCtx.currentTime - this.startTime) % (this.duration || 1);
       try {
         this.sourceNode.stop();
@@ -681,8 +776,15 @@ class PioneerDSPEngine {
     }
   }
 
-  resume() {
-    if (this.isPaused && this.currentBuffer && this.audioCtx) {
+  async resume() {
+    if (this.sourceType === 'stream' && this.audioElement && this.isPaused) {
+      if (this.audioCtx && this.audioCtx.state === 'suspended') {
+        await this.audioCtx.resume();
+      }
+      await this.audioElement.play();
+      this.isPlaying = true;
+      this.isPaused = false;
+    } else if (this.isPaused && this.currentBuffer && this.audioCtx) {
       this.sourceNode = this.audioCtx.createBufferSource();
       this.sourceNode.buffer = this.currentBuffer;
       this.sourceNode.playbackRate.value = this.playbackRate;
@@ -708,6 +810,14 @@ class PioneerDSPEngine {
   }
 
   seek(ratio) {
+    if (this.sourceType === 'stream' && this.audioElement) {
+      const dur = this.getCurrentDuration();
+      if (dur > 0) {
+        this.audioElement.currentTime = Math.max(0, Math.min(dur, dur * ratio));
+      }
+      return;
+    }
+
     if (!this.currentBuffer) return;
     const targetTime = Math.max(0, Math.min(this.duration, this.duration * ratio));
     this.pauseOffset = targetTime;
@@ -736,6 +846,27 @@ class PioneerDSPEngine {
   }
 
   async playNext() {
+    if (this.sourceType === 'stream' && this.streamQueue.length > 0) {
+      let nextIdx;
+      if (this.isShuffle) {
+        nextIdx = Math.floor(Math.random() * this.streamQueue.length);
+      } else {
+        nextIdx = (this.streamIndex + 1) % this.streamQueue.length;
+      }
+      const nextTrack = this.streamQueue[nextIdx];
+      if (nextTrack) {
+        if (!nextTrack.streamUrl && window.youtubeMusicEngine) {
+          try {
+            const res = await window.youtubeMusicEngine.resolveAudioStream(nextTrack.videoId || nextTrack.id);
+            Object.assign(nextTrack, res);
+          } catch(e) {}
+        }
+        await this.playStreamTrack(nextTrack, this.streamQueue, nextIdx);
+        if (window.onPlaybackTrackChanged) window.onPlaybackTrackChanged(nextTrack);
+      }
+      return;
+    }
+
     if (this.songs.length === 0) return;
     let nextIdx;
     if (this.isShuffle) {
@@ -747,6 +878,27 @@ class PioneerDSPEngine {
   }
 
   async playPrev() {
+    if (this.sourceType === 'stream' && this.streamQueue.length > 0) {
+      let prevIdx;
+      if (this.isShuffle) {
+        prevIdx = Math.floor(Math.random() * this.streamQueue.length);
+      } else {
+        prevIdx = (this.streamIndex - 1 + this.streamQueue.length) % this.streamQueue.length;
+      }
+      const prevTrack = this.streamQueue[prevIdx];
+      if (prevTrack) {
+        if (!prevTrack.streamUrl && window.youtubeMusicEngine) {
+          try {
+            const res = await window.youtubeMusicEngine.resolveAudioStream(prevTrack.videoId || prevTrack.id);
+            Object.assign(prevTrack, res);
+          } catch(e) {}
+        }
+        await this.playStreamTrack(prevTrack, this.streamQueue, prevIdx);
+        if (window.onPlaybackTrackChanged) window.onPlaybackTrackChanged(prevTrack);
+      }
+      return;
+    }
+
     if (this.songs.length === 0) return;
     let prevIdx;
     if (this.isShuffle) {
@@ -758,6 +910,9 @@ class PioneerDSPEngine {
   }
 
   getCurrentTime() {
+    if (this.sourceType === 'stream' && this.audioElement) {
+      return this.audioElement.currentTime || 0;
+    }
     if (!this.isPlaying || !this.audioCtx) return this.pauseOffset;
     if (this.isPaused) return this.pauseOffset;
     const elapsed = this.audioCtx.currentTime - this.startTime;
@@ -765,6 +920,9 @@ class PioneerDSPEngine {
   }
 
   getCurrentDuration() {
+    if (this.sourceType === 'stream' && this.audioElement && this.audioElement.duration && isFinite(this.audioElement.duration)) {
+      return this.audioElement.duration;
+    }
     return this.duration || (this.songs[this.currentIndex]?.duration || 0);
   }
 
