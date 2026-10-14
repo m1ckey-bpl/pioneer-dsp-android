@@ -1,15 +1,17 @@
 /* ==========================================================================
-   PIONEER DSP - iOS COCKPIT EDITION (ANDROID STANDALONE)
-   Authentic Dark Titanium & Carbon Cockpit Architecture
-   Pioneer Sound Tune Signature Aesthetic: Amber-Orange, Cyber-Cyan & Hi-Fi Gold
-   ABSOLUTELY NO ANIME/PORTRAIT BACKGROUNDS - 100% PURE CINEMATIC AUDIO SURFACES
+   PIONEER DSP - SOUND TUNE COCKPIT ARCHITECTURE (v4.5.0)
+   Authentic Dark Obsidian & Titanium Acoustic Cockpit Design
+   Pure Acoustic Surfaces — Zero Anime / Character Portraits
+   Multi-Band 10-Band Graphic EQ, Todoroki Super Bass, Reverb & Treble Controls
+   Seamless Integrated Bottom Deck Now Playing Architecture
+   Optimized for OnePlus Nord CE5 & Modern Android 20:9 Screens
    ========================================================================== */
 
 :root {
-  /* Pioneer iOS Color System (from PioneerTheme.swift) */
-  --carbon-bg: #0a0f17;
-  --titanium-card: #141c29;
-  --titanium-card-border: #29384f;
+  /* Color Palette */
+  --carbon-bg: #070a10;
+  --titanium-card: #121926;
+  --titanium-card-border: #233247;
   
   --amber-orange: #ff6b00;
   --amber-glow: rgba(255, 107, 0, 0.35);
@@ -30,12 +32,12 @@
   --font-mono: "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
   --font-rounded: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "SF Pro Rounded", sans-serif;
 
-  /* Dimensions & Safe Areas (OnePlus Nord CE5 & Modern Android Display Cutouts) */
+  /* Dimensions & Safe Areas */
   --safe-top: max(12px, env(safe-area-inset-top, 12px));
   --safe-bottom: max(16px, env(safe-area-inset-bottom, 16px));
-  --header-height: 56px;
-  --bottom-nav-height: 64px;
-  --mini-dock-height: 60px;
+  --header-height: 54px;
+  --bottom-nav-height: 56px;
+  --mini-dock-height: 58px;
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-card: 18px;
@@ -44,13 +46,13 @@
 
   /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.25);
   --shadow-glow-amber: 0 0 20px rgba(255, 107, 0, 0.35);
   --shadow-glow-cyan: 0 0 20px rgba(0, 229, 255, 0.3);
 }
 
 /* ==========================================================================
-   GLOBAL RESET & PREMIUM AUDIO BACKGROUND
+   GLOBAL RESET & DARK ACOUSTIC CANVAS
    ========================================================================== */
 * {
   margin: 0;
@@ -71,45 +73,52 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Cinematic Dark Audio-Themed Background (Pure Acoustic Gradient & Frequency Glow) */
-body {
-  background: radial-gradient(circle at 50% -10%, #172338 0%, #0d1422 45%, #070a10 100%);
-  background-attachment: fixed;
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* App Root Viewport Flex Hierarchy */
+#app-root {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   position: relative;
+  background: radial-gradient(circle at 50% 0%, #111a28 0%, #0a0f17 50%, #070a10 100%);
 }
 
-body::before {
+#app-root::before {
   content: '';
-  position: fixed;
+  position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background-image: 
-    radial-gradient(ellipse 550px 280px at 15% 15%, rgba(0, 229, 255, 0.04) 0%, transparent 70%),
-    radial-gradient(ellipse 550px 280px at 85% 85%, rgba(254, 9, 121, 0.035) 0%, transparent 70%),
-    radial-gradient(ellipse 700px 350px at 50% 50%, rgba(255, 107, 0, 0.03) 0%, transparent 70%);
+    radial-gradient(ellipse 600px 300px at 15% 10%, rgba(0, 229, 255, 0.035) 0%, transparent 70%),
+    radial-gradient(ellipse 600px 300px at 85% 90%, rgba(254, 9, 121, 0.025) 0%, transparent 70%),
+    radial-gradient(ellipse 700px 350px at 50% 40%, rgba(255, 107, 0, 0.025) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Subtle Dynamic Frequency Lines Backdrop */
-body::after {
+#app-root::after {
   content: '';
-  position: fixed;
+  position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(180deg, rgba(10, 15, 23, 0) 0%, rgba(10, 15, 23, 0.4) 60%, rgba(10, 15, 23, 0.85) 100%),
-              repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(41, 56, 79, 0.04) 40px, rgba(41, 56, 79, 0.04) 41px);
+  background: repeating-linear-gradient(0deg, transparent, transparent 38px, rgba(41, 56, 79, 0.04) 38px, rgba(41, 56, 79, 0.04) 39px);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Scrollbar */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 3px;
   height: 3px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.16);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-track {
@@ -119,16 +128,13 @@ body::after {
 /* ==========================================================================
    APP HEADER BAR (Pioneer Logo, Brand Title, Hi-Res Badge, Settings)
    ========================================================================== */
-.app-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: calc(var(--header-height) + var(--safe-top));
-  padding-top: var(--safe-top);
-  padding-left: 18px;
-  padding-right: 18px;
-  background: rgba(10, 15, 23, 0.88);
+.app-header, .cockpit-header {
+  flex-shrink: 0;
+  height: calc(var(--header-height) + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: 16px;
+  padding-right: 16px;
+  background: rgba(10, 15, 23, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(41, 56, 79, 0.5);
@@ -138,100 +144,99 @@ body::after {
   z-index: 100;
 }
 
-.header-left {
+.brand-cluster {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-.header-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 1.5px solid var(--amber-orange);
-  box-shadow: 0 0 12px var(--amber-glow);
+.logo-wrapper {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.header-title-block {
+.brand-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.brand-titles {
   display: flex;
   flex-direction: column;
 }
 
-.header-app-name {
-  font-size: 17px;
+.brand-main {
+  font-size: 13px;
   font-weight: 900;
-  letter-spacing: 1.2px;
-  color: #fff;
   font-family: var(--font-rounded);
+  color: #fff;
+  letter-spacing: 0.5px;
 }
 
-.header-app-sub {
-  font-size: 8.5px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
+.brand-sub {
+  font-size: 8px;
+  font-weight: 700;
+  font-family: var(--font-mono);
   color: var(--amber-orange);
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.badge-hires {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(242, 196, 64, 0.4);
-  padding: 3px 7px;
-  border-radius: 6px;
-}
-.badge-hires-title {
-  font-size: 8.5px;
-  font-weight: 900;
-  color: var(--hifi-gold);
-  font-family: var(--font-mono);
   letter-spacing: 0.8px;
 }
-.badge-hires-spec {
-  font-size: 7.5px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.6);
-  font-family: var(--font-mono);
+
+.header-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.header-icon-btn {
-  background: rgba(255, 255, 255, 0.05);
+.hi-res-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(242, 196, 64, 0.12);
+  border: 1px solid rgba(242, 196, 64, 0.35);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 8.5px;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  color: var(--hifi-gold);
+  letter-spacing: 0.5px;
+}
+
+.hi-res-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--hifi-gold);
+  box-shadow: 0 0 6px var(--hifi-gold);
+}
+
+.settings-gear-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--titanium-card-border);
-  color: var(--text-muted);
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-.header-icon-btn:active {
-  background: rgba(255, 107, 0, 0.15);
-  color: var(--amber-orange);
-  border-color: var(--amber-orange);
 }
 
 /* ==========================================================================
-   VIEWPORT & TAB CONTAINER
+   VIEWPORT & TAB CONTAINER (FLEX 1 CONTAINER)
    ========================================================================== */
-.main-viewport {
-  position: absolute;
-  top: calc(var(--header-height) + var(--safe-top));
-  bottom: 0;
-  left: 0;
-  right: 0;
+.main-viewport, .cockpit-main {
+  flex: 1 1 0%;
+  min-height: 0;
+  width: 100%;
+  position: relative;
   overflow: hidden;
   z-index: 10;
 }
@@ -241,153 +246,200 @@ body::after {
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  overflow-x: hidden;
-  padding: 16px 18px 160px 18px; /* Extra bottom padding for OnePlus Nord CE5 gesture nav & mini dock */
   -webkit-overflow-scrolling: touch;
+  padding: 14px 16px 20px;
+  box-sizing: border-box;
 }
 
 .tab-view.active {
-  display: block;
-  animation: fadeInTab 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-@keyframes fadeInTab {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Pioneer Titanium Glassmorphism Card (PioneerCardModifier from iOS) */
+/* Common Card Surface */
 .pioneer-card {
   background: var(--titanium-card);
-  border-radius: var(--radius-card);
   border: 1.2px solid var(--titanium-card-border);
+  border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
   position: relative;
   overflow: hidden;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
-}
-.pioneer-card.highlight-amber {
-  border-color: rgba(255, 107, 0, 0.5);
-  box-shadow: 0 8px 26px rgba(255, 107, 0, 0.15);
-}
-.pioneer-card.highlight-cyan {
-  border-color: rgba(0, 229, 255, 0.45);
-  box-shadow: 0 8px 26px rgba(0, 229, 255, 0.12);
 }
 
 .section-label {
-  font-size: 9.5px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  margin-bottom: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 4px;
 }
 
 /* ==========================================================================
-   TAB 1: TUNER (Now Playing, Concert Hall Toggle, Rotary Dial, Super Bass)
+   TAB 1: TUNER (Hero Now Playing, Rotary Dial, Super Bass, FFT Analyser)
    ========================================================================== */
-.tuner-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* Concert Hall Acoustics Big Engagement Button */
-.concert-hall-card {
+.hero-now-playing, .now-playing-card {
   padding: 14px 16px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 12px;
   cursor: pointer;
 }
-.ch-left {
+
+.hero-np-top, .np-top-row {
   display: flex;
   align-items: center;
   gap: 14px;
 }
-.ch-icon-circle {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.4);
-  transition: all 0.3s ease;
+
+.hero-np-art, .np-cover-wrap {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
 }
-.concert-hall-card.active .ch-icon-circle {
-  background: rgba(255, 107, 0, 0.25);
-  color: var(--amber-orange);
-  box-shadow: 0 0 16px var(--amber-glow);
+
+.hero-cover-img, .np-cover-img {
+  width: 68px;
+  height: 68px;
+  object-fit: cover;
+  display: block;
 }
-.ch-meta {
+
+.hero-live-badge {
+  position: absolute;
+  bottom: 3px;
+  left: 3px;
+  font-size: 7.5px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  background: rgba(0, 0, 0, 0.75);
+  color: var(--cyber-cyan);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.hero-np-info, .np-meta-wrap {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-.ch-title {
-  font-size: 14.5px;
-  font-weight: 900;
-  color: #fff;
+
+.hero-track-title, .np-title {
+  font-size: 14px;
+  font-weight: 800;
   font-family: var(--font-rounded);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.ch-indicator-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--amber-orange);
-  box-shadow: 0 0 6px var(--amber-orange);
-  display: none;
-}
-.concert-hall-card.active .ch-indicator-dot {
-  display: inline-block;
-  animation: pulse-live 1.5s infinite;
-}
-.ch-subtitle {
-  font-size: 10.5px;
-  font-weight: 500;
-  color: var(--text-muted);
-}
-.concert-hall-card.active .ch-subtitle {
-  color: var(--cyber-cyan);
-}
-.ch-btn-pill {
-  font-size: 10.5px;
-  font-weight: 900;
-  font-family: var(--font-mono);
-  letter-spacing: 0.6px;
-  padding: 7px 14px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.08);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  transition: all 0.25s ease;
-}
-.concert-hall-card.active .ch-btn-pill {
-  background: var(--amber-orange);
-  color: #000;
-  border-color: var(--amber-orange);
-  box-shadow: 0 0 12px var(--amber-glow);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Master Rotary Dial Knob (PioneerDialKnob from iOS) */
-.dial-knob-section {
-  padding: 18px;
+.hero-artist-name, .np-artist {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-album-name {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Master Concert Hall Switch Toggle */
+.hero-concert-hall-toggle, .concert-hall-card {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(20, 28, 41, 0.7);
+  border: 1px solid var(--titanium-card-border);
+  border-radius: var(--radius-md);
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #fff;
+}
+
+.hero-concert-hall-toggle:active, .concert-hall-card:active {
+  transform: scale(0.98);
+}
+
+.hero-concert-hall-toggle.active {
+  border-color: var(--amber-orange);
+  background: rgba(255, 107, 0, 0.12);
+  box-shadow: 0 0 16px rgba(255, 107, 0, 0.25);
+}
+
+.hch-left {
+  display: flex;
   align-items: center;
   gap: 10px;
 }
+
+.hch-icon {
+  font-size: 20px;
+}
+
+.hch-title {
+  font-size: 12px;
+  font-weight: 800;
+  font-family: var(--font-rounded);
+  color: #fff;
+}
+
+.hch-sub {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.hch-pill {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+}
+
+.hero-concert-hall-toggle.active .hch-pill {
+  background: var(--amber-orange);
+  color: #000;
+  box-shadow: 0 0 10px var(--amber-glow);
+}
+
+/* Master Rotary Volume Dial Knob */
+.rotary-dial-card, .dial-knob-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  background: var(--titanium-card);
+  border: 1px solid var(--titanium-card-border);
+  border-radius: var(--radius-card);
+  gap: 8px;
+}
+
 .dial-container {
   position: relative;
   width: 140px;
@@ -397,141 +449,96 @@ body::after {
   justify-content: center;
   touch-action: none;
 }
-.dial-svg {
-  width: 100%;
-  height: 100%;
+
+.dial-svg-track, .dial-svg {
+  width: 140px;
+  height: 140px;
   transform: rotate(-90deg);
 }
-.dial-track-circle {
+
+.dial-bg-arc, .dial-track-circle {
   fill: none;
   stroke: rgba(255, 255, 255, 0.08);
-  stroke-width: 9;
+  stroke-width: 8;
 }
-.dial-arc-fill {
+
+.dial-progress-arc, .dial-arc-fill {
   fill: none;
-  stroke: url(#dialGradient);
-  stroke-width: 9;
+  stroke: var(--cyber-cyan);
+  stroke-width: 8;
   stroke-linecap: round;
-  stroke-dasharray: 377;
-  stroke-dashoffset: 188;
-  transition: stroke-dashoffset 0.05s linear;
+  stroke-dasharray: 427;
+  stroke-dashoffset: 85;
+  filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.6));
 }
-.dial-center-knob {
-  position: absolute;
-  width: 96px;
-  height: 96px;
+
+.rotary-knob, .dial-center-knob {
+  position: relative;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #2a3447 0%, #151b26 70%, #0c1017 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7), inset 0 2px 4px rgba(255, 255, 255, 0.15);
+  background: radial-gradient(circle at 35% 35%, #222d3d 0%, #111722 65%, #080c14 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.15);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: grab;
 }
-.dial-value-text {
-  font-size: 24px;
+
+.rotary-dial-cap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.dial-indicator-dot {
+  position: absolute;
+  top: 10px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cyber-cyan);
+  box-shadow: 0 0 6px var(--cyber-cyan);
+}
+
+.dial-center-val, .dial-value-text {
+  font-size: 22px;
   font-weight: 900;
   color: #fff;
   font-family: var(--font-rounded);
   line-height: 1;
 }
-.dial-unit-text {
-  font-size: 9px;
+
+.dial-center-label, .dial-unit-text {
+  font-size: 8px;
   font-weight: 800;
   letter-spacing: 0.8px;
   color: var(--amber-orange);
   font-family: var(--font-mono);
-  margin-top: 2px;
-}
-
-/* Now Playing Hero Deck Card */
-.now-playing-card {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.np-top-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.np-cover-wrap {
-  position: relative;
-  width: 68px;
-  height: 68px;
-  border-radius: 14px;
-  overflow: hidden;
-  flex-shrink: 0;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-.np-cover-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.np-meta-wrap {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.np-title {
-  font-size: 15px;
-  font-weight: 800;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-family: var(--font-rounded);
-}
-.np-artist {
-  font-size: 12px;
-  color: var(--text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.source-pill-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 2px;
-}
-.source-pill {
-  font-size: 8px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  padding: 2px 6px;
-  border-radius: 4px;
-  text-transform: uppercase;
-}
-.source-pill.local {
-  background: rgba(255, 107, 0, 0.15);
-  border: 1px solid rgba(255, 107, 0, 0.4);
-  color: var(--amber-orange);
-}
-.source-pill.spotify {
-  background: rgba(29, 185, 84, 0.15);
-  border: 1px solid rgba(29, 185, 84, 0.4);
-  color: var(--spotify-green);
-}
-.source-pill.stream {
-  background: rgba(0, 229, 255, 0.15);
-  border: 1px solid rgba(0, 229, 255, 0.4);
-  color: var(--cyber-cyan);
+  margin-top: 3px;
 }
 
 /* Scrub Progress Bar */
-.np-progress-row {
+.hero-scrubber, .np-progress-row {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
+
+.scrubber-time-row, .time-labels-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
 .seek-slider {
   width: 100%;
   -webkit-appearance: none;
@@ -541,6 +548,7 @@ body::after {
   outline: none;
   cursor: pointer;
 }
+
 .seek-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 14px;
@@ -550,22 +558,52 @@ body::after {
   box-shadow: 0 0 8px var(--amber-orange);
   cursor: pointer;
 }
-.time-labels-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-}
 
-/* Transport Controls Row */
-.np-transport-row {
+/* Hero Transport Buttons */
+.hero-transport-row, .np-transport-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 6px;
+  justify-content: space-around;
+  padding: 4px 0;
 }
-.transport-btn {
+
+.hero-btn-play, .transport-btn-play {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--amber-orange);
+  color: #000;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 16px var(--amber-glow);
+  transition: transform 0.15s ease;
+}
+
+.hero-btn-play:active, .transport-btn-play:active {
+  transform: scale(0.92);
+}
+
+.hero-btn-step, .transport-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  transition: transform 0.15s ease;
+}
+
+.hero-btn-step:active {
+  transform: scale(0.9);
+  color: var(--cyber-cyan);
+}
+
+.hero-btn-sub {
   background: transparent;
   border: none;
   color: var(--text-muted);
@@ -573,64 +611,64 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-}
-.transport-btn:active {
-  transform: scale(0.9);
-  color: #fff;
-}
-.transport-btn.active {
-  color: var(--cyber-cyan);
-}
-.transport-btn-play {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--amber-orange);
-  color: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 18px var(--amber-glow);
-  cursor: pointer;
-  border: none;
-  transition: transform 0.15s ease;
-}
-.transport-btn-play:active {
-  transform: scale(0.92);
+  padding: 6px;
+  transition: color 0.15s ease;
 }
 
-/* Todoroki Super Bass Slider Card */
-.super-bass-card {
-  padding: 16px;
+.hero-btn-sub.active {
+  color: var(--cyber-cyan);
+}
+
+/* Super Bass Dual-Stage Card */
+.super-bass-card, .treble-card, .reverb-card {
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
+
 .sb-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.sb-title-wrap {
+
+.sb-titles {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
-.sb-title {
-  font-size: 12px;
+
+.sb-icon {
+  font-size: 20px;
+}
+
+.sb-main-title {
+  font-size: 13px;
   font-weight: 800;
-  font-family: var(--font-mono);
+  font-family: var(--font-rounded);
   color: #fff;
-  letter-spacing: 0.6px;
 }
-.sb-val-badge {
-  font-size: 11px;
+
+.sb-sub-title {
+  font-size: 8.5px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.sb-gain-val {
+  font-size: 13px;
   font-weight: 900;
   font-family: var(--font-mono);
   color: var(--amber-orange);
 }
-.super-bass-slider {
+
+.sb-slider-wrap {
+  width: 100%;
+}
+
+.super-bass-slider, .treble-slider, .reverb-slider {
   width: 100%;
   -webkit-appearance: none;
   height: 6px;
@@ -638,6 +676,7 @@ body::after {
   background: rgba(255, 255, 255, 0.08);
   outline: none;
 }
+
 .super-bass-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 18px;
@@ -648,848 +687,710 @@ body::after {
   cursor: pointer;
 }
 
-/* DSP Presets Grid (Exact iOS Presets) */
-.presets-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-.preset-btn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(41, 56, 79, 0.7);
-  border-radius: 12px;
-  padding: 10px 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.preset-btn.active {
-  background: rgba(255, 107, 0, 0.16);
-  border-color: var(--amber-orange);
-  box-shadow: 0 0 12px var(--amber-glow);
-}
-.preset-icon {
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.5);
-}
-.preset-btn.active .preset-icon {
-  color: var(--amber-orange);
-}
-.preset-name {
-  font-size: 9px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  color: var(--text-secondary);
-  text-align: center;
-  line-height: 1.2;
-}
-.preset-btn.active .preset-name {
-  color: #fff;
-}
-
-/* Dynamic 18-Bar Spectrum Visualizer (SpectrumVisualizerView from iOS) */
-.spectrum-card {
-  padding: 12px 14px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 14px;
-  border: 1px solid var(--titanium-card-border);
-}
-.spectrum-bars-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  height: 52px;
-  gap: 3px;
-}
-.spectrum-bar {
-  flex: 1;
-  min-width: 4px;
-  height: 6px;
-  border-radius: 3px 3px 0 0;
-  background: linear-gradient(180deg, var(--amber-orange) 0%, var(--cyber-cyan) 100%);
-  transition: height 0.08s linear;
-}
-
-/* ==========================================================================
-   TAB 2: LIBRARY (Music Discovery, MediaStore, Local Audio, SAF)
-   ========================================================================== */
-.library-actions-bar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-.btn-add-songs {
-  flex: 1;
-  background: var(--amber-orange);
-  color: #000;
-  border: none;
-  font-size: 11.5px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  letter-spacing: 0.6px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-  box-shadow: 0 0 12px var(--amber-glow);
-}
-.btn-rescan-media {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--titanium-card-border);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 10px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.library-search-box {
-  width: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid var(--titanium-card-border);
-  border-radius: 10px;
-  padding: 9px 12px;
-  color: #fff;
-  font-size: 12.5px;
-  outline: none;
-  margin-bottom: 14px;
-  font-family: var(--font-sans);
-}
-.library-search-box:focus {
-  border-color: var(--amber-orange);
-}
-
-.song-list-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.song-row {
-  background: var(--titanium-card);
-  border: 1px solid var(--titanium-card-border);
-  border-radius: 12px;
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.song-row:active {
-  background: rgba(255, 255, 255, 0.06);
-}
-.song-row.playing {
-  border-color: var(--amber-orange);
-  background: rgba(255, 107, 0, 0.08);
-}
-.song-index-pill {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-.song-row.playing .song-index-pill {
-  background: rgba(255, 107, 0, 0.2);
-  color: var(--amber-orange);
-}
-.song-meta {
-  flex: 1;
-  min-width: 0;
-}
-.song-title {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.song-row.playing .song-title {
-  color: var(--amber-orange);
-}
-.song-artist {
-  font-size: 11px;
-  color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.song-dur {
-  font-size: 11px;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-}
-.song-delete-btn {
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.25);
-  padding: 6px;
-  cursor: pointer;
-}
-.song-delete-btn:hover {
-  color: #ff4444;
-}
-
-/* ==========================================================================
-   TAB 3: SPOTIFY (Quick Stations, Web Player, Floating DSP Quick Tuning)
-   ========================================================================== */
-.spotify-top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-.spotify-brand-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(29, 185, 84, 0.15);
-  border: 1px solid rgba(29, 185, 84, 0.4);
-  padding: 4px 10px;
-  border-radius: 20px;
-}
-.spotify-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--spotify-green);
-  box-shadow: 0 0 6px var(--spotify-green);
-}
-.spotify-brand-text {
-  font-size: 10px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  color: var(--spotify-green);
-  letter-spacing: 0.6px;
-}
-
-.spotify-stations-scroll {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-  margin-bottom: 14px;
-}
-.spotify-station-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--titanium-card-border);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 8px 12px;
-  border-radius: 10px;
-  white-space: nowrap;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-}
-.spotify-station-btn.active {
-  background: var(--spotify-green);
-  color: #000;
-  border-color: var(--spotify-green);
-  box-shadow: 0 0 10px var(--accent-spotify-glow);
-}
-
-.spotify-web-container {
-  width: 100%;
-  height: 380px;
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  border: 1.2px solid var(--titanium-card-border);
-  background: #000;
-  margin-bottom: 14px;
-}
-.spotify-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-/* Floating DSP Quick Tuning Bar on Spotify View */
-.spotify-dsp-companion {
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.s-dsp-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.s-dsp-title {
-  font-size: 11px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  color: var(--amber-orange);
-  letter-spacing: 0.6px;
-}
-.s-dsp-status {
-  font-size: 9px;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-}
-.s-dsp-controls-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-/* ==========================================================================
-   TAB 4: EQUALIZER (10-Band ISO Faders & Real-Time Frequency Curve)
-   ========================================================================== */
-.eq-top-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-.btn-reset-flat {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid var(--titanium-card-border);
-  color: var(--amber-orange);
-  font-size: 10px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  padding: 5px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.eq-curve-box {
-  width: 100%;
-  height: 60px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid var(--titanium-card-border);
-  border-radius: 12px;
-  padding: 4px;
-  margin-bottom: 14px;
-  overflow: hidden;
-}
-.eq-curve-canvas {
-  width: 100%;
-  height: 100%;
-}
-
-.eq-faders-container {
-  display: flex;
-  justify-content: space-between;
-  padding: 18px 8px;
-  gap: 4px;
-  background: var(--titanium-card);
-  border-radius: var(--radius-card);
-  border: 1.2px solid rgba(0, 229, 255, 0.35);
-  box-shadow: 0 8px 24px rgba(0, 229, 255, 0.1);
-  margin-bottom: 14px;
-  overflow-x: auto;
-}
-.eq-fader-column {
-  flex: 1;
-  min-width: 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-.eq-gain-label {
-  font-size: 9px;
-  font-family: var(--font-mono);
-  color: var(--cyber-cyan);
-  font-weight: 700;
-  min-height: 12px;
-}
-.eq-slider-vertical-wrap {
-  height: 140px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.eq-slider-vert {
+.treble-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 140px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 2px;
-  transform: rotate(-90deg);
-  outline: none;
-  cursor: pointer;
-}
-.eq-slider-vert::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--cyber-cyan);
-  box-shadow: 0 0 8px var(--cyber-cyan);
-  cursor: pointer;
-}
-.eq-freq-label {
-  font-size: 8px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-}
-
-.eq-desc-card {
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.eq-desc-title {
-  font-size: 11px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  color: var(--amber-orange);
-}
-.eq-desc-body {
-  font-size: 11.5px;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
-
-/* ==========================================================================
-   TAB 5: HALL (Concert Hall Acoustics & Reverb Environment)
-   ========================================================================== */
-.reverb-rooms-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-.reverb-room-card {
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  background: var(--titanium-card);
-  border: 1px solid var(--titanium-card-border);
-  border-radius: 14px;
-  transition: all 0.2s ease;
-}
-.reverb-room-card.selected {
-  background: rgba(255, 107, 0, 0.14);
-  border-color: var(--amber-orange);
-}
-.rr-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.rr-icon {
-  font-size: 18px;
-  color: rgba(255, 255, 255, 0.4);
-}
-.reverb-room-card.selected .rr-icon {
-  color: var(--amber-orange);
-}
-.rr-title {
-  font-size: 13.5px;
-  font-weight: 800;
-  color: #fff;
-  font-family: var(--font-rounded);
-}
-.rr-sub {
-  font-size: 10.5px;
-  color: var(--text-muted);
-}
-.rr-check {
-  color: var(--amber-orange);
-  font-size: 16px;
-  display: none;
-}
-.reverb-room-card.selected .rr-check {
-  display: block;
-}
-
-.reverb-mix-card {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.rm-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.rm-title {
-  font-size: 10px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-  letter-spacing: 0.6px;
-}
-.rm-val {
-  font-size: 12px;
-  font-weight: 900;
-  font-family: var(--font-mono);
-  color: var(--cyber-cyan);
-}
-.reverb-mix-slider {
-  width: 100%;
-  -webkit-appearance: none;
-  height: 5px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.1);
-  outline: none;
-}
-.reverb-mix-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: var(--cyber-cyan);
   box-shadow: 0 0 10px var(--cyber-glow);
   cursor: pointer;
 }
 
-/* ==========================================================================
-   TAB 6: CABIN (Car Cabin Listening Position Alignment)
-   ========================================================================== */
-.cabin-diagram-card {
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
-}
-.car-outline-box {
-  width: 190px;
-  height: 230px;
-  border-radius: 32px;
-  border: 2px solid var(--titanium-card-border);
-  background: rgba(0, 0, 0, 0.45);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 10px;
-}
-.windshield-arc {
-  position: absolute;
-  top: 50px;
-  left: 25px;
-  right: 25px;
-  height: 20px;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0 0 50% 50%;
-}
-.seats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px 36px;
-  z-index: 2;
-}
-.seat-pill {
-  width: 58px;
-  height: 60px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+.reverb-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--hifi-gold);
+  box-shadow: 0 0 10px rgba(242, 196, 64, 0.5);
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-.seat-pill.selected {
-  background: rgba(255, 107, 0, 0.2);
-  border-color: var(--amber-orange);
-  box-shadow: 0 0 12px var(--amber-glow);
-}
-.seat-icon {
-  font-size: 15px;
-  color: rgba(255, 255, 255, 0.4);
-}
-.seat-pill.selected .seat-icon {
-  color: var(--amber-orange);
-}
-.seat-label {
-  font-size: 8px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-}
-.seat-pill.selected .seat-label {
-  color: #fff;
 }
 
-.cabin-mode-pills {
+.sb-quick-presets, .reverb-rooms-mini-grid {
   display: flex;
-  gap: 10px;
-}
-.cabin-mode-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border: none;
-  font-size: 10.5px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  padding: 8px 14px;
-  border-radius: 10px;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.cabin-mode-btn.active {
-  background: var(--amber-orange);
-  color: #000;
-  box-shadow: 0 0 10px var(--amber-glow);
-}
-
-/* ==========================================================================
-   MINI-PLAYER DOCK (Floats Above Cockpit Bottom Nav)
-   ========================================================================== */
-.mini-player-dock {
-  position: fixed;
-  bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 8px);
-  left: 12px;
-  right: 12px;
-  height: var(--mini-dock-height);
-  background: rgba(20, 28, 41, 0.95);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1.2px solid var(--titanium-card-border);
-  border-radius: 14px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 14px;
-  z-index: 90;
-  cursor: pointer;
-}
-.mini-dock-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  flex: 1;
-}
-.mini-dock-thumb {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  object-fit: cover;
-  flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-.mini-dock-meta {
-  min-width: 0;
-  flex: 1;
-}
-.mini-dock-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.mini-dock-artist {
-  font-size: 10.5px;
-  color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: flex;
-  align-items: center;
   gap: 6px;
-}
-.mini-dock-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.mini-btn {
-  background: transparent;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.mini-progress-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 14px 14px 0 0;
-  overflow: hidden;
-}
-.mini-progress-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--amber-orange), var(--cyber-cyan));
-  transition: width 0.1s linear;
+  flex-wrap: wrap;
 }
 
-/* ==========================================================================
-   PIONEER COCKPIT BOTTOM NAVIGATION BAR (6 Authentic iOS Cockpit Tabs)
-   ========================================================================== */
-.cockpit-bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: calc(var(--bottom-nav-height) + var(--safe-bottom));
-  padding-bottom: var(--safe-bottom);
-  background: var(--titanium-card);
-  border-top: 1px solid var(--titanium-card-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  z-index: 100;
-}
-
-.cockpit-tab-item {
-  flex: 1;
-  height: 100%;
-  background: transparent;
-  border: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+.sb-pill-btn {
+  padding: 6px 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--titanium-card-border);
+  color: var(--text-secondary);
+  font-size: 9.5px;
+  font-weight: 700;
+  font-family: var(--font-mono);
   cursor: pointer;
   transition: all 0.15s ease;
 }
-.cockpit-tab-item svg {
-  width: 20px;
-  height: 20px;
-  stroke: var(--text-muted);
-  transition: stroke 0.2s ease, transform 0.15s ease;
-}
-.cockpit-tab-item .tab-title {
-  font-size: 8px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  letter-spacing: 0.6px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  transition: color 0.2s ease;
+
+.sb-pill-btn:active {
+  transform: scale(0.95);
 }
 
-.cockpit-tab-item.active svg {
-  stroke: var(--amber-orange);
-  transform: scale(1.1);
+.sb-pill-btn.active {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: var(--cyber-cyan);
+  color: var(--cyber-cyan);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
 }
-.cockpit-tab-item.active .tab-title {
+
+/* Presets Scroll Bar */
+.presets-scroll-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 0 6px 0;
+}
+
+.preset-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: rgba(20, 28, 41, 0.75);
+  border: 1px solid var(--titanium-card-border);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.preset-btn.active {
+  background: rgba(255, 107, 0, 0.15);
+  border-color: var(--amber-orange);
   color: #fff;
-  font-weight: 900;
+  box-shadow: 0 0 12px rgba(255, 107, 0, 0.3);
+}
+
+.preset-btn:active {
+  transform: scale(0.96);
+}
+
+/* FFT Spectrum Card */
+.spectrum-card {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.spectrum-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.spectrum-title {
+  font-size: 10px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.spectrum-status {
+  font-size: 9px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--cyber-cyan);
+}
+
+.spectrum-bars-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 60px;
+  gap: 3px;
+  padding: 0 4px;
+}
+
+.spectrum-bar {
+  flex: 1;
+  background: linear-gradient(180deg, var(--cyber-cyan) 0%, var(--amber-orange) 60%, rgba(255, 255, 255, 0.1) 100%);
+  border-radius: 2px 2px 0 0;
+  min-height: 4px;
+  transition: height 0.06s ease;
+}
+
+.spectrum-freq-axis {
+  display: flex;
+  justify-content: space-between;
+  font-size: 8px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
 }
 
 /* ==========================================================================
-   MODALS: NOW PLAYING OVERLAY & SETTINGS SHEET
+   TAB 4: EQUALIZER (10-Band Graphic EQ, Response Curve, Presets, Controls)
    ========================================================================== */
-.now-playing-overlay {
+.eq-top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.eq-title {
+  font-size: 15px;
+  font-weight: 900;
+  font-family: var(--font-rounded);
+  color: #fff;
+}
+
+.eq-sub {
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.btn-reset-flat {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--titanium-card-border);
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-reset-flat:active {
+  background: var(--amber-orange);
+  color: #000;
+}
+
+.eq-curve-box {
+  width: 100%;
+  height: 72px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--titanium-card-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.eq-curve-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.eq-faders-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  padding: 14px 6px;
+  background: var(--titanium-card);
+  border: 1.2px solid var(--titanium-card-border);
+  border-radius: var(--radius-card);
+  gap: 2px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.eq-fader-column, .eq-fader-col {
+  flex: 1;
+  min-width: 28px;
+  max-width: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.eq-gain-label, .eq-fader-val {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--cyber-cyan);
+  min-height: 12px;
+  text-align: center;
+}
+
+.eq-slider-vertical-wrap, .eq-slider-vert-track {
+  height: 150px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.eq-slider-vert {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 140px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  outline: none;
+  transform: rotate(-90deg);
+  -webkit-transform: rotate(-90deg);
+  margin: 0;
+  cursor: pointer;
+}
+
+.eq-slider-vert::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--cyber-cyan);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.8), 0 0 2px #fff;
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+
+.eq-freq-label, .eq-fader-freq {
+  font-size: 8.5px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.eq-desc-card {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.eq-desc-title {
+  font-size: 11px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--amber-orange);
+}
+
+.eq-desc-body {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   TAB 5: HALL & TAB 6: CABIN
+   ========================================================================== */
+.reverb-rooms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reverb-room-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: rgba(20, 28, 41, 0.7);
+  border: 1px solid var(--titanium-card-border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reverb-room-card.selected {
+  border-color: var(--amber-orange);
+  background: rgba(255, 107, 0, 0.1);
+}
+
+.rr-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rr-icon {
+  font-size: 18px;
+}
+
+.rr-name {
+  font-size: 12px;
+  font-weight: 800;
+  font-family: var(--font-rounded);
+  color: #fff;
+}
+
+.rr-desc {
+  font-size: 9.5px;
+  color: var(--text-muted);
+}
+
+.rr-pill {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  color: var(--amber-orange);
+  background: rgba(255, 107, 0, 0.12);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.cabin-diagram-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 14px;
+  border: 1px solid var(--titanium-card-border);
+}
+
+.cabin-pos-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.pos-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--titanium-card-border);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  cursor: pointer;
+}
+
+.pos-btn.active {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: var(--cyber-cyan);
+  color: var(--cyber-cyan);
+}
+
+/* ==========================================================================
+   INTEGRATED BOTTOM DECK & NOW PLAYING BAR
+   ========================================================================== */
+.integrated-bottom-deck {
+  flex-shrink: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 90;
+  background: #080c14;
+}
+
+.integrated-player-bar, .mini-player-dock {
+  position: relative;
+  width: 100%;
+  height: 58px;
+  background: rgba(14, 21, 32, 0.98);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(41, 56, 79, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 16px;
+  cursor: pointer;
+}
+
+.dock-progress-track, .mini-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dock-progress-fill, .mini-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--amber-orange), var(--cyber-cyan));
+  transition: width 0.15s linear;
+}
+
+.dock-content-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.dock-left-cluster, .mini-dock-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.dock-art-img, .mini-dock-thumb {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.dock-meta-info, .mini-dock-meta {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dock-track-title, .mini-dock-title {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-rounded);
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dock-artist-name, .mini-dock-artist {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dock-right-controls, .mini-dock-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.dock-control-btn, .mini-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dock-control-btn:active, .mini-btn:active {
+  transform: scale(0.9);
+}
+
+.dock-play-btn, #dock-play-btn {
+  width: 38px;
+  height: 38px;
+  background: rgba(0, 229, 255, 0.15);
+  border: 1.5px solid var(--cyber-cyan);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
+}
+
+/* Cockpit Bottom Nav */
+.cockpit-bottom-nav {
+  width: 100%;
+  height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 16px));
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+  background: #080c14;
+  border-top: 1px solid rgba(41, 56, 79, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-shrink: 0;
+}
+
+.cockpit-tab-item {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 6px 12px;
+  transition: all 0.2s ease;
+  font-family: var(--font-mono);
+}
+
+.cockpit-tab-item svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.15s ease;
+}
+
+.cockpit-tab-item .tab-title {
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.cockpit-tab-item.active {
+  color: var(--amber-orange);
+}
+
+.cockpit-tab-item.active svg {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 0 6px var(--amber-glow));
+}
+
+/* ==========================================================================
+   MODALS: NOW PLAYING SCREEN & SETTINGS SHEET
+   ========================================================================== */
+.now-playing-screen {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 50% -10%, #172338 0%, #0d1422 45%, #070a10 100%);
+  background: radial-gradient(circle at 50% 20%, #172439 0%, #0c121d 60%, #06090e 100%);
   z-index: 200;
-  display: none;
-  flex-direction: column;
-  padding: calc(var(--safe-top) + 12px) 20px var(--safe-bottom) 20px;
-  overflow-y: auto;
-}
-.now-playing-overlay.open {
   display: flex;
-  animation: slideUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-direction: column;
+  justify-content: space-between;
+  padding: calc(var(--safe-top) + 12px) 24px calc(var(--safe-bottom) + 16px);
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes slideUpModal {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+.now-playing-screen.open {
+  transform: translateY(0);
 }
 
-.np-modal-header {
+.np-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  width: 100%;
 }
-.np-modal-btn {
+
+.np-close-btn, .np-lyrics-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--titanium-card-border);
   color: #fff;
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 }
 
-.np-large-cover-wrap {
-  width: min(78vw, 300px);
-  height: min(78vw, 300px);
-  margin: 0 auto 24px auto;
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 24px var(--amber-glow);
-  border: 2px solid rgba(255, 255, 255, 0.15);
+.np-header-title {
+  font-size: 11px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+  color: var(--text-muted);
 }
+
+.np-large-cover-wrap {
+  width: 240px;
+  height: 240px;
+  max-width: 65vw;
+  max-height: 65vw;
+  margin: 0 auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+}
+
 .np-large-cover-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* LRCLIB Synchronized Lyrics Container */
 .lyrics-overlay-container {
   display: none;
-  height: 280px;
+  flex: 1;
+  max-height: 240px;
   overflow-y: auto;
-  padding: 10px;
   text-align: center;
-  margin-bottom: 20px;
+  padding: 10px;
 }
-.lyrics-overlay-container.visible {
+
+.lyrics-overlay-container.active {
   display: block;
 }
-.lyric-line {
-  font-size: 15px;
-  color: rgba(255, 255, 255, 0.4);
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.25s ease;
+
+.np-track-meta {
+  text-align: center;
+  margin-top: 10px;
 }
-.lyric-line.active {
-  color: var(--amber-orange);
+
+.np-title {
   font-size: 18px;
-  font-weight: 800;
-  background: rgba(255, 107, 0, 0.12);
-  transform: scale(1.04);
+  font-weight: 900;
+  color: #fff;
+  font-family: var(--font-rounded);
+}
+
+.np-artist {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.np-scrubber-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.np-time-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.np-transport-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.np-ctrl-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.np-play-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--amber-orange);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 24px var(--amber-glow);
+  cursor: pointer;
+  border: none;
 }
 
 /* Settings Sheet */
@@ -1498,52 +1399,55 @@ body::after {
   top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(8px);
-  z-index: 250;
+  z-index: 220;
   display: none;
   align-items: flex-end;
 }
+
 .settings-sheet-overlay.open {
   display: flex;
 }
+
 .settings-sheet-card {
   width: 100%;
-  max-height: 85vh;
-  background: #141c29;
+  background: #111722;
   border-top: 1.5px solid var(--titanium-card-border);
   border-radius: 24px 24px 0 0;
-  padding: 20px 20px var(--safe-bottom) 20px;
+  padding: 20px 20px calc(var(--safe-bottom) + 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 80vh;
   overflow-y: auto;
-  animation: slideUpModal 0.25s ease;
 }
+
 .settings-header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
 }
+
 .settings-group {
-  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
+
 .settings-input {
   width: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--titanium-card-border);
-  border-radius: 10px;
-  padding: 10px 14px;
   color: #fff;
-  font-size: 12.5px;
   font-family: var(--font-mono);
+  font-size: 12px;
   outline: none;
-  margin-top: 6px;
-}
-.settings-input:focus {
-  border-color: var(--amber-orange);
 }
 
 /* ==========================================================================
-   ENHANCED COCKPIT SUB-NAVIGATION & MODULAR CONTROLS (v4.3.0)
+   TAIL SPECIFIC STYLES (Sub-tabs, Discovery, Downloads, DRM, Spotify Cards)
    ========================================================================== */
-
 /* Sub-Navigation Segmented Bar (Matching iOS Picker segment style) */
 .sub-tabs-bar {
   display: flex;

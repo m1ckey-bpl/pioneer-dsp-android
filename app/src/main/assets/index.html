@@ -7,11 +7,12 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <div id="app-root">
 
   <!-- ==========================================================================
        TOP COCKPIT STATUS & NAVIGATION HEADER
        ========================================================================== -->
-  <header class="cockpit-header">
+  <header class="app-header cockpit-header">
     <div class="brand-cluster">
       <div class="logo-wrapper">
         <img src="assets/logo.png" alt="Pioneer DSP Logo" class="brand-logo" onerror="this.style.display='none'">
@@ -39,7 +40,7 @@
   <!-- ==========================================================================
        MAIN COCKPIT CONTENT AREA (6 AUTHENTIC TABS)
        ========================================================================== -->
-  <main class="cockpit-main" id="cockpit-viewport">
+  <main class="main-viewport cockpit-main" id="cockpit-viewport">
 
     <!-- ------------------------------------------------------------------------
          TAB 1: TUNER (Main Cockpit View, Rotary Dial, Super Bass, Presets, FFT)
@@ -461,20 +462,52 @@
     </section>
 
     <!-- ------------------------------------------------------------------------
-         TAB 4: EQUALIZER (10-Band Graphic EQ & Frequency Curve Preview)
+         TAB 4: EQUALIZER (10-Band Graphic EQ, Curve Preview, Presets, DSP Controls)
          ------------------------------------------------------------------------ -->
     <section id="tab-equalizer" class="tab-view">
       <div class="eq-top-header">
         <div>
-          <div style="font-size:16px; font-weight:900; color:#fff; font-family:var(--font-rounded);">10-BAND GRAPHIC EQUALIZER</div>
-          <div style="font-size:9px; font-weight:700; color:var(--text-muted); font-family:var(--font-mono);">PARAMETRIC PRECISION FREQUENCY SHAPING</div>
+          <div class="eq-title">10-BAND GRAPHIC EQUALIZER</div>
+          <div class="eq-sub">32-BIT PARAMETRIC AUDIO PROCESSOR</div>
         </div>
         <button class="btn-reset-flat" onclick="uiResetEQ()">RESET FLAT</button>
       </div>
 
-      <!-- Real-Time Frequency Response Curve Canvas (iOS EqualizerView match) -->
+      <!-- Real-Time Frequency Response Curve Canvas -->
       <div class="eq-curve-box">
-        <canvas id="eq-curve-canvas" class="eq-curve-canvas" width="400" height="60"></canvas>
+        <canvas id="eq-curve-canvas" class="eq-curve-canvas" width="400" height="72"></canvas>
+      </div>
+
+      <!-- DSP Presets Selector Bar -->
+      <div class="section-label">
+        <span>ACOUSTIC DSP PROFILES</span>
+        <span style="color:var(--amber-orange);">STUDIO CALIBRATION</span>
+      </div>
+      <div class="presets-scroll-bar">
+        <button class="preset-btn active" id="preset-flat" onclick="selectPreset('flat')">
+          <span class="preset-icon">🎚️</span>
+          <span class="preset-name">FLAT</span>
+        </button>
+        <button class="preset-btn" id="preset-superBass" onclick="selectPreset('superBass')">
+          <span class="preset-icon">🔊</span>
+          <span class="preset-name">BASS BOOST</span>
+        </button>
+        <button class="preset-btn" id="preset-vocal" onclick="selectPreset('vocal')">
+          <span class="preset-icon">🎤</span>
+          <span class="preset-name">VOCAL</span>
+        </button>
+        <button class="preset-btn" id="preset-dynamic" onclick="selectPreset('dynamic')">
+          <span class="preset-icon">⚡</span>
+          <span class="preset-name">ROCK / DYNAMIC</span>
+        </button>
+        <button class="preset-btn" id="preset-club" onclick="selectPreset('club')">
+          <span class="preset-icon">🎛️</span>
+          <span class="preset-name">CLUB</span>
+        </button>
+        <button class="preset-btn" id="preset-concertHall" onclick="selectPreset('concertHall')">
+          <span class="preset-icon">🏛️</span>
+          <span class="preset-name">CONCERT HALL</span>
+        </button>
       </div>
 
       <!-- 10 Vertical Faders Container -->
@@ -485,7 +518,77 @@
       <!-- Active Curve Description Card -->
       <div class="pioneer-card eq-desc-card">
         <div class="eq-desc-title" id="eq-desc-title">ACTIVE CURVE: FLAT / DIRECT</div>
-        <div class="eq-desc-body" id="eq-desc-body">Studio reference response with zero coloration across the entire 20Hz-20kHz acoustic spectrum.</div>
+        <div class="eq-desc-body" id="eq-desc-body">Studio reference acoustic calibration with neutral frequency transmission across the 20Hz-20kHz audio band.</div>
+      </div>
+
+      <!-- Todoroki Super Bass Control Card -->
+      <div class="pioneer-card super-bass-card">
+        <div class="sb-header">
+          <div class="sb-titles">
+            <span class="sb-icon">🔊</span>
+            <div>
+              <div class="sb-main-title">TODOROKI SUPER BASS</div>
+              <div class="sb-sub-title">80Hz LOW-SHELF & 60Hz PUNCH BOOST</div>
+            </div>
+          </div>
+          <div class="sb-gain-val" id="eq-sb-val">+0.0 dB</div>
+        </div>
+        <div class="sb-slider-wrap">
+          <input type="range" class="super-bass-slider" id="eq-sb-slider" min="0" max="14" step="0.5" value="0" oninput="uiUpdateSuperBass(this.value)">
+        </div>
+        <div class="sb-quick-presets">
+          <button class="sb-pill-btn" onclick="setSuperBassDirect(0)">OFF (0dB)</button>
+          <button class="sb-pill-btn" onclick="setSuperBassDirect(4.5)">SUBTLE (+4.5dB)</button>
+          <button class="sb-pill-btn" onclick="setSuperBassDirect(9.0)">PUNCH (+9.0dB)</button>
+          <button class="sb-pill-btn" onclick="setSuperBassDirect(14.0)">MAX (+14dB)</button>
+        </div>
+      </div>
+
+      <!-- Treble Brilliance & Clarity Card -->
+      <div class="pioneer-card treble-card">
+        <div class="sb-header">
+          <div class="sb-titles">
+            <span class="sb-icon">✨</span>
+            <div>
+              <div class="sb-main-title">TREBLE BRILLIANCE & AIR</div>
+              <div class="sb-sub-title">10kHz HIGH-SHELF CLARITY & AIR SHAPING</div>
+            </div>
+          </div>
+          <div class="sb-gain-val" id="eq-treble-val">+0.0 dB</div>
+        </div>
+        <div class="sb-slider-wrap">
+          <input type="range" class="treble-slider" id="eq-treble-slider" min="-6" max="12" step="0.5" value="0" oninput="uiUpdateTreble(this.value)">
+        </div>
+        <div class="sb-quick-presets">
+          <button class="sb-pill-btn" onclick="setTrebleDirect(0)">FLAT (0dB)</button>
+          <button class="sb-pill-btn" onclick="setTrebleDirect(3.0)">CRISP (+3dB)</button>
+          <button class="sb-pill-btn" onclick="setTrebleDirect(6.0)">AIR BOOST (+6dB)</button>
+          <button class="sb-pill-btn" onclick="setTrebleDirect(9.0)">ULTRA (+9dB)</button>
+        </div>
+      </div>
+
+      <!-- Acoustic Reverb Environment Card -->
+      <div class="pioneer-card reverb-card">
+        <div class="sb-header">
+          <div class="sb-titles">
+            <span class="sb-icon">🏛️</span>
+            <div>
+              <div class="sb-main-title">ACOUSTIC REVERB ENVIRONMENT</div>
+              <div class="sb-sub-title">3D IMPULSE SPACE & WET/DRY MIX</div>
+            </div>
+          </div>
+          <div class="sb-gain-val" id="eq-reverb-val">0%</div>
+        </div>
+        <div class="reverb-rooms-mini-grid">
+          <button class="sb-pill-btn active" id="eq-room-concertHall" onclick="selectReverbRoomDirect('concertHall', this)">CONCERT HALL</button>
+          <button class="sb-pill-btn" id="eq-room-largeHall" onclick="selectReverbRoomDirect('largeHall', this)">ARENA</button>
+          <button class="sb-pill-btn" id="eq-room-cathedral" onclick="selectReverbRoomDirect('cathedral', this)">CATHEDRAL</button>
+          <button class="sb-pill-btn" id="eq-room-mediumRoom" onclick="selectReverbRoomDirect('mediumRoom', this)">STUDIO</button>
+          <button class="sb-pill-btn" id="eq-room-plate" onclick="selectReverbRoomDirect('plate', this)">PLATE</button>
+        </div>
+        <div class="sb-slider-wrap" style="margin-top:8px;">
+          <input type="range" class="reverb-slider" id="eq-reverb-slider" min="0" max="100" step="1" value="0" oninput="uiUpdateReverbMix(this.value)">
+        </div>
       </div>
     </section>
 
@@ -620,98 +723,102 @@
 
   </main>
 
-  <!-- ==========================================================================
-       PERSISTENT MINI-PLAYER DOCK (Above Cockpit Bottom Nav)
-       ========================================================================== -->
-  <div class="mini-player-dock" id="mini-player-dock" onclick="openNowPlaying()">
-    <div class="mini-progress-bar">
-      <div class="mini-progress-fill" id="dock-progress-fill"></div>
-    </div>
+    <!-- ==========================================================================
+         SEAMLESS INTEGRATED BOTTOM DECK (Docked Directly Above Bottom Nav)
+         ========================================================================== -->
+    <div class="integrated-bottom-deck">
+      <!-- Seamless Integrated Player Bar -->
+      <div class="integrated-player-bar mini-player-dock" id="mini-player-dock" onclick="openNowPlaying()">
+        <div class="dock-progress-track mini-progress-bar">
+          <div class="dock-progress-fill mini-progress-fill" id="dock-progress-fill"></div>
+        </div>
 
-    <div class="mini-dock-left">
-      <img src="assets/logo.png" alt="Thumb" class="mini-dock-thumb" id="dock-cover-img" onerror="this.src='assets/logo.png'">
-      <div class="mini-dock-meta">
-        <div class="mini-dock-title" id="dock-title">Concert Hall Acoustic Master</div>
-        <div class="mini-dock-artist" id="dock-artist">
-          <span>Pioneer Philharmonic Studio</span>
+        <div class="dock-content-row">
+          <div class="dock-left-cluster mini-dock-left">
+            <img src="assets/logo.png" alt="Thumb" class="dock-art-img mini-dock-thumb" id="dock-cover-img" onerror="this.src='assets/logo.png'">
+            <div class="dock-meta-info mini-dock-meta">
+              <div class="dock-track-title mini-dock-title" id="dock-title">Concert Hall Acoustic Master</div>
+              <div class="dock-artist-name mini-dock-artist" id="dock-artist">
+                <span>Pioneer Philharmonic Studio</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dock-right-controls mini-dock-controls" onclick="event.stopPropagation()">
+            <button class="dock-control-btn mini-btn dock-play-btn" id="dock-play-btn" onclick="toggleMasterPlay()">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <polygon points="6 4 20 12 6 20 6 4" id="dock-play-icon"/>
+              </svg>
+            </button>
+            <button class="dock-control-btn mini-btn" onclick="masterStepNext()">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
+
+      <!-- Pioneer Cockpit Bottom Navigation Bar -->
+      <nav class="cockpit-bottom-nav">
+        <button class="cockpit-tab-item active" id="nav-tuner" onclick="switchCockpitTab('tuner')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="21" x2="4" y2="14"></line>
+            <line x1="4" y1="10" x2="4" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12" y2="3"></line>
+            <line x1="20" y1="21" x2="20" y2="16"></line>
+            <line x1="20" y1="12" x2="20" y2="3"></line>
+            <line x1="1" y1="14" x2="7" y2="14"></line>
+            <line x1="9" y1="8" x2="15" y2="8"></line>
+            <line x1="17" y1="16" x2="23" y2="16"></line>
+          </svg>
+          <span class="tab-title">TUNER</span>
+        </button>
+
+        <button class="cockpit-tab-item" id="nav-library" onclick="switchCockpitTab('library')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+          </svg>
+          <span class="tab-title">LIBRARY</span>
+        </button>
+
+        <button class="cockpit-tab-item" id="nav-spotify" onclick="switchCockpitTab('spotify')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 11.5c3.5-1 7-0.5 9.5 1"></path>
+            <path d="M7 14c4-1 8-0.5 11 1"></path>
+            <path d="M9 9c3.5-1 6.5-0.5 9 1"></path>
+          </svg>
+          <span class="tab-title">SPOTIFY</span>
+        </button>
+
+        <button class="cockpit-tab-item" id="nav-equalizer" onclick="switchCockpitTab('equalizer')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+          <span class="tab-title">EQ</span>
+        </button>
+
+        <button class="cockpit-tab-item" id="nav-hall" onclick="switchCockpitTab('hall')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 22h16M4 18h16M4 6h16M2 22V6l10-4 10 4v16M8 10v4M12 10v4M16 10v4"></path>
+          </svg>
+          <span class="tab-title">HALL</span>
+        </button>
+
+        <button class="cockpit-tab-item" id="nav-cabin" onclick="switchCockpitTab('cabin')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H7.5a1 1 0 0 0-.8.4L4 11l-5.16.86a1 1 0 0 0-.84.99V16h3m14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-12 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"></path>
+          </svg>
+          <span class="tab-title">CABIN</span>
+        </button>
+      </nav>
     </div>
-
-    <div class="mini-dock-controls" onclick="event.stopPropagation()">
-      <button class="mini-btn" id="dock-play-btn" onclick="toggleMasterPlay()">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-          <polygon points="6 4 20 12 6 20 6 4" id="dock-play-icon"/>
-        </svg>
-      </button>
-      <button class="mini-btn" onclick="masterStepNext()">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-          <polygon points="5 4 15 12 5 20 5 4"></polygon>
-          <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- ==========================================================================
-       PIONEER COCKPIT BOTTOM NAVIGATION BAR (6 Authentic iOS Cockpit Tabs)
-       ========================================================================== -->
-  <nav class="cockpit-bottom-nav">
-    <button class="cockpit-tab-item active" id="nav-tuner" onclick="switchCockpitTab('tuner')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="4" y1="21" x2="4" y2="14"></line>
-        <line x1="4" y1="10" x2="4" y2="3"></line>
-        <line x1="12" y1="21" x2="12" y2="12"></line>
-        <line x1="12" y1="8" x2="12" y2="3"></line>
-        <line x1="20" y1="21" x2="20" y2="16"></line>
-        <line x1="20" y1="12" x2="20" y2="3"></line>
-        <line x1="1" y1="14" x2="7" y2="14"></line>
-        <line x1="9" y1="8" x2="15" y2="8"></line>
-        <line x1="17" y1="16" x2="23" y2="16"></line>
-      </svg>
-      <span class="tab-title">TUNER</span>
-    </button>
-
-    <button class="cockpit-tab-item" id="nav-library" onclick="switchCockpitTab('library')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M9 18V5l12-2v13"></path>
-        <circle cx="6" cy="18" r="3"></circle>
-        <circle cx="18" cy="16" r="3"></circle>
-      </svg>
-      <span class="tab-title">LIBRARY</span>
-    </button>
-
-    <button class="cockpit-tab-item" id="nav-spotify" onclick="switchCockpitTab('spotify')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"></circle>
-        <path d="M8 11.5c3.5-1 7-0.5 9.5 1"></path>
-        <path d="M7 14c4-1 8-0.5 11 1"></path>
-        <path d="M9 9c3.5-1 6.5-0.5 9 1"></path>
-      </svg>
-      <span class="tab-title">SPOTIFY</span>
-    </button>
-
-    <button class="cockpit-tab-item" id="nav-equalizer" onclick="switchCockpitTab('equalizer')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-      </svg>
-      <span class="tab-title">EQ</span>
-    </button>
-
-    <button class="cockpit-tab-item" id="nav-hall" onclick="switchCockpitTab('hall')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 22h16M4 18h16M4 6h16M2 22V6l10-4 10 4v16M8 10v4M12 10v4M16 10v4"></path>
-      </svg>
-      <span class="tab-title">HALL</span>
-    </button>
-
-    <button class="cockpit-tab-item" id="nav-cabin" onclick="switchCockpitTab('cabin')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H7.5a1 1 0 0 0-.8.4L4 11l-5.16.86a1 1 0 0 0-.84.99V16h3m14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-12 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"></path>
-      </svg>
-      <span class="tab-title">CABIN</span>
-    </button>
-  </nav>
+  </div><!-- End of #app-root -->
 
   <!-- ==========================================================================
        FULL-SCREEN NOW PLAYING & SYNCHRONIZED LYRICS MODAL
@@ -1654,13 +1761,13 @@
 
       EQ_BANDS.forEach(b => {
         const col = document.createElement('div');
-        col.className = 'eq-fader-col';
+        col.className = 'eq-fader-column eq-fader-col';
         col.innerHTML = `
-          <span class="eq-fader-val" id="eq-val-${b.idx}">0.0</span>
-          <div class="eq-slider-vert-track">
+          <span class="eq-gain-label eq-fader-val" id="eq-val-${b.idx}">0.0</span>
+          <div class="eq-slider-vertical-wrap eq-slider-vert-track">
             <input type="range" class="eq-slider-vert" id="eq-slider-${b.idx}" min="-12" max="12" step="0.5" value="0" oninput="uiUpdateEQBand(${b.idx}, this.value)">
           </div>
-          <span class="eq-fader-freq">${b.freq}</span>
+          <span class="eq-freq-label eq-fader-freq">${b.freq}</span>
         `;
         container.appendChild(col);
       });
@@ -1739,65 +1846,63 @@
     // --- SUPER BASS & CONCERT HALL ---
     function uiUpdateSuperBass(gainDb) {
       const parsed = parseFloat(gainDb);
-      const text = document.getElementById('super-bass-val');
-      if (text) text.innerText = (parsed > 0 ? '+' : '') + parsed.toFixed(1) + ' dB';
+      const formatted = (parsed > 0 ? '+' : '') + parsed.toFixed(1) + ' dB';
+      ['super-bass-val', 'eq-sb-val'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = formatted;
+      });
+      ['super-bass-slider', 'eq-sb-slider'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && Math.abs(parseFloat(el.value) - parsed) > 0.01) el.value = parsed;
+      });
       if (window.dspEngine) {
         window.dspEngine.setSuperBass(parsed);
       }
     }
 
     function setSuperBassDirect(gainDb) {
-      const slider = document.getElementById('super-bass-slider');
-      if (slider) slider.value = gainDb;
       uiUpdateSuperBass(gainDb);
     }
 
-    function uiToggleConcertHall(e) {
-      if (e) e.stopPropagation();
-      if (!window.dspEngine) return;
-      const isEnabled = window.dspEngine.toggleConcertHall();
-      updateHallButtonUI(isEnabled);
-    }
-
-    function updateHallButtonUI(isEnabled) {
-      const btn = document.getElementById('hero-hall-toggle');
-      const pill = document.getElementById('hero-hall-pill');
-      if (btn) btn.classList.toggle('active', isEnabled);
-      if (pill) {
-        pill.innerText = isEnabled ? 'ACTIVE' : 'OFF';
-        pill.classList.toggle('active', isEnabled);
-      }
-    }
-
-    // --- DSP PRESETS ---
-    function selectPreset(presetKey) {
-      document.querySelectorAll('.presets-scroll-bar .preset-btn').forEach(b => b.classList.remove('active'));
-      const activeBtn = document.getElementById(`preset-${presetKey}`);
-      if (activeBtn) activeBtn.classList.add('active');
-
+    function uiUpdateTreble(gainDb) {
+      const parsed = parseFloat(gainDb);
+      const formatted = (parsed > 0 ? '+' : '') + parsed.toFixed(1) + ' dB';
+      const text = document.getElementById('eq-treble-val');
+      if (text) text.innerText = formatted;
+      const slider = document.getElementById('eq-treble-slider');
+      if (slider && Math.abs(parseFloat(slider.value) - parsed) > 0.01) slider.value = parsed;
       if (window.dspEngine) {
-        window.dspEngine.loadPreset(presetKey);
-
-        // Reflect EQ gains in faders
-        if (window.dspEngine.eqGains) {
-          window.dspEngine.eqGains.forEach((g, idx) => {
-            const slider = document.getElementById(`eq-slider-${idx}`);
-            if (slider) slider.value = g;
-            const text = document.getElementById(`eq-val-${idx}`);
-            if (text) text.innerText = (g > 0 ? '+' : '') + g.toFixed(1);
-          });
-          drawEQCurve();
-        }
-
-        // Reflect Super Bass
-        setSuperBassDirect(window.dspEngine.superBassGain || 0);
-
-        // Reflect Concert Hall state
-        updateHallButtonUI(window.dspEngine.isConcertHallEnabled);
+        window.dspEngine.setTreble(parsed);
       }
     }
 
-    // --- REVERB ACOUSTIC ENVIRONMENT ---
+    function setTrebleDirect(gainDb) {
+      uiUpdateTreble(gainDb);
+    }
+
+    function uiUpdateReverbMix(wetPct) {
+      const parsed = Math.max(0, Math.min(100, parseFloat(wetPct)));
+      const text = document.getElementById('eq-reverb-val');
+      if (text) text.innerText = Math.round(parsed) + '%';
+      const slider = document.getElementById('eq-reverb-slider');
+      if (slider && Math.abs(parseFloat(slider.value) - parsed) > 0.5) slider.value = parsed;
+      const hallSlider = document.getElementById('reverb-mix-slider');
+      if (hallSlider && Math.abs(parseFloat(hallSlider.value) - parsed) > 0.5) hallSlider.value = parsed;
+      const hallVal = document.getElementById('reverb-mix-val');
+      if (hallVal) hallVal.innerText = Math.round(parsed) + '%';
+      if (window.dspEngine) {
+        window.dspEngine.setReverbMix(parsed);
+      }
+    }
+
+    function selectReverbRoomDirect(roomKey, btnEl) {
+      document.querySelectorAll('.reverb-rooms-mini-grid .sb-pill-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      if (window.dspEngine) {
+        window.dspEngine.setReverbRoom(roomKey);
+      }
+    }
+
     function selectReverbRoom(roomKey, el) {
       document.querySelectorAll('.reverb-room-card').forEach(c => c.classList.remove('selected'));
       if (el) el.classList.add('selected');
