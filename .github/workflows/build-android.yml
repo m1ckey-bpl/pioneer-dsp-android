@@ -49,30 +49,29 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: v4.2.0
-          name: "Pioneer DSP Android v4.2.0 (Real-Time Online Music Streaming & Live DSP Edition)"
+          tag_name: v4.3.0
+          name: "Pioneer DSP Android v4.3.0 (iOS Cockpit Re-creation Edition — Pure Dark Titanium Theme)"
           body: |
-            ## 🎵 Pioneer DSP for Android v4.2.0 — Real-Time Online Music Streaming & Live DSP Edition
+            ## 🎵 Pioneer DSP for Android v4.3.0 — iOS Cockpit Re-creation Edition (Pure Dark Titanium Theme)
             
             ### 📦 Direct Download:
             * 📱 **Android APK**: `Pioneer_DSP.apk` (Direct install, 100% free)
 
             ### ✨ Key Upgrades in this Release:
-            1. **Real-Time Online Music Streaming Pipeline**:
-               - Streams remote audio directly through 32-bit floating point WebAudio DSP pipeline before audio output:
-                 `Authorized Stream -> Transport & Buffer -> Audio Decoder -> Decoded PCM -> Pioneer DSP Engine -> Hardware Output`.
-               - All active DSP effects (10-Band EQ, Todoroki Super Bass, Concert Hall Reverb, Limiter) apply audibly to online streams in real time.
-            2. **Native Streaming Proxy (CORS & WebAudio Sandbox Bypass)**:
-               - Android WebView intercepts `https://pioneer.local/stream?url=` via `MainActivity.java` `shouldInterceptRequest`.
-               - Injects permissive CORS (`Access-Control-Allow-Origin: *`) and Range 206 Partial Content support, completely eliminating WebAudio silent muting.
-            3. **Curated 24/7 Hi-Fi Live Stations & Custom Stream Input**:
-               - 6 hand-picked 24/7 HD live streams calibrated for DSP testing (Philharmonic Concert Hall, 808 Bass Lab, Tokyo Synthwave, Lo-Fi Chillout, Rock Antenne, Secret Agent Jazz).
-               - Direct Custom Stream URL player for any live MP3/AAC audio URL.
-            4. **Radio Browser Open API Integration**:
-               - Instant access to over 40,000 public radio stations worldwide without requiring API keys.
-            5. **Smooth Parameter Modulation Without Track Restart**:
-               - EQ bands, Todoroki Super Bass, and Concert Hall Reverb parameters modulate smoothly using `setTargetAtTime` without pops, clicks, or track restarts.
-            6. **Native Hardware AudioEffect Synchronization**:
-               - WebAudio slider movements trigger native `PioneerBridge` sync calls to Android hardware `AudioEffect` sessions.
+            1. **Faithful iOS Cockpit Parity (6-Tab Navigation)**:
+               - **TUNER**: Main DSP cockpit featuring Now Playing banner, Concert Hall master toggle, Rotary Master Volume Dial (with smooth drag/touch angle tracking), Todoroki Super Bass quick-switch, Presets bar, and dynamic 20-band live Spectrum Analyser.
+               - **LIBRARY**: Local Music Repository with Android SAF file picker, automatic MediaStore scanner, track list, and instant search.
+               - **SPOTIFY**: Spotify Web API Player & hardware AudioEffect integration, Curated Quick Stations, and floating DSP Quick Tuning Bar.
+               - **EQ**: 10-Band Graphic Equalizer with ISO standard frequency faders (31Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz, 8kHz, 16kHz) with ±12 dB range, real-time frequency curve preview canvas, and Reset Flat button.
+               - **HALL**: Acoustic Reverb Environment selector (Concert Hall, Large Arena, Cathedral, Live Studio, Plate Reverb) with synthetic impulse response convolution and 0–100% Wet/Dry mix slider.
+               - **CABIN**: Listening Position Alignment featuring an interactive Car Cabin Visualizer with 4 individual speaker seats (FL, FR, RL, RR) and listening mode presets (ALL SEATS, DRIVER FOCUS, PASSENGER FOCUS) driving WebAudio ChannelDelay and StereoPanner wavefront correction.
+            2. **Pure Dark Titanium & Audio Surface UI (Zero Anime Imagery)**:
+               - 100% removal of all anime character artwork, manga girl portraits, and face wallpapers.
+               - Replaced with the authentic iOS `PioneerTheme` visual identity: deep charcoal, midnight titanium, subtle acoustic wave backgrounds, neon cyan (`#00E5FF`), magenta (`#FE0979`), signature amber-orange (`#FF6B00`), and hi-fi gold (`#F2C440`).
+            3. **Modern Android Device Optimization (OnePlus Nord CE5 Safe Area)**:
+               - Safe area inset handling (`env(safe-area-inset-bottom)`), responsive bottom cockpit navigation bar, zero control clipping, minimum 44px touch targets.
+            4. **Dual DSP Architecture**:
+               - 32-bit floating point WebAudio engine for local PCM audio and online streaming.
+               - Native Android hardware `AudioEffect` routing (`Equalizer`, `BassBoost`, `PresetReverb`) synchronized with system Spotify playback sessions.
           files: |
             Pioneer_DSP.apk

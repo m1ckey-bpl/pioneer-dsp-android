@@ -344,22 +344,26 @@ class PioneerDSPEngine {
     if (!this.audioCtx) return null;
 
     const sampleRate = this.audioCtx.sampleRate;
-    let duration = 2.6; // Concert Hall
-    let decayRate = 2.4;
-    let initialGain = 0.55;
+    let duration = 3.2; // Concert Hall
+    let decayRate = 2.2;
+    let initialGain = 0.65;
 
-    if (mode === 'room') {
-      duration = 1.3;
-      decayRate = 3.8;
-      initialGain = 0.45;
-    } else if (mode === 'studio') {
-      duration = 0.6;
-      decayRate = 6.5;
-      initialGain = 0.40;
-    } else if (mode === 'arena') {
-      duration = 3.6;
-      decayRate = 1.8;
-      initialGain = 0.65;
+    if (mode === 'largeHall' || mode === 'arena') {
+      duration = 4.5;
+      decayRate = 1.6;
+      initialGain = 0.70;
+    } else if (mode === 'cathedral') {
+      duration = 5.5;
+      decayRate = 1.2;
+      initialGain = 0.75;
+    } else if (mode === 'mediumRoom' || mode === 'studio' || mode === 'room') {
+      duration = 1.4;
+      decayRate = 4.2;
+      initialGain = 0.50;
+    } else if (mode === 'plate') {
+      duration = 2.0;
+      decayRate = 3.0;
+      initialGain = 0.60;
     }
 
     const length = Math.floor(sampleRate * duration);
@@ -500,18 +504,115 @@ class PioneerDSPEngine {
   }
 
   // Presets Configuration
+
+  // --- iOS Sound Tune Feature Parity Methods ---
+  async toggleConcertHall() {
+    this.isConcertHallEnabled = !this.isConcertHallEnabled;
+    if (this.isConcertHallEnabled) {
+      this.ambienceMode = 'concertHall';
+      if (this.convolverNode && this.audioCtx) {
+        this.convolverNode.buffer = await this.getImpulseResponse('concertHall');
+      }
+      this.reverbMix = 65.0;
+      this.updateReverbGains();
+
+      this.setEQBand(1, 4.5); // 63Hz
+      this.setEQBand(8, 3.5); // 8kHz
+      this.setEQBand(9, 4.0); // 16kHz
+
+      if (window.PioneerBridge && typeof window.PioneerBridge.syncNativeReverb === 'function') {
+        window.PioneerBridge.syncNativeReverb('hall');
+      }
+    } else {
+      this.reverbMix = 0.0;
+      this.updateReverbGains();
+      this.applyPreset(this.currentPreset || 'flat');
+
+      if (window.PioneerBridge && typeof window.PioneerBridge.syncNativeReverb === 'function') {
+        window.PioneerBridge.syncNativeReverb('none');
+      }
+    }
+    return this.isConcertHallEnabled;
+  }
+
+  async setReverbRoom(room) {
+    this.ambienceMode = room;
+    if (this.convolverNode && this.audioCtx) {
+      this.convolverNode.buffer = await this.getImpulseResponse(room);
+    }
+    if (window.PioneerBridge && typeof window.PioneerBridge.syncNativeReverb === 'function') {
+      window.PioneerBridge.syncNativeReverb(room);
+    }
+  }
+
+  setReverbWetDry(val) {
+    this.setReverbMix(val);
+  }
+
+  setListeningPosition(pos) {
+    this.listeningPosition = pos;
+    let pan = 0.0;
+    let delayL = 0.0;
+    let delayR = 0.0;
+
+    if (pos === 'frontLeft' || pos === 'fl' || pos === 'DRIVER (FL)') {
+      pan = -0.45;
+      delayR = 0.0018; // 1.8ms delay on opposite speaker to align acoustic wavefront to driver
+      delayL = 0.0;
+    } else if (pos === 'frontRight' || pos === 'fr' || pos === 'PASSENGER (FR)') {
+      pan = 0.45;
+      delayL = 0.0018;
+      delayR = 0.0;
+    } else if (pos === 'frontCenter' || pos === 'fc' || pos === 'FRONT CENTER') {
+      pan = 0.0;
+      delayL = 0.0005;
+      delayR = 0.0005;
+    } else {
+      // ALL SEATS
+      pan = 0.0;
+      delayL = 0.0;
+      delayR = 0.0;
+    }
+
+    if (this.audioCtx) {
+      const now = this.audioCtx.currentTime;
+      if (this.pannerNode) this.pannerNode.pan.setTargetAtTime(pan, now, 0.03);
+      if (this.cabinDelayL) this.cabinDelayL.delayTime.setTargetAtTime(delayL, now, 0.03);
+      if (this.cabinDelayR) this.cabinDelayR.delayTime.setTargetAtTime(delayR, now, 0.03);
+    }
+  }
+
+  resetEQToZero() {
+    this.resetEQ();
+    this.applyPreset('flat');
+  }
+
+  setMasterGain(percent) {
+    const p = Math.max(0, Math.min(100, parseFloat(percent)));
+    this.setMasterVolume(p / 100.0);
+  }
+
+  getByteFrequencyData(array) {
+    if (this.analyser && this.isPlaying && !this.isPaused) {
+      this.analyser.getByteFrequencyData(array);
+    } else {
+      array.fill(0);
+    }
+  }
+
   applyPreset(presetName) {
+    this.currentPreset = presetName;
     const presets = {
       flat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      bass: [6, 8, 6, 2, 0, 0, 0, 1, 2, 3],
-      deep_bass: [9, 9, 5, 2, 0, 0, 0, 0, 1, 2],
-      hall: [2, 1, 0, 0, 1, 2, 3, 4, 3, 2],
-      studio: [0, 1, 2, 0, 1, 1, 2, 1, 0, 0],
+      concertHall: [0, 4.5, 0, 0, 0, 0, 0, 0, 3.5, 4.0],
+      superBass: [6, 8, 6, 2, 0, 0, 0, 1, 2, 3],
+      dynamic: [5, 4, 2, 0, -1, 1, 3, 5, 6, 5],
       vocal: [-2, -1, 0, 2, 4, 5, 4, 2, 1, 0],
-      acoustic: [3, 2, 1, 2, 3, 3, 4, 4, 3, 2],
-      rock: [6, 5, 3, 0, -1, 1, 3, 5, 6, 5],
-      classical: [4, 3, 2, 1, 0, 1, 2, 3, 4, 4],
-      electronic: [7, 7, 4, 1, -1, 1, 3, 5, 6, 6]
+      club: [7, 7, 4, 1, -1, 1, 3, 5, 6, 6],
+      // Aliases
+      bass: [6, 8, 6, 2, 0, 0, 0, 1, 2, 3],
+      rock: [5, 4, 2, 0, -1, 1, 3, 5, 6, 5],
+      hall: [0, 4.5, 0, 0, 0, 0, 0, 0, 3.5, 4.0]
     };
 
     const targetGains = presets[presetName] || presets.flat;

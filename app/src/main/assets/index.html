@@ -3,512 +3,497 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Pioneer DSP - Sound Tune Audio Engine</title>
+  <title>Pioneer DSP - Sound Tune Cockpit Edition</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
   <!-- ==========================================================================
-       TOP APP BAR
+       APP HEADER BAR
        ========================================================================== -->
   <header class="app-header">
-    <div class="brand-meta" onclick="switchTab('home')">
-      <img src="assets/logo.png" alt="Pioneer DSP" class="brand-icon">
-      <div class="brand-text">
-        <h1>PIONEER DSP</h1>
-        <span>SOUND TUNE Hi-Fi</span>
+    <div class="header-left">
+      <img src="assets/logo.png" alt="Pioneer DSP Logo" class="header-logo" onerror="this.style.display='none'">
+      <div class="header-title-block">
+        <span class="header-app-name">PIONEER DSP</span>
+        <span class="header-app-sub">SOUND TUNE ACOUSTIC ENGINE</span>
       </div>
     </div>
 
-    <div class="header-status-group">
-      <div id="header-source-badge" class="source-badge idle">STANDBY</div>
-      <div class="status-indicator-pill" title="DSP Processing Status">
-        <span class="status-dot" id="header-status-dot"></span>
-        <span id="header-status-text">Hi-Fi 32b</span>
+    <div class="header-right">
+      <div class="badge-hires">
+        <span class="badge-hires-title">HI-RES</span>
+        <span class="badge-hires-spec">96kHz/24b</span>
       </div>
+      <button class="header-icon-btn" onclick="openSettings()" aria-label="Settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
     </div>
   </header>
 
   <!-- ==========================================================================
-       PRIMARY VIEWPORT (5 TABS)
+       MAIN VIEWPORT (6 iOS COCKPIT TABS)
        ========================================================================== -->
-  <main class="app-viewport">
+  <main class="main-viewport">
 
     <!-- ------------------------------------------------------------------------
-         TAB 1: HOME DASHBOARD
+         TAB 1: TUNER (Main DSP Cockpit, Concert Hall, Rotary Dial, Super Bass)
          ------------------------------------------------------------------------ -->
-    <section id="tab-home" class="tab-view active">
-      <!-- Active / Now Playing Hero Card -->
-      <div class="hero-playback-card" id="hero-card" onclick="openNowPlaying()">
-        <div class="hero-content">
-          <img src="assets/logo.png" alt="Album Cover" class="hero-cover" id="hero-cover-img">
-          <div class="hero-info">
-            <div class="hero-title" id="hero-title">Pioneer DSP Ready</div>
-            <div class="hero-artist" id="hero-artist">Select a song to begin playback</div>
-            <div class="hero-badge-row">
-              <span class="source-badge idle" id="hero-source-badge">DSP IDLE</span>
+    <section id="tab-tuner" class="tab-view active">
+      <div class="tuner-container">
+
+        <!-- Concert Hall Acoustics Engagement Button (iOS MainDSPView match) -->
+        <div class="pioneer-card concert-hall-card" id="concert-hall-card" onclick="uiToggleConcertHall()">
+          <div class="ch-left">
+            <div class="ch-icon-circle">
+              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M4 22h16M4 18h16M4 6h16M2 22V6l10-4 10 4v16M8 10v4M12 10v4M16 10v4"></path>
+              </svg>
+            </div>
+            <div class="ch-meta">
+              <div class="ch-title">
+                <span>CONCERT HALL ACOUSTICS</span>
+                <span class="ch-indicator-dot"></span>
+              </div>
+              <div class="ch-subtitle" id="ch-status-text">Tap to Engage Real-Time Concert Hall Reverb</div>
             </div>
           </div>
-          <button class="hero-action-btn" id="hero-play-btn" onclick="event.stopPropagation(); toggleMasterPlay()">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-              <polygon points="6 4 20 12 6 20 6 4" id="hero-play-icon"/>
+          <div class="ch-btn-pill" id="ch-btn-text">ENGAGE</div>
+        </div>
+
+        <!-- Master Rotary Dial Knob (PioneerDialKnob from iOS) -->
+        <div class="pioneer-card dial-knob-section">
+          <div class="section-label" style="margin-bottom:0;">
+            <span>MASTER ACOUSTIC OUTPUT LEVEL</span>
+            <span style="color:var(--amber-orange);">32-BIT FLOAT</span>
+          </div>
+
+          <div class="dial-container" id="master-dial-touch-area">
+            <svg class="dial-svg" viewBox="0 0 140 140">
+              <defs>
+                <linearGradient id="dialGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#00e5ff"/>
+                  <stop offset="100%" stop-color="#ff6b00"/>
+                </linearGradient>
+              </defs>
+              <circle class="dial-track-circle" cx="70" cy="70" r="54"/>
+              <circle class="dial-arc-fill" id="dial-arc-progress" cx="70" cy="70" r="54"/>
             </svg>
-          </button>
-        </div>
-      </div>
 
-      <!-- Real-Time Acoustic Spectrum Visualizer -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
-              <path d="M12 20v-6M6 20V10M18 20V4"/>
-            </svg>
-            Acoustic Spectrum Analyzer
+            <div class="dial-center-knob">
+              <div class="dial-value-text" id="dial-val-text">80</div>
+              <div class="dial-unit-text">LEVEL %</div>
+            </div>
           </div>
-          <span class="card-subtitle" id="home-spectrum-label">60 FPS REAL-TIME</span>
-        </div>
-        <div class="spectrum-box">
-          <canvas id="homeSpectrumCanvas" class="spectrum-canvas"></canvas>
-        </div>
-      </div>
-
-      <!-- Concert Hall 3D Reverb Quick Card -->
-      <div class="sound-tune-card" id="home-hall-card" onclick="toggleConcertHall()">
-        <div class="sound-tune-left">
-          <div class="sound-tune-icon">
-            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
-              <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6a3 3 0 0 1 6 0v6"/>
-            </svg>
-          </div>
-          <div class="sound-tune-text">
-            <h4>Concert Hall Reverb</h4>
-            <p>3D Spatial acoustic reverberation & ambience</p>
-          </div>
-        </div>
-        <div class="toggle-pill" id="home-hall-pill">OFF</div>
-      </div>
-
-      <!-- Quick Dials: Super Bass & Treble -->
-      <div class="quick-dial-grid">
-        <div class="quick-dial-box">
-          <div class="quick-dial-head">
-            <span class="quick-dial-title">Todoroki Bass</span>
-            <span class="quick-dial-val" id="home-bass-val">+0 dB</span>
-          </div>
-          <input type="range" class="pioneer-slider" id="home-bass-slider" min="0" max="14" step="1" value="0" oninput="updateHomeBass(this.value)">
+          <div style="font-size:10px; color:var(--text-muted); font-family:var(--font-mono);">Drag or rotate dial to adjust master volume</div>
         </div>
 
-        <div class="quick-dial-box">
-          <div class="quick-dial-head">
-            <span class="quick-dial-title">Treble Air</span>
-            <span class="quick-dial-val" id="home-treble-val">+0 dB</span>
+        <!-- Now Playing Hero Deck Card -->
+        <div class="pioneer-card now-playing-card">
+          <div class="np-top-row">
+            <div class="np-cover-wrap">
+              <img src="assets/logo.png" alt="Cover" class="np-cover-img" id="hero-cover-img" onerror="this.src='assets/logo.png'">
+            </div>
+            <div class="np-meta-wrap">
+              <div class="np-title" id="hero-title">Concert Hall Acoustic Master</div>
+              <div class="np-artist" id="hero-artist">Pioneer Philharmonic Studio</div>
+              <div class="source-pill-row">
+                <span class="source-pill local" id="hero-source-pill">HI-FI DSP</span>
+                <span style="font-size:9.5px; font-family:var(--font-mono); color:var(--text-muted);" id="hero-format-spec">PCM • 44.1kHz</span>
+              </div>
+            </div>
           </div>
-          <input type="range" class="pioneer-slider" id="home-treble-slider" min="-10" max="10" step="1" value="0" oninput="updateHomeTreble(this.value)">
-        </div>
-      </div>
 
-      <!-- Sound Tune Acoustic Presets -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-            </svg>
-            Acoustic Profiles
+          <!-- Scrub Progress Bar -->
+          <div class="np-progress-row">
+            <input type="range" class="seek-slider" id="hero-seek-slider" min="0" max="100" value="0" oninput="onSeekInput(this.value)">
+            <div class="time-labels-row">
+              <span id="hero-time-cur">0:00</span>
+              <span id="hero-time-dur">3:00</span>
+            </div>
           </div>
-          <span class="card-subtitle">INSTANT DSP CURVES</span>
+
+          <!-- Transport Controls Row -->
+          <div class="np-transport-row">
+            <button class="transport-btn" id="hero-shuffle-btn" onclick="toggleShuffle()" title="Shuffle">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                <polyline points="16 3 21 3 21 8"></polyline>
+                <line x1="4" y1="20" x2="21" y2="3"></line>
+                <polyline points="21 16 21 21 16 21"></polyline>
+                <line x1="15" y1="15" x2="21" y2="21"></line>
+                <line x1="4" y1="4" x2="9" y2="9"></line>
+              </svg>
+            </button>
+
+            <button class="transport-btn" onclick="masterStepPrev()" title="Previous Track">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5"></line>
+              </svg>
+            </button>
+
+            <button class="transport-btn-play" id="hero-play-btn" onclick="toggleMasterPlay()" title="Play / Pause">
+              <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+                <polygon points="6 4 20 12 6 20 6 4" id="hero-play-icon"/>
+              </svg>
+            </button>
+
+            <button class="transport-btn" onclick="masterStepNext()" title="Next Track">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
+              </svg>
+            </button>
+
+            <button class="transport-btn" id="hero-lyrics-btn" onclick="openNowPlayingWithLyrics()" title="Synced Lyrics">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                <line x1="9" y1="9" x2="15" y2="9"></line>
+                <line x1="9" y1="13" x2="13" y2="13"></line>
+              </svg>
+            </button>
+          </div>
         </div>
-        <div class="preset-chips-scroll">
-          <button class="chip-btn active" id="chip-flat" onclick="applyPresetPreset('flat')">Flat Reference</button>
-          <button class="chip-btn" id="chip-bass" onclick="applyPresetPreset('bass')">Todoroki Bass</button>
-          <button class="chip-btn" id="chip-deep_bass" onclick="applyPresetPreset('deep_bass')">Sub-Bass Depth</button>
-          <button class="chip-btn" id="chip-hall" onclick="applyPresetPreset('hall')">Concert Hall</button>
-          <button class="chip-btn" id="chip-vocal" onclick="applyPresetPreset('vocal')">Vocal Clarity</button>
-          <button class="chip-btn" id="chip-rock" onclick="applyPresetPreset('rock')">Rock Dynamic</button>
-          <button class="chip-btn" id="chip-acoustic" onclick="applyPresetPreset('acoustic')">Acoustic Hi-Fi</button>
-          <button class="chip-btn" id="chip-electronic" onclick="applyPresetPreset('electronic')">Electronic Beat</button>
+
+        <!-- Todoroki Super Bass & Sub-Bass Depth Slider -->
+        <div class="pioneer-card super-bass-card highlight-amber">
+          <div class="sb-header">
+            <div class="sb-title-wrap">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--amber-orange)" stroke-width="2" fill="none">
+                <path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              </svg>
+              <span class="sb-title">TODOROKI SUPER BASS (80Hz + 60Hz PUNCH)</span>
+            </div>
+            <span class="sb-val-badge" id="super-bass-val">+0.0 dB</span>
+          </div>
+          <input type="range" class="super-bass-slider" id="super-bass-slider" min="0" max="14" step="0.5" value="0" oninput="onSuperBassInput(this.value)">
+          <div style="display:flex; justify-content:space-between; font-size:9.5px; font-family:var(--font-mono); color:var(--text-muted);">
+            <span>0 dB (DIRECT)</span>
+            <span>+7 dB (PUNCH)</span>
+            <span>+14 dB (MAX BASS)</span>
+          </div>
         </div>
+
+        <!-- DSP Presets Selector (Exact 6 Presets from iOS DSPSettings.swift) -->
+        <div>
+          <div class="section-label">
+            <span>ACOUSTIC DSP PRESETS</span>
+            <span style="color:var(--cyber-cyan);">REAL-TIME</span>
+          </div>
+          <div class="presets-grid">
+            <button class="preset-btn active" id="preset-flat" onclick="selectPreset('flat')">
+              <span class="preset-icon">〰️</span>
+              <span class="preset-name">FLAT / DIRECT</span>
+            </button>
+            <button class="preset-btn" id="preset-concertHall" onclick="selectPreset('concertHall')">
+              <span class="preset-icon">🏛️</span>
+              <span class="preset-name">CONCERT HALL</span>
+            </button>
+            <button class="preset-btn" id="preset-superBass" onclick="selectPreset('superBass')">
+              <span class="preset-icon">🔊</span>
+              <span class="preset-name">SUPER BASS</span>
+            </button>
+            <button class="preset-btn" id="preset-dynamic" onclick="selectPreset('dynamic')">
+              <span class="preset-icon">⚡</span>
+              <span class="preset-name">DYNAMIC LIVE</span>
+            </button>
+            <button class="preset-btn" id="preset-vocal" onclick="selectPreset('vocal')">
+              <span class="preset-icon">🎙️</span>
+              <span class="preset-name">VOCAL CLARITY</span>
+            </button>
+            <button class="preset-btn" id="preset-club" onclick="selectPreset('club')">
+              <span class="preset-icon">🎶</span>
+              <span class="preset-name">CLUB DANCE</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic 18-Bar Spectrum Visualizer (SpectrumVisualizerView from iOS) -->
+        <div class="spectrum-card">
+          <div class="section-label" style="margin-bottom:6px;">
+            <span>REAL-TIME 32-BIT SPECTRUM ANALYSER</span>
+            <span style="color:var(--amber-orange);">LIVE FFT</span>
+          </div>
+          <div class="spectrum-bars-row" id="spectrum-bars-row">
+            <!-- 18 gradient bars generated dynamically -->
+          </div>
+        </div>
+
       </div>
     </section>
 
     <!-- ------------------------------------------------------------------------
-         TAB 2: SEARCH
+         TAB 2: LIBRARY (Local Library, MediaStore, SAF Import)
          ------------------------------------------------------------------------ -->
-    <section id="tab-search" class="tab-view">
-      <!-- Search Input -->
-      <div class="search-bar-wrap">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" class="search-icon-left">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        <input type="text" class="search-input" id="search-input-field" placeholder="Search tracks, artists, albums..." oninput="onSearchInput(this.value)">
-        <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearchInput()">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
+    <section id="tab-library" class="tab-view">
+      <div class="section-label">
+        <span>LOCAL MUSIC REPOSITORY</span>
+        <span id="lib-count-label">0 TRACKS</span>
+      </div>
+
+      <div class="library-actions-bar">
+        <button class="btn-add-songs" onclick="triggerFileImport()">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
+          <span>ADD SONGS (SAF)</span>
+        </button>
+        <button class="btn-rescan-media" onclick="scanMediaStore()">
+          SCAN DEVICE
         </button>
       </div>
 
-      <!-- Filter Pills -->
-      <div class="search-filter-pills">
-        <button class="chip-btn active" id="filter-all" onclick="setSearchFilter('all')">All</button>
-        <button class="chip-btn" id="filter-streams" onclick="setSearchFilter('streams')">Online Streams</button>
-        <button class="chip-btn" id="filter-youtube" onclick="setSearchFilter('youtube')">YouTube Music</button>
-        <button class="chip-btn" id="filter-spotify" onclick="setSearchFilter('spotify')">Spotify</button>
-        <button class="chip-btn" id="filter-local" onclick="setSearchFilter('local')">Local Files</button>
-      </div>
+      <input type="text" class="library-search-box" id="lib-search-input" placeholder="Search tracks, artists, albums..." oninput="filterLocalSongs(this.value)">
 
-      <!-- Search Results Container -->
-      <div id="search-results-container">
-        <div class="empty-state">
-          <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <h3>Discover Music</h3>
-          <p>Search millions of tracks on Spotify and your indexed local audio library.</p>
-        </div>
+      <div class="song-list-container" id="library-songs-list">
+        <!-- Rendered local songs -->
       </div>
     </section>
 
     <!-- ------------------------------------------------------------------------
-         TAB 3: LIBRARY
+         TAB 3: SPOTIFY (Quick Stations, Web Player, Floating DSP Quick Tuning)
          ------------------------------------------------------------------------ -->
-    <section id="tab-library" class="tab-view">
-      <!-- Segmented Control: Local vs Spotify -->
-      <div class="segmented-control">
-        <button class="segment-btn active" id="seg-local" onclick="switchLibrarySegment('local')">Local Music</button>
-        <button class="segment-btn" id="seg-spotify" onclick="switchLibrarySegment('spotify')">Spotify Playlists</button>
+    <section id="tab-spotify" class="tab-view">
+      <div class="spotify-top-bar">
+        <div class="spotify-brand-pill">
+          <span class="spotify-dot"></span>
+          <span class="spotify-brand-text" id="spotify-conn-status">SPOTIFY CONNECT ACTIVE</span>
+        </div>
+        <button class="btn-reset-flat" onclick="connectSpotifyOAuth()">AUTH SPOTIFY</button>
       </div>
 
-      <!-- Local Library Sub-View -->
-      <div id="library-sub-local">
-        <div class="library-actions-bar">
-          <button class="btn-secondary" onclick="triggerMediaStoreScan()">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
-              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-              <polyline points="17 8 12 3 7 8"></polyline>
-              <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-            Scan Device Music
+      <!-- Quick Curated Stations (Exact match from iOS SpotifyService.swift) -->
+      <div class="section-label">
+        <span>CURATED SPOTIFY BROADCASTS</span>
+        <span style="color:var(--spotify-green);">PIONEER READY</span>
+      </div>
+      <div class="spotify-stations-scroll">
+        <button class="spotify-station-btn active" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M', this)">
+          <span>🔥</span><span>Today's Top Hits</span>
+        </button>
+        <button class="spotify-station-btn" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DX0hWmn8726Rh', this)">
+          <span>🏛️</span><span>Live Concert Hall</span>
+        </button>
+        <button class="spotify-station-btn" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd', this)">
+          <span>🔊</span><span>Bass Heavy Drive</span>
+        </button>
+        <button class="spotify-station-btn" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DWXRqgorJj26U', this)">
+          <span>🎸</span><span>Rock Classics</span>
+        </button>
+        <button class="spotify-station-btn" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DXdLEN7aqioXM', this)">
+          <span>🎧</span><span>Chill Lo-Fi Vibes</span>
+        </button>
+      </div>
+
+      <!-- Embedded Spotify Web Player Container -->
+      <div class="spotify-web-container">
+        <iframe id="spotify-web-frame" class="spotify-iframe" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+      </div>
+
+      <!-- Floating DSP Quick Tuning Companion for Spotify -->
+      <div class="pioneer-card spotify-dsp-companion">
+        <div class="s-dsp-header">
+          <span class="s-dsp-title">FLOATING DSP HARDWARE SYNC</span>
+          <span class="s-dsp-status" id="spotify-audiofx-status">AudioEffect Session Active</span>
+        </div>
+        <div class="s-dsp-controls-row">
+          <button class="preset-btn" onclick="uiToggleConcertHall()">
+            <span class="preset-icon">🏛️</span>
+            <span class="preset-name">TOGGLE HALL</span>
           </button>
-
-          <label class="btn-secondary" style="margin: 0; cursor: pointer;">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
-              <path d="M12 5v14M5 12h14"></path>
-            </svg>
-            Import Files
-            <input type="file" id="file-picker-input" multiple accept="audio/*" style="display: none;" onchange="handleFileImport(this.files)">
-          </label>
+          <button class="preset-btn" onclick="selectPreset('superBass')">
+            <span class="preset-icon">🔊</span>
+            <span class="preset-name">SUPER BASS +9dB</span>
+          </button>
         </div>
-
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 0 4px;">
-          <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;" id="local-count-label">0 TRACKS INDEXED</span>
-        </div>
-
-        <!-- Local Songs List -->
-        <div class="track-list" id="local-track-list">
-          <!-- Populated dynamically -->
-        </div>
-      </div>
-
-      <!-- Spotify Library Sub-View -->
-      <div id="library-sub-spotify" style="display: none;">
-        <div id="spotify-library-container">
-          <!-- Populated dynamically -->
+        <div style="font-size:10px; color:var(--text-muted); line-height:1.4;">
+          Pioneer Android hooks directly into Android's native <code>android.media.audiofx</code> session to synchronize hardware Equalizer, BassBoost, and Reverb presets with Spotify playback.
         </div>
       </div>
     </section>
 
     <!-- ------------------------------------------------------------------------
-         TAB 4: 10-BAND EQUALIZER & DSP
+         TAB 4: EQUALIZER (10-Band Graphic EQ & Frequency Curve Preview)
          ------------------------------------------------------------------------ -->
     <section id="tab-equalizer" class="tab-view">
-      <!-- EQ Presets Bar -->
-      <div class="card" style="padding: 12px 14px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-          <span style="font-size: 12px; font-weight: 800; color: #fff; text-transform: uppercase;">10-Band EQ Presets</span>
-          <div style="display: flex; gap: 6px;">
-            <button class="chip-btn" onclick="resetEQFlat()" style="padding: 4px 10px; font-size: 10px;">Reset Flat</button>
-            <button class="chip-btn" onclick="saveCustomPresetPrompt()" style="padding: 4px 10px; font-size: 10px;">Save Custom</button>
-          </div>
+      <div class="eq-top-header">
+        <div>
+          <div style="font-size:16px; font-weight:900; color:#fff; font-family:var(--font-rounded);">10-BAND GRAPHIC EQUALIZER</div>
+          <div style="font-size:9px; font-weight:700; color:var(--text-muted); font-family:var(--font-mono);">PARAMETRIC PRECISION FREQUENCY SHAPING</div>
         </div>
-        <div class="preset-chips-scroll">
-          <button class="chip-btn active" id="eqchip-flat" onclick="applyPresetPreset('flat')">Flat</button>
-          <button class="chip-btn" id="eqchip-bass" onclick="applyPresetPreset('bass')">Todoroki Bass</button>
-          <button class="chip-btn" id="eqchip-deep_bass" onclick="applyPresetPreset('deep_bass')">Sub-Bass</button>
-          <button class="chip-btn" id="eqchip-hall" onclick="applyPresetPreset('hall')">Concert Hall</button>
-          <button class="chip-btn" id="eqchip-studio" onclick="applyPresetPreset('studio')">Studio Monitor</button>
-          <button class="chip-btn" id="eqchip-vocal" onclick="applyPresetPreset('vocal')">Vocal Boost</button>
-          <button class="chip-btn" id="eqchip-rock" onclick="applyPresetPreset('rock')">Rock</button>
-          <button class="chip-btn" id="eqchip-acoustic" onclick="applyPresetPreset('acoustic')">Acoustic</button>
-          <button class="chip-btn" id="eqchip-electronic" onclick="applyPresetPreset('electronic')">Electronic</button>
-        </div>
+        <button class="btn-reset-flat" onclick="uiResetEQ()">RESET FLAT</button>
       </div>
 
-      <!-- Real-Time Spectrum Canvas in EQ View -->
-      <div class="card" style="padding: 12px 14px; margin-bottom: 14px;">
-        <div class="card-header" style="margin-bottom: 8px;">
-          <div class="card-title" style="font-size: 11px;">
-            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
-              <path d="M12 20v-6M6 20V10M18 20V4"/>
-            </svg>
-            Active Acoustic Spectrum
-          </div>
-          <span class="card-subtitle" id="eq-spectrum-status">STANDBY</span>
-        </div>
-        <div class="spectrum-box" style="height: 54px; padding: 6px;">
-          <canvas id="eqSpectrumCanvas" class="spectrum-canvas" style="height: 42px;"></canvas>
-        </div>
+      <!-- Real-Time Frequency Response Curve Canvas (iOS EqualizerView match) -->
+      <div class="eq-curve-box">
+        <canvas id="eq-curve-canvas" class="eq-curve-canvas" width="400" height="60"></canvas>
       </div>
 
-      <!-- 10-Band Graphic Fader Rack -->
-      <div class="eq-rack-card">
-        <div class="eq-faders-grid" id="eq-faders-container">
-          <!-- 10 Vertical Faders populated by JS -->
-        </div>
+      <!-- 10 Vertical Faders Container -->
+      <div class="eq-faders-container" id="eq-faders-container">
+        <!-- Rendered 10 vertical faders for 31Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz, 8kHz, 16kHz -->
       </div>
 
-      <!-- Pioneer Sound Tune Tone Controls -->
-      <div class="tone-controls-grid">
-        <div class="tone-card">
-          <div class="tone-card-head">
-            <span class="tone-title">Preamp Gain</span>
-            <span class="tone-value" id="val-preamp">0.0 dB</span>
-          </div>
-          <input type="range" class="pioneer-slider" id="slider-preamp" min="-12" max="12" step="0.5" value="0" oninput="updatePreamp(this.value)">
-        </div>
+      <!-- Active Curve Description Card -->
+      <div class="pioneer-card eq-desc-card">
+        <div class="eq-desc-title" id="eq-desc-title">ACTIVE CURVE: FLAT / DIRECT</div>
+        <div class="eq-desc-body" id="eq-desc-body">Studio reference response with zero coloration across the entire 20Hz-20kHz acoustic spectrum.</div>
+      </div>
+    </section>
 
-        <div class="tone-card">
-          <div class="tone-card-head">
-            <span class="tone-title">Todoroki 63Hz</span>
-            <span class="tone-value" id="val-super-bass">+0 dB</span>
-          </div>
-          <input type="range" class="pioneer-slider" id="slider-super-bass" min="0" max="14" step="1" value="0" oninput="updateSuperBass(this.value)">
-        </div>
-
-        <div class="tone-card">
-          <div class="tone-card-head">
-            <span class="tone-title">Sub-Bass 35Hz</span>
-            <span class="tone-value" id="val-deep-bass">+0 dB</span>
-          </div>
-          <input type="range" class="pioneer-slider" id="slider-deep-bass" min="0" max="12" step="1" value="0" oninput="updateDeepBass(this.value)">
-        </div>
-
-        <div class="tone-card">
-          <div class="tone-card-head">
-            <span class="tone-title">Mid Vocal</span>
-            <span class="tone-value" id="val-mid">0 dB</span>
-          </div>
-          <input type="range" class="pioneer-slider" id="slider-mid" min="-10" max="10" step="1" value="0" oninput="updateMid(this.value)">
-        </div>
+    <!-- ------------------------------------------------------------------------
+         TAB 5: HALL (Acoustics, Reverb Environment, Wet/Dry Crossfade)
+         ------------------------------------------------------------------------ -->
+    <section id="tab-hall" class="tab-view">
+      <div class="section-label">
+        <span>ACOUSTIC REVERB ENVIRONMENT</span>
+        <span style="color:var(--amber-orange);">3D IMPULSE</span>
       </div>
 
-      <!-- Acoustic Spatial Ambience & Cabin Alignment -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
-              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-              <polyline points="2 17 12 22 22 17"></polyline>
-              <polyline points="2 12 12 17 22 12"></polyline>
-            </svg>
-            Spatial Ambience & Reverb
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
-          <div>
-            <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 6px;">Acoustic Mode</label>
-            <select class="search-input" id="select-reverb-mode" style="height: 38px; padding: 0 10px; font-size: 12px;" onchange="updateReverbMode(this.value)">
-              <option value="hall">Concert Hall (2.6s)</option>
-              <option value="arena">Stadium Arena (3.6s)</option>
-              <option value="room">Live Room (1.3s)</option>
-              <option value="studio">Acoustic Studio (0.6s)</option>
-            </select>
-          </div>
-
-          <div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary);">Reverb Mix</span>
-              <span style="font-size: 11px; font-family: var(--font-mono); color: var(--accent-pioneer);" id="val-reverb-mix">0%</span>
+      <!-- 5 Reverb Rooms List (Matching iOS ReverbRoomType) -->
+      <div class="reverb-rooms-list">
+        <div class="reverb-room-card selected" id="room-concertHall" onclick="selectReverbRoom('concertHall', this)">
+          <div class="rr-left">
+            <span class="rr-icon">🏛️</span>
+            <div>
+              <div class="rr-title">CONCERT HALL</div>
+              <div class="rr-sub">Symphonic 3.2s decay with rich diffuse reflections</div>
             </div>
-            <input type="range" class="pioneer-slider" id="slider-reverb-mix" min="0" max="100" step="1" value="0" style="margin-top: 10px;" oninput="updateReverbMix(this.value)">
           </div>
+          <span class="rr-check">✓</span>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div>
-            <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 6px;">Cabin Position</label>
-            <select class="search-input" id="select-cabin" style="height: 38px; padding: 0 10px; font-size: 12px;" onchange="updateCabin(this.value)">
-              <option value="all">Center / All Seats</option>
-              <option value="fl">Driver (Front Left)</option>
-              <option value="fr">Passenger (Front Right)</option>
-            </select>
-          </div>
-
-          <div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary);">Balance</span>
-              <span style="font-size: 11px; font-family: var(--font-mono); color: var(--accent-pioneer);" id="val-balance">Center</span>
+        <div class="reverb-room-card" id="room-largeHall" onclick="selectReverbRoom('largeHall', this)">
+          <div class="rr-left">
+            <span class="rr-icon">🏟️</span>
+            <div>
+              <div class="rr-title">LARGE ARENA</div>
+              <div class="rr-sub">Expansive 4.5s soundstage with wide stereo imaging</div>
             </div>
-            <input type="range" class="pioneer-slider" id="slider-balance" min="-1" max="1" step="0.05" value="0" style="margin-top: 10px;" oninput="updateBalance(this.value)">
           </div>
+          <span class="rr-check">✓</span>
+        </div>
+
+        <div class="reverb-room-card" id="room-cathedral" onclick="selectReverbRoom('cathedral', this)">
+          <div class="rr-left">
+            <span class="rr-icon">⛪</span>
+            <div>
+              <div class="rr-title">CATHEDRAL</div>
+              <div class="rr-sub">Long 5.5s grand stone architecture reverberation</div>
+            </div>
+          </div>
+          <span class="rr-check">✓</span>
+        </div>
+
+        <div class="reverb-room-card" id="room-mediumRoom" onclick="selectReverbRoom('mediumRoom', this)">
+          <div class="rr-left">
+            <span class="rr-icon">🎙️</span>
+            <div>
+              <div class="rr-title">LIVE STUDIO</div>
+              <div class="rr-sub">Intimate 1.4s acoustic chamber for warm presence</div>
+            </div>
+          </div>
+          <span class="rr-check">✓</span>
+        </div>
+
+        <div class="reverb-room-card" id="room-plate" onclick="selectReverbRoom('plate', this)">
+          <div class="rr-left">
+            <span class="rr-icon">⚡</span>
+            <div>
+              <div class="rr-title">PLATE REVERB</div>
+              <div class="rr-sub">Dense 2.0s metallic vintage reflections with crisp top-end</div>
+            </div>
+          </div>
+          <span class="rr-check">✓</span>
         </div>
       </div>
 
-      <!-- Transparent DSP Policy Notice -->
-      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 12px 14px; margin-top: 10px;">
-        <div style="display: flex; align-items: flex-start; gap: 10px;">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--accent-pioneer)" stroke-width="2" fill="none" style="flex-shrink: 0; margin-top: 2px;">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-          <p style="font-size: 11px; color: var(--text-muted); line-height: 1.5;">
-            <strong style="color: var(--text-secondary);">Pioneer Hi-Fi DSP Processing:</strong>
-            The 10-Band Graphic EQ, Todoroki Bass, and Reverb engine actively process all local device audio and imported files at 32-bit floating point precision. Spotify Connect streams play directly on Spotify devices in accordance with Spotify DRM policies.
-          </p>
+      <!-- Wet / Dry Mix Slider Card -->
+      <div class="pioneer-card reverb-mix-card highlight-cyan">
+        <div class="rm-header">
+          <span class="rm-title">WET / DRY REVERBERATION MIX (EQUAL-POWER CURVE)</span>
+          <span class="rm-val" id="reverb-mix-val">0%</span>
+        </div>
+        <input type="range" class="reverb-mix-slider" id="reverb-mix-slider" min="0" max="100" value="0" oninput="onReverbMixInput(this.value)">
+        <div style="display:flex; justify-content:space-between; font-size:9.5px; font-family:var(--font-mono); color:var(--text-muted);">
+          <span>DRY (0%)</span>
+          <span>50%</span>
+          <span>WET (100%)</span>
         </div>
       </div>
     </section>
 
     <!-- ------------------------------------------------------------------------
-         TAB 5: SETTINGS
+         TAB 6: CABIN (Car Cabin Listening Position Alignment)
          ------------------------------------------------------------------------ -->
-    <section id="tab-settings" class="tab-view">
-      <!-- Spotify Integration Settings -->
-      <div class="settings-group">
-        <div class="settings-group-title">Spotify Account & Connect</div>
+    <section id="tab-cabin" class="tab-view">
+      <div class="section-label">
+        <span>LISTENING POSITION ALIGNMENT</span>
+        <span style="color:var(--amber-orange);">TIME DELAY</span>
+      </div>
 
-        <div class="settings-item">
-          <div class="settings-item-info">
-            <h4 id="settings-spotify-user">Spotify Disconnected</h4>
-            <p id="settings-spotify-status">Connect to control playback & browse playlists</p>
+      <!-- Car Cabin Diagram Container (Matching iOS CarCabinVisualizer) -->
+      <div class="pioneer-card cabin-diagram-card highlight-amber">
+        <div class="car-outline-box">
+          <div class="windshield-arc"></div>
+
+          <div class="seats-grid">
+            <div class="seat-pill" id="seat-fl" onclick="selectCabinPosition('frontLeft')">
+              <span class="seat-icon">👤</span>
+              <span class="seat-label">DRIVER</span>
+            </div>
+            <div class="seat-pill" id="seat-fr" onclick="selectCabinPosition('frontRight')">
+              <span class="seat-icon">👤</span>
+              <span class="seat-label">PASSENGER</span>
+            </div>
+            <div class="seat-pill" id="seat-rl" onclick="selectCabinPosition('all')">
+              <span class="seat-icon">👤</span>
+              <span class="seat-label">REAR L</span>
+            </div>
+            <div class="seat-pill" id="seat-rr" onclick="selectCabinPosition('all')">
+              <span class="seat-icon">👤</span>
+              <span class="seat-label">REAR R</span>
+            </div>
           </div>
-          <button class="btn-primary btn-spotify" id="settings-spotify-btn" onclick="toggleSpotifyAuth()">Connect Spotify</button>
         </div>
 
-        <div class="settings-item" id="spotify-device-selector-row" style="display: none;">
-          <div class="settings-item-info">
-            <h4>Active Playback Device</h4>
-            <p id="settings-active-device-name">Auto-Detecting...</p>
-          </div>
-          <button class="btn-secondary" style="width: auto; padding: 0 12px; height: 34px;" onclick="refreshSpotifyDevicesPrompt()">Change Device</button>
-        </div>
-
-        <!-- Spotify Developer Config -->
-        <div class="card" style="margin-top: 10px;">
-          <div class="card-header">
-            <div class="card-title" style="font-size: 11px;">Developer Configuration</div>
-          </div>
-          <div style="margin-bottom: 10px;">
-            <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Client ID</label>
-            <input type="text" class="search-input" id="cfg-client-id" placeholder="Paste Spotify Client ID" style="height: 40px; font-size: 12px; font-family: var(--font-mono);">
-          </div>
-          <div style="margin-bottom: 12px;">
-            <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Redirect URI</label>
-            <input type="text" class="search-input" id="cfg-redirect-uri" value="pioneerdsp://callback" style="height: 40px; font-size: 12px; font-family: var(--font-mono);">
-          </div>
-          <button class="btn-secondary" onclick="saveSpotifyConfig()" style="height: 36px;">Save Configuration</button>
+        <!-- Mode Selectors -->
+        <div class="cabin-mode-pills">
+          <button class="cabin-mode-btn active" id="btn-seat-all" onclick="selectCabinPosition('all')">ALL SEATS</button>
+          <button class="cabin-mode-btn" id="btn-seat-fl" onclick="selectCabinPosition('frontLeft')">DRIVER FOCUS</button>
+          <button class="cabin-mode-btn" id="btn-seat-fr" onclick="selectCabinPosition('frontRight')">PASSENGER FOCUS</button>
         </div>
       </div>
 
-      <!-- YouTube Streaming & Music APIs -->
-      <div class="settings-group">
-        <div class="settings-group-title">YouTube Streaming & Music APIs</div>
-
-        <div class="settings-item">
-          <div class="settings-item-info">
-            <h4 id="settings-yt-status-title">High-Speed Music Gateway</h4>
-            <p id="settings-yt-status-desc">Active (Auto Public Failover + Official API Key)</p>
-          </div>
-          <span class="source-badge youtube" style="font-size: 10px; padding: 3px 8px;">ACTIVE</span>
-        </div>
-
-        <div class="card" style="margin-top: 10px;">
-          <div class="card-header">
-            <div class="card-title" style="font-size: 11px;">YouTube Data API v3 Key (Optional)</div>
-          </div>
-          <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Enter your Google Cloud YouTube Data API v3 key to use your dedicated developer quota for music search & metadata. When empty, high-speed public music gateways are used automatically.</p>
-          <div style="margin-bottom: 10px;">
-            <input type="password" class="search-input" id="cfg-yt-api-key" placeholder="AIzaSy... (Leave empty for auto public gateway)" style="height: 40px; font-size: 12px; font-family: var(--font-mono);">
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <button class="btn-primary" onclick="saveYouTubeConfig()" style="height: 36px; flex: 1;">Save API Key</button>
-            <button class="btn-secondary" onclick="clearYouTubeConfig()" style="height: 36px; width: auto; padding: 0 12px;">Clear</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- DSP Engine Specifications -->
-      <div class="settings-group">
-        <div class="settings-group-title">Audio DSP Specifications</div>
-        <div class="settings-item">
-          <div class="settings-item-info">
-            <h4>Internal Precision</h4>
-            <p>32-bit Floating Point Architecture</p>
-          </div>
-          <span style="font-size: 11px; font-family: var(--font-mono); color: var(--accent-pioneer); font-weight: 700;">Hi-Fi FLOAT32</span>
-        </div>
-
-        <div class="settings-item">
-          <div class="settings-item-info">
-            <h4>Clipping Protection</h4>
-            <p>Dynamics Peak Limiter with Soft Knee</p>
-          </div>
-          <span style="font-size: 11px; font-family: var(--font-mono); color: var(--accent-spotify); font-weight: 700;">ACTIVE</span>
-        </div>
-      </div>
-
-      <!-- Local Library Storage -->
-      <div class="settings-group">
-        <div class="settings-group-title">Local Library Management</div>
-        <div class="settings-item">
-          <div class="settings-item-info">
-            <h4>Re-index MediaStore</h4>
-            <p>Refresh local songs from phone storage</p>
-          </div>
-          <button class="btn-secondary" style="width: auto; padding: 0 14px; height: 34px;" onclick="triggerMediaStoreScan()">Re-Scan</button>
-        </div>
-
-        <div class="settings-item">
-          <div class="settings-item-info">
-            <h4>Clear Cache</h4>
-            <p>Reset local database and stored metadata</p>
-          </div>
-          <button class="btn-secondary" style="width: auto; padding: 0 14px; height: 34px; color: #ff6666;" onclick="clearLibraryCache()">Clear</button>
-        </div>
-      </div>
-
-      <!-- About Pioneer DSP -->
-      <div class="settings-group">
-        <div class="settings-group-title">About Pioneer DSP</div>
-        <div class="settings-item">
-          <div class="settings-item-info">
-            <h4>Pioneer DSP Application</h4>
-            <p>Version 4.0.0 Master Redesign Edition</p>
-          </div>
-          <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">v4.0.0</span>
+      <!-- Explanation Card -->
+      <div class="pioneer-card eq-desc-card" style="margin-top:14px;">
+        <div class="eq-desc-title" id="cabin-status-title">ACTIVE FOCUS: ALL SEATS</div>
+        <div class="eq-desc-body">
+          Time Alignment delays each speaker output by milliseconds so the acoustic wavefront arrives at your ears simultaneously, placing you at the center of the live soundstage.
         </div>
       </div>
     </section>
+
   </main>
 
   <!-- ==========================================================================
-       PERSISTENT MINI-PLAYER DOCK
+       PERSISTENT MINI-PLAYER DOCK (Above Cockpit Bottom Nav)
        ========================================================================== -->
   <div class="mini-player-dock" id="mini-player-dock" onclick="openNowPlaying()">
+    <div class="mini-progress-bar">
+      <div class="mini-progress-fill" id="dock-progress-fill"></div>
+    </div>
+
     <div class="mini-dock-left">
-      <img src="assets/logo.png" alt="Cover" class="mini-dock-thumb" id="dock-cover-img">
+      <img src="assets/logo.png" alt="Thumb" class="mini-dock-thumb" id="dock-cover-img" onerror="this.src='assets/logo.png'">
       <div class="mini-dock-meta">
-        <div class="mini-dock-title" id="dock-title">No Track Playing</div>
+        <div class="mini-dock-title" id="dock-title">Concert Hall Acoustic Master</div>
         <div class="mini-dock-artist" id="dock-artist">
-          <span>Pioneer DSP Ready</span>
-          <span class="source-badge idle" id="dock-source-badge" style="font-size: 8px; padding: 1px 5px;">IDLE</span>
+          <span>Pioneer Philharmonic Studio</span>
         </div>
       </div>
     </div>
@@ -519,7 +504,6 @@
           <polygon points="6 4 20 12 6 20 6 4" id="dock-play-icon"/>
         </svg>
       </button>
-
       <button class="mini-btn" onclick="masterStepNext()">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
           <polygon points="5 4 15 12 5 20 5 4"></polygon>
@@ -527,44 +511,14 @@
         </svg>
       </button>
     </div>
-
-    <!-- Mini Progress Line -->
-    <div class="mini-progress-bar">
-      <div class="mini-progress-fill" id="dock-progress-fill"></div>
-    </div>
   </div>
 
   <!-- ==========================================================================
-       PRIMARY BOTTOM NAVIGATION BAR (5 TABS)
+       PIONEER COCKPIT BOTTOM NAVIGATION BAR (6 Authentic iOS Cockpit Tabs)
        ========================================================================== -->
-  <nav class="bottom-nav-bar">
-    <button class="nav-tab-item active" id="nav-home" onclick="switchTab('home')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
-      <span class="nav-tab-label">Home</span>
-    </button>
-
-    <button class="nav-tab-item" id="nav-search" onclick="switchTab('search')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <circle cx="11" cy="11" r="8"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
-      <span class="nav-tab-label">Search</span>
-    </button>
-
-    <button class="nav-tab-item" id="nav-library" onclick="switchTab('library')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M9 18V5l12-2v13"></path>
-        <circle cx="6" cy="18" r="3"></circle>
-        <circle cx="18" cy="16" r="3"></circle>
-      </svg>
-      <span class="nav-tab-label">Library</span>
-    </button>
-
-    <button class="nav-tab-item" id="nav-equalizer" onclick="switchTab('equalizer')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+  <nav class="cockpit-bottom-nav">
+    <button class="cockpit-tab-item active" id="nav-tuner" onclick="switchCockpitTab('tuner')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="4" y1="21" x2="4" y2="14"></line>
         <line x1="4" y1="10" x2="4" y2="3"></line>
         <line x1="12" y1="21" x2="12" y2="12"></line>
@@ -575,117 +529,132 @@
         <line x1="9" y1="8" x2="15" y2="8"></line>
         <line x1="17" y1="16" x2="23" y2="16"></line>
       </svg>
-      <span class="nav-tab-label">Equalizer</span>
+      <span class="tab-title">TUNER</span>
     </button>
 
-    <button class="nav-tab-item" id="nav-settings" onclick="switchTab('settings')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    <button class="cockpit-tab-item" id="nav-library" onclick="switchCockpitTab('library')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 18V5l12-2v13"></path>
+        <circle cx="6" cy="18" r="3"></circle>
+        <circle cx="18" cy="16" r="3"></circle>
       </svg>
-      <span class="nav-tab-label">Settings</span>
+      <span class="tab-title">LIBRARY</span>
+    </button>
+
+    <button class="cockpit-tab-item" id="nav-spotify" onclick="switchCockpitTab('spotify')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M8 11.5c3.5-1 7-0.5 9.5 1"></path>
+        <path d="M7 14c4-1 8-0.5 11 1"></path>
+        <path d="M9 9c3.5-1 6.5-0.5 9 1"></path>
+      </svg>
+      <span class="tab-title">SPOTIFY</span>
+    </button>
+
+    <button class="cockpit-tab-item" id="nav-equalizer" onclick="switchCockpitTab('equalizer')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+      </svg>
+      <span class="tab-title">EQ</span>
+    </button>
+
+    <button class="cockpit-tab-item" id="nav-hall" onclick="switchCockpitTab('hall')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 22h16M4 18h16M4 6h16M2 22V6l10-4 10 4v16M8 10v4M12 10v4M16 10v4"></path>
+      </svg>
+      <span class="tab-title">HALL</span>
+    </button>
+
+    <button class="cockpit-tab-item" id="nav-cabin" onclick="switchCockpitTab('cabin')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H7.5a1 1 0 0 0-.8.4L4 11l-5.16.86a1 1 0 0 0-.84.99V16h3m14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-12 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"></path>
+      </svg>
+      <span class="tab-title">CABIN</span>
     </button>
   </nav>
 
   <!-- ==========================================================================
-       DEDICATED FULL-SCREEN NOW PLAYING OVERLAY
+       DEDICATED FULL-SCREEN NOW PLAYING & LYRICS MODAL
        ========================================================================== -->
   <div class="now-playing-overlay" id="now-playing-screen">
-    <!-- Header -->
-    <div class="np-header">
-      <button class="np-close-btn" onclick="closeNowPlaying()">
-        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none">
+    <div class="np-modal-header">
+      <button class="np-modal-btn" onclick="closeNowPlaying()">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none">
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
       </button>
 
-      <div class="np-header-center">
-        <div class="np-header-title">Now Playing</div>
-        <span class="source-badge idle" id="np-source-badge">STANDBY</span>
+      <div style="text-align:center;">
+        <div style="font-size:10px; font-weight:800; font-family:var(--font-mono); color:var(--amber-orange);">PIONEER NOW PLAYING</div>
+        <div style="font-size:12px; font-weight:700; color:#fff;" id="np-modal-source">32-Bit Float DSP Active</div>
       </div>
 
-      <div style="display: flex; gap: 6px;">
-        <button class="np-close-btn" id="np-lyrics-toggle-btn" onclick="toggleLyricsView()" title="Toggle LRCLIB Lyrics">
-          <svg viewBox="0 0 24 24" width="19" height="19" stroke="currentColor" stroke-width="2" fill="none">
-            <path d="M4 6h16M4 12h10M4 18h14"/>
-          </svg>
-        </button>
-        <button class="np-close-btn" onclick="closeNowPlaying(); switchTab('equalizer')" title="Equalizer">
-          <svg viewBox="0 0 24 24" width="19" height="19" stroke="currentColor" stroke-width="2" fill="none">
-            <line x1="4" y1="21" x2="4" y2="14"></line>
-            <line x1="4" y1="10" x2="4" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12" y2="3"></line>
-            <line x1="20" y1="21" x2="20" y2="16"></line>
-            <line x1="20" y1="12" x2="20" y2="3"></line>
-            <line x1="1" y1="14" x2="7" y2="14"></line>
-            <line x1="9" y1="8" x2="15" y2="8"></line>
-            <line x1="17" y1="16" x2="23" y2="16"></line>
-          </svg>
-        </button>
+      <button class="np-modal-btn" onclick="toggleLyricsView()">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Large Artwork Cover -->
+    <div class="np-large-cover-wrap" id="np-large-cover-wrap">
+      <img src="assets/logo.png" alt="Cover Large" class="np-large-cover-img" id="np-large-cover" onerror="this.src='assets/logo.png'">
+    </div>
+
+    <!-- Lyrics Container -->
+    <div class="lyrics-overlay-container" id="lyrics-container">
+      <div id="lyrics-scroll-content">
+        <!-- Rendered lyric lines -->
       </div>
     </div>
 
-    <!-- Album Art & LRCLIB Lyrics Flipper -->
-    <div class="np-cover-wrap" id="np-cover-wrap" onclick="toggleLyricsView()">
-      <img src="assets/logo.png" alt="Now Playing Artwork" class="np-cover-art" id="np-cover-img">
-      <div class="np-lyrics-container" id="np-lyrics-container" style="display: none;">
-        <div class="np-lyrics-content" id="np-lyrics-content">
-          <div class="lyrics-status">Searching LRCLIB lyrics...</div>
-        </div>
+    <!-- Track Meta -->
+    <div style="text-align:center; margin-bottom:16px;">
+      <div style="font-size:20px; font-weight:900; color:#fff; font-family:var(--font-rounded);" id="np-modal-title">Concert Hall Acoustic Master</div>
+      <div style="font-size:14px; color:var(--text-muted); margin-top:4px;" id="np-modal-artist">Pioneer Philharmonic Studio</div>
+    </div>
+
+    <!-- Seek Scrubber -->
+    <div style="margin-bottom:20px;">
+      <input type="range" class="seek-slider" id="np-modal-seek" min="0" max="100" value="0" oninput="onSeekInput(this.value)">
+      <div class="time-labels-row" style="margin-top:6px;">
+        <span id="np-modal-time-cur">0:00</span>
+        <span id="np-modal-time-dur">3:00</span>
       </div>
     </div>
 
-    <!-- Track Metadata -->
-    <div class="np-track-meta">
-      <div class="np-title" id="np-title">No Track Playing</div>
-      <div class="np-artist" id="np-artist">Pioneer DSP Ready</div>
-      <div class="np-album" id="np-album">Select a track to start</div>
-    </div>
-
-    <!-- Scrub Bar -->
-    <div class="np-scrub-wrap">
-      <input type="range" class="pioneer-slider np-seek-slider" id="np-seek-slider" min="0" max="100" step="0.1" value="0" oninput="onSeekInput(this.value)" onchange="onSeekChange(this.value)">
-      <div class="np-time-row">
-        <span id="np-time-cur">00:00</span>
-        <span id="np-time-dur">00:00</span>
-      </div>
-    </div>
-
-    <!-- Main Playback Controls -->
-    <div class="np-controls-row">
-      <button class="np-btn-sub" id="np-shuffle-btn" onclick="toggleShuffle()">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
-          <polyline points="16 3 21 3 21 8"></polyline>
-          <line x1="4" y1="20" x2="21" y2="3"></line>
-          <polyline points="21 16 21 21 16 21"></polyline>
-          <line x1="15" y1="15" x2="21" y2="21"></line>
+    <!-- Transport Buttons -->
+    <div class="np-transport-row" style="margin-bottom:30px;">
+      <button class="transport-btn" onclick="toggleShuffle()">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
+          <polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line>
+          <polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line>
           <line x1="4" y1="4" x2="9" y2="9"></line>
         </svg>
       </button>
 
-      <button class="np-btn-step" onclick="masterStepPrev()">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+      <button class="transport-btn" onclick="masterStepPrev()">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
           <polygon points="19 20 9 12 19 4 19 20"></polygon>
           <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5"></line>
         </svg>
       </button>
 
-      <button class="np-btn-play" onclick="toggleMasterPlay()">
+      <button class="transport-btn-play" onclick="toggleMasterPlay()">
         <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor">
-          <polygon points="6 4 20 12 6 20 6 4" id="np-play-icon"/>
+          <polygon points="6 4 20 12 6 20 6 4" id="np-modal-play-icon"/>
         </svg>
       </button>
 
-      <button class="np-btn-step" onclick="masterStepNext()">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+      <button class="transport-btn" onclick="masterStepNext()">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
           <polygon points="5 4 15 12 5 20 5 4"></polygon>
           <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
         </svg>
       </button>
 
-      <button class="np-btn-sub" id="np-repeat-btn" onclick="toggleRepeat()">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+      <button class="transport-btn" onclick="toggleRepeat()">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
           <polyline points="17 1 21 5 17 9"></polyline>
           <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
           <polyline points="7 23 3 19 7 15"></polyline>
@@ -693,432 +662,571 @@
         </svg>
       </button>
     </div>
-
-    <!-- Bottom Shortcuts -->
-    <div class="np-bottom-bar">
-      <div class="np-dsp-pill" id="np-hall-pill" onclick="toggleConcertHall()">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
-          <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6a3 3 0 0 1 6 0v6"/>
-        </svg>
-        <span id="np-hall-label">Concert Hall: OFF</span>
-      </div>
-
-      <div class="np-dsp-pill" onclick="closeNowPlaying(); switchTab('equalizer')">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
-          <circle cx="12" cy="12" r="3"></circle>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
-        <span>Open Equalizer</span>
-      </div>
-    </div>
   </div>
 
   <!-- ==========================================================================
-       MODAL DIALOG (For Spotify Devices / Custom Presets)
+       SETTINGS SHEET
        ========================================================================== -->
-  <div class="modal-backdrop" id="app-modal" onclick="closeAppModal()">
-    <div class="modal-window" onclick="event.stopPropagation()">
-      <div class="modal-head">
-        <h3 class="modal-title" id="modal-title">Modal Title</h3>
-        <button class="track-delete-btn" onclick="closeAppModal()">
-          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+  <div class="settings-sheet-overlay" id="settings-sheet" onclick="closeSettings()">
+    <div class="settings-sheet-card" onclick="event.stopPropagation()">
+      <div class="settings-header-row">
+        <span style="font-size:16px; font-weight:900; color:#fff; font-family:var(--font-rounded);">PIONEER SETTINGS</span>
+        <button class="header-icon-btn" onclick="closeSettings()">✕</button>
       </div>
-      <div id="modal-content-body">
-        <!-- Content inserted dynamically -->
+
+      <div class="settings-group">
+        <label style="font-size:11px; font-weight:800; font-family:var(--font-mono); color:var(--amber-orange);">SPOTIFY CLIENT CONFIGURATION</label>
+        <div style="font-size:10.5px; color:var(--text-muted); margin-top:2px;">Custom Spotify Developer App Client ID for OAuth PKCE login:</div>
+        <input type="text" class="settings-input" id="cfg-spotify-client-id" placeholder="Enter Spotify Client ID" onchange="saveSpotifyClientId(this.value)">
+      </div>
+
+      <div class="settings-group">
+        <label style="font-size:11px; font-weight:800; font-family:var(--font-mono); color:var(--cyber-cyan);">AUDIO ENGINE LATENCY & BUFFER</label>
+        <select class="settings-input" id="cfg-latency-hint" onchange="saveLatencyHint(this.value)">
+          <option value="playback">Audiophile Playback (High Fidelity Buffer)</option>
+          <option value="interactive">Low Latency (Interactive Touch)</option>
+          <option value="balanced">Balanced Cockpit Tuning</option>
+        </select>
+      </div>
+
+      <div class="settings-group">
+        <label style="font-size:11px; font-weight:800; font-family:var(--font-mono); color:var(--hifi-gold);">ANDROID MEDIASTORE DATABASE</label>
+        <button class="btn-add-songs" style="margin-top:8px; width:100%;" onclick="scanMediaStore()">RE-INDEX ALL DEVICE AUDIO FILES</button>
+      </div>
+
+      <div style="margin-top:24px; padding-top:14px; border-top:1px solid var(--titanium-card-border); font-size:10px; color:var(--text-muted); font-family:var(--font-mono); text-align:center;">
+        PIONEER DSP SOUND TUNE COCKPIT v4.2.0 • 32-BIT FLOATING POINT AUDIO ENGINE
       </div>
     </div>
   </div>
 
-  <!-- SCRIPTS -->
+  <!-- Hidden Native File Inputs -->
+  <input type="file" id="saf-file-input" multiple accept="audio/*" style="display:none;" onchange="handleFileSelect(event)">
+
+  <!-- Core JavaScript Services & Engines -->
   <script src="js/dsp-engine.js"></script>
   <script src="js/spotify-service.js"></script>
   <script src="js/youtube-music-engine.js"></script>
 
+  <!-- Pioneer Cockpit UI Controller Script -->
   <script>
-    // ==========================================================================
-    // PIONEER DSP - APPLICATION CONTROLLER & INTERACTION ENGINE
-    // ==========================================================================
+    // --- GLOBAL COCKPIT CONTROLLER ---
+    let currentTab = 'tuner';
+    let currentDialLevel = 80; // 0 to 100%
+    let isNowPlayingOpen = false;
+    let isLyricsViewActive = false;
+    let activeSpectrumData = new Uint8Array(18);
+    let spectrumInterval = null;
 
-    let currentSourceMode = 'local'; // 'local' or 'spotify'
-    let currentActiveTab = 'home';
-    let isSeeking = false;
-    let searchDebounceTimer = null;
-    let currentSearchFilter = 'all';
-    let searchCache = { spotify: [], local: [] };
+    // Initialize UI on DOM Ready
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Initialize Spectrum Bars
+      initSpectrumBars();
 
-    // Spotify Playback Poller State
-    let spotifyPollInterval = null;
-    let spotifyLastProgressMs = 0;
-    let spotifyLastProgressTimestamp = 0;
-    let spotifyDurationMs = 0;
-    let spotifyIsPlaying = false;
-    let spotifyCurrentTrack = null;
+      // 2. Setup Equalizer Faders
+      setupEqualizerFaders();
 
-    // --- TAB SWITCHING (Strictly 5 Tabs) ---
-    function switchTab(tabId) {
-      currentActiveTab = tabId;
-      document.querySelectorAll('.tab-view').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-tab-item').forEach(n => n.classList.remove('active'));
+      // 3. Setup Rotary Dial Knob Drag
+      setupRotaryDialKnob();
 
-      const targetView = document.getElementById(`tab-${tabId}`);
-      const targetNav = document.getElementById(`nav-${tabId}`);
+      // 4. Initialize DSP Engine & Load Saved Songs
+      try {
+        await window.dspEngine.initAudioContext();
+        await window.dspEngine.loadSavedSongs();
+        renderLibrarySongs();
+      } catch (e) {
+        console.warn('AudioContext auto-init deferred until user interaction:', e);
+      }
 
-      if (targetView) targetView.classList.add('active');
-      if (targetNav) targetNav.classList.add('active');
+      // 5. Start Spectrum Animation Loop
+      startSpectrumVisualizerLoop();
 
-      if (tabId === 'equalizer') {
-        renderEQFaders();
+      // 6. Start Playback Sync Loop
+      startPlaybackSyncTimer();
+
+      // 7. Initial EQ Curve Render
+      drawEQCurve();
+    });
+
+    // --- COCKPIT NAVIGATION (6 Authentic iOS Cockpit Tabs) ---
+    function switchCockpitTab(tabKey) {
+      currentTab = tabKey;
+
+      // Update Nav Buttons
+      const navIds = ['tuner', 'library', 'spotify', 'equalizer', 'hall', 'cabin'];
+      navIds.forEach(id => {
+        const btn = document.getElementById(`nav-${id}`);
+        if (btn) btn.classList.toggle('active', id === tabKey);
+      });
+
+      // Update Tab Views
+      navIds.forEach(id => {
+        const view = document.getElementById(`tab-${id}`);
+        if (view) view.classList.toggle('active', id === tabKey);
+      });
+
+      // Special Tab Transitions
+      if (tabKey === 'equalizer') {
+        setTimeout(drawEQCurve, 50);
       }
     }
 
-    // --- NOW PLAYING OVERLAY CONTROLS ---
-    function openNowPlaying() {
-      document.getElementById('now-playing-screen').classList.add('open');
+    // --- MASTER DIAL ROTARY KNOB (PioneerDialKnob from iOS) ---
+    function setupRotaryDialKnob() {
+      const area = document.getElementById('master-dial-touch-area');
+      let isDragging = false;
+      let startY = 0;
+      let startVal = currentDialLevel;
+
+      function onStart(e) {
+        isDragging = true;
+        startY = e.touches ? e.touches[0].clientY : e.clientY;
+        startVal = currentDialLevel;
+      }
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const curY = e.touches ? e.touches[0].clientY : e.clientY;
+        const delta = startY - curY; // drag up = increase, down = decrease
+        const newVal = Math.max(0, Math.min(100, Math.round(startVal + delta * 0.75)));
+        setDialLevel(newVal);
+      }
+
+      function onEnd() {
+        isDragging = false;
+      }
+
+      area.addEventListener('mousedown', onStart);
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onEnd);
+
+      area.addEventListener('touchstart', onStart, { passive: true });
+      window.addEventListener('touchmove', onMove, { passive: true });
+      window.addEventListener('touchend', onEnd);
+
+      // Set initial 80%
+      setDialLevel(80);
     }
 
-    function closeNowPlaying() {
-      document.getElementById('now-playing-screen').classList.remove('open');
+    function setDialLevel(val) {
+      currentDialLevel = val;
+      document.getElementById('dial-val-text').innerText = val;
+
+      // Arc dashoffset: circumference = 2 * PI * 54 = 339.29
+      const circ = 339.29;
+      const offset = circ - (circ * (val / 100.0));
+      const arc = document.getElementById('dial-arc-progress');
+      if (arc) {
+        arc.style.strokeDasharray = circ;
+        arc.style.strokeDashoffset = offset;
+      }
+
+      // Update WebAudio master gain
+      if (window.dspEngine && typeof window.dspEngine.setMasterGain === 'function') {
+        window.dspEngine.setMasterGain(val);
+      }
     }
 
-    // --- PLAYBACK CONTROL (UNIFIED FOR LOCAL & SPOTIFY) ---
-    async function toggleMasterPlay() {
-      if (currentSourceMode === 'spotify') {
-        try {
-          if (spotifyIsPlaying) {
-            await window.spotifyService.pause();
-            spotifyIsPlaying = false;
-          } else {
-            await window.spotifyService.play();
-            spotifyIsPlaying = true;
+    // --- CONCERT HALL ACOUSTICS TOGGLE (iOS MainDSPView match) ---
+    async function uiToggleConcertHall() {
+      if (!window.dspEngine) return;
+      const isEnabled = await window.dspEngine.toggleConcertHall();
+      updateConcertHallUI(isEnabled);
+    }
+
+    function updateConcertHallUI(isEnabled) {
+      const card = document.getElementById('concert-hall-card');
+      const text = document.getElementById('ch-status-text');
+      const pill = document.getElementById('ch-btn-text');
+      if (!card) return;
+
+      card.classList.toggle('active', isEnabled);
+      if (isEnabled) {
+        text.innerText = '3D Spatial Reverb Active • Live Stage Acoustics';
+        pill.innerText = 'ACTIVE';
+        highlightPreset('concertHall');
+        document.getElementById('reverb-mix-slider').value = 65;
+        document.getElementById('reverb-mix-val').innerText = '65%';
+      } else {
+        text.innerText = 'Tap to Engage Real-Time Concert Hall Reverb';
+        pill.innerText = 'ENGAGE';
+        document.getElementById('reverb-mix-slider').value = 0;
+        document.getElementById('reverb-mix-val').innerText = '0%';
+      }
+      drawEQCurve();
+    }
+
+    // --- TODOROKI SUPER BASS SLIDER ---
+    function onSuperBassInput(val) {
+      const g = parseFloat(val);
+      document.getElementById('super-bass-val').innerText = `+${g.toFixed(1)} dB`;
+      if (window.dspEngine) {
+        window.dspEngine.setSuperBass(g);
+      }
+      drawEQCurve();
+    }
+
+    // --- DSP PRESETS (6 iOS Presets) ---
+    function selectPreset(presetKey) {
+      if (!window.dspEngine) return;
+      window.dspEngine.applyPreset(presetKey);
+      highlightPreset(presetKey);
+
+      // Sync UI sliders
+      const gains = window.dspEngine.eqGains;
+      gains.forEach((g, idx) => {
+        const slider = document.getElementById(`eq-slider-${idx}`);
+        const lbl = document.getElementById(`eq-gain-lbl-${idx}`);
+        if (slider) slider.value = g;
+        if (lbl) lbl.innerText = `${g > 0 ? '+' : ''}${g}dB`;
+      });
+
+      // Sync Super Bass slider
+      const sbSlider = document.getElementById('super-bass-slider');
+      if (sbSlider) {
+        sbSlider.value = window.dspEngine.superBassGain;
+        document.getElementById('super-bass-val').innerText = `+${window.dspEngine.superBassGain.toFixed(1)} dB`;
+      }
+
+      // Sync Reverb
+      if (presetKey === 'concertHall') {
+        updateConcertHallUI(true);
+      } else {
+        updateConcertHallUI(false);
+      }
+
+      // Update Curve description
+      updatePresetDescription(presetKey);
+      drawEQCurve();
+    }
+
+    function highlightPreset(presetKey) {
+      const allPresets = ['flat', 'concertHall', 'superBass', 'dynamic', 'vocal', 'club'];
+      allPresets.forEach(p => {
+        const btn = document.getElementById(`preset-${p}`);
+        if (btn) btn.classList.toggle('active', p === presetKey);
+      });
+    }
+
+    function updatePresetDescription(presetKey) {
+      const descMap = {
+        flat: { title: 'ACTIVE CURVE: FLAT / DIRECT', body: 'Studio reference response with zero coloration across the entire 20Hz-20kHz acoustic spectrum.' },
+        concertHall: { title: 'ACTIVE CURVE: CONCERT HALL', body: '3D spatial acoustics with wide reverberation and high-frequency stage reflections.' },
+        superBass: { title: 'ACTIVE CURVE: SUPER BASS (TODOROKI)', body: 'Pioneer Todoroki dual-stage sub-bass booster (+9dB) at 80Hz and 60Hz.' },
+        dynamic: { title: 'ACTIVE CURVE: DYNAMIC LIVE', body: 'V-shape dynamic frequency curve with elevated presence and punch.' },
+        vocal: { title: 'ACTIVE CURVE: VOCAL CLARITY', body: 'Enhanced 1kHz-4kHz mid frequencies for crystal-clear vocals and speech.' },
+        club: { title: 'ACTIVE CURVE: CLUB DANCE', body: 'Punchy low-end kick and sharp high-shelf sparkle for electronic dance tracks.' }
+      };
+      const info = descMap[presetKey] || descMap.flat;
+      document.getElementById('eq-desc-title').innerText = info.title;
+      document.getElementById('eq-desc-body').innerText = info.body;
+    }
+
+    // --- 10-BAND GRAPHIC EQUALIZER ---
+    function setupEqualizerFaders() {
+      const container = document.getElementById('eq-faders-container');
+      container.innerHTML = '';
+
+      const freqs = [
+        { f: 31, l: '31Hz' },
+        { f: 63, l: '63Hz' },
+        { f: 125, l: '125Hz' },
+        { f: 250, l: '250Hz' },
+        { f: 500, l: '500Hz' },
+        { f: 1000, l: '1kHz' },
+        { f: 2000, l: '2kHz' },
+        { f: 4000, l: '4kHz' },
+        { f: 8000, l: '8kHz' },
+        { f: 16000, l: '16kHz' }
+      ];
+
+      freqs.forEach((item, idx) => {
+        const col = document.createElement('div');
+        col.className = 'eq-fader-column';
+        col.innerHTML = `
+          <span class="eq-gain-label" id="eq-gain-lbl-${idx}">0dB</span>
+          <div class="eq-slider-vertical-wrap">
+            <input type="range" class="eq-slider-vert" id="eq-slider-${idx}" min="-12" max="12" step="0.5" value="0" oninput="onEQFaderInput(${idx}, this.value)">
+          </div>
+          <span class="eq-freq-label">${item.l}</span>
+        `;
+        container.appendChild(col);
+      });
+    }
+
+    function onEQFaderInput(index, val) {
+      const gain = parseFloat(val);
+      document.getElementById(`eq-gain-lbl-${index}`).innerText = `${gain > 0 ? '+' : ''}${gain}dB`;
+      if (window.dspEngine) {
+        window.dspEngine.setEQBand(index, gain);
+      }
+      drawEQCurve();
+    }
+
+    function uiResetEQ() {
+      if (!window.dspEngine) return;
+      window.dspEngine.resetEQToZero();
+      selectPreset('flat');
+    }
+
+    // Draw Smooth Frequency Curve Preview Line
+    function drawEQCurve() {
+      const canvas = document.getElementById('eq-curve-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      // Draw Center Baseline
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, h / 2);
+      ctx.lineTo(w, h / 2);
+      ctx.stroke();
+
+      // Read current gains
+      const gains = window.dspEngine ? window.dspEngine.eqGains : [0,0,0,0,0,0,0,0,0,0];
+      const step = w / (gains.length - 1);
+      const midY = h / 2;
+
+      ctx.beginPath();
+      gains.forEach((g, i) => {
+        const x = i * step;
+        const norm = g / 12.0; // -1 to +1
+        const y = midY - (norm * (h * 0.42));
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+
+      const grad = ctx.createLinearGradient(0, 0, w, 0);
+      grad.addColorStop(0, '#ff6b00');
+      grad.addColorStop(0.5, '#00e5ff');
+      grad.addColorStop(1, '#ff6b00');
+
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    }
+
+    // --- REVERB ROOMS & WET/DRY MIX ---
+    function selectReverbRoom(roomKey, element) {
+      document.querySelectorAll('.reverb-room-card').forEach(c => c.classList.remove('selected'));
+      element.classList.add('selected');
+      if (window.dspEngine) {
+        window.dspEngine.setReverbRoom(roomKey);
+      }
+    }
+
+    function onReverbMixInput(val) {
+      const p = parseFloat(val);
+      document.getElementById('reverb-mix-val').innerText = `${Math.round(p)}%`;
+      if (window.dspEngine) {
+        window.dspEngine.setReverbWetDry(p);
+      }
+    }
+
+    // --- CAR CABIN LISTENING POSITION ALIGNMENT ---
+    function selectCabinPosition(pos) {
+      const allSeats = ['seat-fl', 'seat-fr', 'seat-rl', 'seat-rr'];
+      allSeats.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('selected');
+      });
+
+      const allBtns = ['btn-seat-all', 'btn-seat-fl', 'btn-seat-fr'];
+      allBtns.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+      });
+
+      if (pos === 'frontLeft') {
+        document.getElementById('seat-fl').classList.add('selected');
+        document.getElementById('btn-seat-fl').classList.add('active');
+        document.getElementById('cabin-status-title').innerText = 'ACTIVE FOCUS: DRIVER FOCUS (FL)';
+      } else if (pos === 'frontRight') {
+        document.getElementById('seat-fr').classList.add('selected');
+        document.getElementById('btn-seat-fr').classList.add('active');
+        document.getElementById('cabin-status-title').innerText = 'ACTIVE FOCUS: PASSENGER FOCUS (FR)';
+      } else {
+        document.getElementById('btn-seat-all').classList.add('active');
+        document.getElementById('cabin-status-title').innerText = 'ACTIVE FOCUS: ALL SEATS';
+      }
+
+      if (window.dspEngine) {
+        window.dspEngine.setListeningPosition(pos);
+      }
+    }
+
+    // --- SPECTRUM VISUALIZER LOOP ---
+    function initSpectrumBars() {
+      const row = document.getElementById('spectrum-bars-row');
+      row.innerHTML = '';
+      for (let i = 0; i < 18; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'spectrum-bar';
+        bar.id = `spec-bar-${i}`;
+        row.appendChild(bar);
+      }
+    }
+
+    function startSpectrumVisualizerLoop() {
+      const data = new Uint8Array(18);
+      function update() {
+        if (window.dspEngine && window.dspEngine.isPlaying && !window.dspEngine.isPaused) {
+          window.dspEngine.getByteFrequencyData(data);
+          for (let i = 0; i < 18; i++) {
+            const bar = document.getElementById(`spec-bar-${i}`);
+            if (bar) {
+              const val = data[i] || 0;
+              const h = Math.max(6, (val / 255.0) * 52);
+              bar.style.height = `${h}px`;
+            }
           }
-          updatePlaybackUI();
-        } catch(e) {
-          alert(e.message);
+        } else {
+          for (let i = 0; i < 18; i++) {
+            const bar = document.getElementById(`spec-bar-${i}`);
+            if (bar) bar.style.height = '6px';
+          }
         }
-      } else {
-        const playing = window.dspEngine.togglePlay();
-        updatePlaybackUI();
+        requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    // --- PLAYBACK SYNC & CLOCK ---
+    function startPlaybackSyncTimer() {
+      setInterval(() => {
+        if (!window.dspEngine) return;
+        const cur = window.dspEngine.getCurrentTime();
+        const dur = window.dspEngine.getCurrentDuration();
+        const isPlaying = window.dspEngine.isPlaying;
+
+        const curStr = formatTime(cur);
+        const durStr = formatTime(dur);
+
+        document.getElementById('hero-time-cur').innerText = curStr;
+        document.getElementById('hero-time-dur').innerText = durStr;
+        document.getElementById('np-modal-time-cur').innerText = curStr;
+        document.getElementById('np-modal-time-dur').innerText = durStr;
+
+        let pct = 0;
+        if (dur > 0) pct = Math.min(100, Math.max(0, (cur / dur) * 100));
+
+        document.getElementById('hero-seek-slider').value = pct;
+        document.getElementById('np-modal-seek').value = pct;
+        document.getElementById('dock-progress-fill').style.width = `${pct}%`;
+
+        // Update Play/Pause Icons
+        updatePlayIcons(isPlaying);
+
+        // Sync Lyrics line if open
+        if (isLyricsViewActive && window.syncLyricsScroll) {
+          window.syncLyricsScroll(cur);
+        }
+      }, 250);
+    }
+
+    function formatTime(secs) {
+      if (!secs || isNaN(secs) || !isFinite(secs)) return '0:00';
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function updatePlayIcons(isPlaying) {
+      const playPoly = '<polygon points="6 4 20 12 6 20 6 4" />';
+      const pauseRects = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      const content = isPlaying ? pauseRects : playPoly;
+
+      ['hero-play-icon', 'dock-play-icon', 'np-modal-play-icon'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.parentElement) el.parentElement.innerHTML = content;
+      });
+    }
+
+    // --- MASTER CONTROLS ---
+    function toggleMasterPlay() {
+      if (window.dspEngine) {
+        window.dspEngine.togglePlay();
       }
     }
 
-    async function masterStepNext() {
-      if (currentSourceMode === 'spotify') {
-        try {
-          await window.spotifyService.next();
-          setTimeout(pollSpotifyPlayback, 400);
-        } catch(e) {
-          alert(e.message);
-        }
-      } else {
-        await window.dspEngine.playNext();
-        updatePlaybackUI();
+    function masterStepNext() {
+      if (window.dspEngine) {
+        window.dspEngine.playNext();
       }
     }
 
-    async function masterStepPrev() {
-      if (currentSourceMode === 'spotify') {
-        try {
-          await window.spotifyService.previous();
-          setTimeout(pollSpotifyPlayback, 400);
-        } catch(e) {
-          alert(e.message);
-        }
-      } else {
-        await window.dspEngine.playPrev();
-        updatePlaybackUI();
+    function masterStepPrev() {
+      if (window.dspEngine) {
+        window.dspEngine.playPrev();
+      }
+    }
+
+    function onSeekInput(ratioPct) {
+      if (window.dspEngine) {
+        window.dspEngine.seek(parseFloat(ratioPct) / 100.0);
       }
     }
 
     function toggleShuffle() {
-      if (currentSourceMode === 'spotify') {
-        const btn = document.getElementById('np-shuffle-btn');
-        const nextState = !btn.classList.contains('active');
-        window.spotifyService.setShuffle(nextState).then(() => {
-          btn.classList.toggle('active', nextState);
-        }).catch(err => alert(err.message));
-      } else {
+      if (window.dspEngine) {
         window.dspEngine.isShuffle = !window.dspEngine.isShuffle;
-        document.getElementById('np-shuffle-btn').classList.toggle('active', window.dspEngine.isShuffle);
+        const btn = document.getElementById('hero-shuffle-btn');
+        if (btn) btn.classList.toggle('active', window.dspEngine.isShuffle);
       }
     }
 
     function toggleRepeat() {
-      if (currentSourceMode === 'spotify') {
-        const btn = document.getElementById('np-repeat-btn');
-        const nextState = btn.classList.contains('active') ? 'off' : 'context';
-        window.spotifyService.setRepeat(nextState).then(() => {
-          btn.classList.toggle('active', nextState !== 'off');
-        }).catch(err => alert(err.message));
-      } else {
-        const states = ['off', 'all', 'one'];
-        const curIdx = states.indexOf(window.dspEngine.isRepeat);
-        window.dspEngine.isRepeat = states[(curIdx + 1) % states.length];
-        const isActive = window.dspEngine.isRepeat !== 'off';
-        document.getElementById('np-repeat-btn').classList.toggle('active', isActive);
+      if (!window.dspEngine) return;
+      const modes = ['off', 'all', 'one'];
+      const curIdx = modes.indexOf(window.dspEngine.isRepeat || 'all');
+      window.dspEngine.isRepeat = modes[(curIdx + 1) % modes.length];
+    }
+
+    // --- LOCAL LIBRARY & SAF ---
+    function triggerFileImport() {
+      document.getElementById('saf-file-input').click();
+    }
+
+    async function handleFileSelect(e) {
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
+      if (window.dspEngine) {
+        await window.dspEngine.importFiles(files);
+        renderLibrarySongs();
       }
     }
 
-    function onSeekInput(val) {
-      isSeeking = true;
-      const ratio = parseFloat(val) / 100.0;
-      let durSec = 0;
-      if (currentSourceMode === 'spotify') {
-        durSec = spotifyDurationMs / 1000.0;
-      } else {
-        durSec = window.dspEngine.getCurrentDuration();
-      }
-      const targetSec = durSec * ratio;
-      document.getElementById('np-time-cur').innerText = formatTime(targetSec);
-    }
-
-    async function onSeekChange(val) {
-      const ratio = parseFloat(val) / 100.0;
-      if (currentSourceMode === 'spotify') {
-        const targetMs = Math.round(spotifyDurationMs * ratio);
-        try {
-          await window.spotifyService.seek(targetMs);
-          spotifyLastProgressMs = targetMs;
-          spotifyLastProgressTimestamp = Date.now();
-        } catch(e) {
-          alert(e.message);
-        }
-      } else {
-        window.dspEngine.seek(ratio);
-      }
-      isSeeking = false;
-    }
-
-    // --- ACCURATE 100ms PLAYBACK TIMER LOOP ---
-    setInterval(() => {
-      let curSec = 0;
-      let durSec = 0;
-      let isPlaying = false;
-
-      if (currentSourceMode === 'spotify') {
-        if (spotifyDurationMs > 0) {
-          durSec = spotifyDurationMs / 1000.0;
-          const elapsedSincePoll = spotifyIsPlaying ? (Date.now() - spotifyLastProgressTimestamp) / 1000.0 : 0;
-          curSec = Math.min(durSec, (spotifyLastProgressMs / 1000.0) + elapsedSincePoll);
-        }
-        isPlaying = spotifyIsPlaying;
-      } else {
-        curSec = window.dspEngine.getCurrentTime();
-        durSec = window.dspEngine.getCurrentDuration();
-        isPlaying = window.dspEngine.isPlaying;
-      }
-
-      if (!isSeeking) {
-        const activeTrack = window.dspEngine ? window.dspEngine.activeTrack : null;
-        if (activeTrack && activeTrack.isLive) {
-          document.getElementById('np-time-cur').innerText = formatTime(curSec);
-          document.getElementById('np-time-dur').innerText = 'LIVE';
-          document.getElementById('np-seek-slider').value = 100;
-          document.getElementById('dock-progress-fill').style.width = '100%';
-        } else {
-          document.getElementById('np-time-cur').innerText = formatTime(curSec);
-          document.getElementById('np-time-dur').innerText = formatTime(durSec);
-
-          let pct = 0;
-          if (durSec > 0) {
-            pct = Math.min(100, Math.max(0, (curSec / durSec) * 100));
-          }
-          document.getElementById('np-seek-slider').value = pct;
-          document.getElementById('dock-progress-fill').style.width = `${pct}%`;
+    function scanMediaStore() {
+      if (window.PioneerBridge && typeof window.PioneerBridge.scanMediaStoreAudio === 'function') {
+        const json = window.PioneerBridge.scanMediaStoreAudio();
+        if (json) {
+          try {
+            const tracks = JSON.parse(json);
+            if (window.dspEngine) {
+              window.dspEngine.importMediaStoreTracks(tracks);
+              renderLibrarySongs();
+            }
+          } catch(e) {}
         }
       }
-
-      // Live synchronized lyric scrolling
-      if (isLyricsVisible && window.syncLyricsScroll) {
-        window.syncLyricsScroll(curSec);
-      }
-
-      // W3C Media Session position telemetry
-      if ('mediaSession' in navigator && 'setPositionState' in navigator.mediaSession && isPlaying && durSec > 0) {
-        try {
-          navigator.mediaSession.setPositionState({
-            duration: durSec,
-            playbackRate: 1.0,
-            position: Math.min(durSec, Math.max(0, curSec))
-          });
-        } catch(e) {}
-      }
-    }, 100);
-
-    function formatTime(secs) {
-      if (isNaN(secs) || secs < 0) return '00:00';
-      const m = Math.floor(secs / 60);
-      const s = Math.floor(secs % 60);
-      return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
     }
 
-    // Update UI elements for current playback state
-    function updatePlaybackUI() {
-      const isPlaying = (currentSourceMode === 'spotify') ? spotifyIsPlaying : window.dspEngine.isPlaying;
-
-      // Update Play Icons (Home, Dock, Now Playing)
-      const playSvgPath = 'polygon points="6 4 20 12 6 20 6 4"';
-      const pauseSvgPath = 'rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
-
-      const heroIcon = document.getElementById('hero-play-icon');
-      const dockIcon = document.getElementById('dock-play-icon');
-      const npIcon = document.getElementById('np-play-icon');
-
-      if (isPlaying) {
-        if (heroIcon) heroIcon.outerHTML = `<g id="hero-play-icon">${pauseSvgPath}</g>`;
-        if (dockIcon) dockIcon.outerHTML = `<g id="dock-play-icon">${pauseSvgPath}</g>`;
-        if (npIcon) npIcon.outerHTML = `<g id="np-play-icon">${pauseSvgPath}</g>`;
-      } else {
-        if (heroIcon) heroIcon.outerHTML = `<${playSvgPath} id="hero-play-icon"/>`;
-        if (dockIcon) dockIcon.outerHTML = `<${playSvgPath} id="dock-play-icon"/>`;
-        if (npIcon) npIcon.outerHTML = `<${playSvgPath} id="np-play-icon"/>`;
-      }
-
-      // Update Metadata
-      if (currentSourceMode === 'spotify' && spotifyCurrentTrack) {
-        const title = spotifyCurrentTrack.name || 'Spotify Track';
-        const artist = (spotifyCurrentTrack.artists || []).map(a => a.name).join(', ') || 'Spotify Artist';
-        const album = spotifyCurrentTrack.album ? spotifyCurrentTrack.album.name : 'Spotify Stream';
-        const cover = (spotifyCurrentTrack.album && spotifyCurrentTrack.album.images && spotifyCurrentTrack.album.images[0]) ? spotifyCurrentTrack.album.images[0].url : 'assets/logo.png';
-
-        document.getElementById('hero-title').innerText = title;
-        document.getElementById('hero-artist').innerText = artist;
-        document.getElementById('hero-cover-img').src = cover;
-
-        document.getElementById('dock-title').innerText = title;
-        document.getElementById('dock-artist').querySelector('span:first-child').innerText = artist;
-        document.getElementById('dock-cover-img').src = cover;
-
-        document.getElementById('np-title').innerText = title;
-        document.getElementById('np-artist').innerText = artist;
-        document.getElementById('np-album').innerText = album;
-        document.getElementById('np-cover-img').src = cover;
-
-        updateSourceBadges('spotify');
-      } else if (currentSourceMode === 'youtube' || window.dspEngine.sourceType === 'stream') {
-        const track = window.dspEngine.activeTrack;
-        if (track) {
-          const title = track.title || 'YouTube Stream';
-          const artist = track.artist || 'YouTube Music';
-          const album = track.album || 'YouTube Music Stream';
-          const cover = track.artwork || 'assets/logo.png';
-
-          document.getElementById('hero-title').innerText = title;
-          document.getElementById('hero-artist').innerText = artist;
-          document.getElementById('hero-cover-img').src = cover;
-
-          document.getElementById('dock-title').innerText = title;
-          document.getElementById('dock-artist').querySelector('span:first-child').innerText = artist;
-          document.getElementById('dock-cover-img').src = cover;
-
-          document.getElementById('np-title').innerText = title;
-          document.getElementById('np-artist').innerText = artist;
-          document.getElementById('np-album').innerText = album;
-          document.getElementById('np-cover-img').src = cover;
-
-          updateSourceBadges('youtube');
-        }
-      } else if (currentSourceMode === 'local') {
-        const song = window.dspEngine.activeTrack || window.dspEngine.songs[window.dspEngine.currentIndex];
-        if (song) {
-          const title = song.title || 'Local Audio Track';
-          const artist = song.artist || 'Local Music';
-          const album = song.album || 'Device Library';
-
-          document.getElementById('hero-title').innerText = title;
-          document.getElementById('hero-artist').innerText = artist;
-          document.getElementById('hero-cover-img').src = 'assets/logo.png';
-
-          document.getElementById('dock-title').innerText = title;
-          document.getElementById('dock-artist').querySelector('span:first-child').innerText = artist;
-          document.getElementById('dock-cover-img').src = 'assets/logo.png';
-
-          document.getElementById('np-title').innerText = title;
-          document.getElementById('np-artist').innerText = artist;
-          document.getElementById('np-album').innerText = album;
-          document.getElementById('np-cover-img').src = 'assets/logo.png';
-
-          updateSourceBadges('local');
-        } else {
-          document.getElementById('dock-title').innerText = 'No Track Playing';
-          document.getElementById('dock-artist').querySelector('span:first-child').innerText = 'Pioneer DSP Ready';
-          updateSourceBadges('idle');
-        }
-      }
-
-      renderLocalSongList();
-    }
-
-    function updateSourceBadges(mode) {
-      const topBadge = document.getElementById('header-source-badge');
-      const heroBadge = document.getElementById('hero-source-badge');
-      const dockBadge = document.getElementById('dock-source-badge');
-      const npBadge = document.getElementById('np-source-badge');
-
-      let text = 'STANDBY';
-      let cls = 'idle';
-
-      if (mode === 'local') {
-        text = 'Hi-Fi DSP';
-        cls = 'local';
-      } else if (mode === 'spotify') {
-        text = 'SPOTIFY CONNECT';
-        cls = 'spotify';
-      } else if (mode === 'youtube') {
-        text = 'YOUTUBE Hi-Fi';
-        cls = 'youtube';
-      } else if (mode === 'stream') {
-        text = 'ONLINE STREAM';
-        cls = 'stream';
-      } else if (mode === 'radio') {
-        text = 'LIVE DSP STREAM';
-        cls = 'stream';
-      }
-
-      [topBadge, heroBadge, dockBadge, npBadge].forEach(b => {
-        if (!b) return;
-        b.className = `source-badge ${cls}`;
-        b.innerText = text;
-      });
-    }
-
-    // --- LOCAL LIBRARY CONTROLS & RENDERING ---
-    async function playLocalSong(idx) {
-      currentSourceMode = 'local';
-      try {
-        await window.dspEngine.playLocalSong(idx);
-        updatePlaybackUI();
-        const s = window.dspEngine.songs[idx];
-        if (s) {
-          updateMediaSession(s);
-          loadLyricsForTrack(s);
-        }
-      } catch(err) {
-        alert('Could not play track: ' + err.message);
-      }
-    }
-
-    function renderLocalSongList() {
-      const container = document.getElementById('local-track-list');
-      const countLabel = document.getElementById('local-count-label');
-      if (!container) return;
-
+    function renderLibrarySongs() {
+      const container = document.getElementById('library-songs-list');
+      if (!container || !window.dspEngine) return;
       const songs = window.dspEngine.songs || [];
-      if (countLabel) countLabel.innerText = `${songs.length} TRACKS ON DEVICE`;
+      document.getElementById('lib-count-label').innerText = `${songs.length} TRACKS`;
 
       if (songs.length === 0) {
         container.innerHTML = `
-          <div class="empty-state">
-            <svg viewBox="0 0 24 24" width="44" height="44" stroke="currentColor" stroke-width="1.5" fill="none">
-              <path d="M9 18V5l12-2v13"></path>
-              <circle cx="6" cy="18" r="3"></circle>
-              <circle cx="18" cy="16" r="3"></circle>
-            </svg>
-            <h3>No Local Music Found</h3>
-            <p>Tap "Scan Device Music" to search your phone's storage, or import audio files directly.</p>
+          <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+            <div style="font-size:24px; margin-bottom:8px;">🎵</div>
+            <div style="font-size:13px; font-weight:700; color:#fff;">No local audio files imported</div>
+            <div style="font-size:11px; margin-top:4px;">Tap "ADD SONGS" to select audio files from device storage.</div>
           </div>
         `;
         return;
@@ -1126,1093 +1234,178 @@
 
       container.innerHTML = '';
       songs.forEach((song, idx) => {
-        const isCurrent = (currentSourceMode === 'local' && window.dspEngine.currentIndex === idx);
         const row = document.createElement('div');
-        row.className = `track-row ${isCurrent ? 'playing' : ''}`;
-        row.onclick = () => playLocalSong(idx);
-
+        row.className = `song-row ${window.dspEngine.currentIndex === idx ? 'playing' : ''}`;
+        row.onclick = () => playSongAtIndex(idx);
         row.innerHTML = `
-          <div class="track-index-cover">
-            ${isCurrent ? `
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="var(--accent-pioneer)">
-                <polygon points="6 4 20 12 6 20 6 4"/>
-              </svg>
-            ` : (idx + 1)}
+          <div class="song-index-pill">${idx + 1}</div>
+          <div class="song-meta">
+            <div class="song-title">${escapeHtml(song.title)}</div>
+            <div class="song-artist">${escapeHtml(song.artist || 'Local Audio')}</div>
           </div>
-          <div class="track-meta">
-            <div class="track-title">${escapeHtml(song.title)}</div>
-            <div class="track-sub">${escapeHtml(song.artist)} • ${escapeHtml(song.album || 'Local Track')}</div>
-          </div>
-          <div class="track-right-meta">
-            <span class="track-duration">${song.duration ? formatTime(song.duration) : '--:--'}</span>
-            <button class="track-delete-btn" onclick="event.stopPropagation(); removeLocalSong('${song.id}')">
-              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
+          <span class="song-dur">${formatTime(song.duration)}</span>
+          <button class="song-delete-btn" onclick="deleteSong(${idx}, event)">✕</button>
         `;
         container.appendChild(row);
       });
     }
 
-    async function handleFileImport(files) {
-      if (files && files.length > 0) {
-        document.getElementById('local-count-label').innerText = 'IMPORTING AUDIO FILES...';
-        await window.dspEngine.importFiles(files);
-        renderLocalSongList();
-        updatePlaybackUI();
+    function filterLocalSongs(query) {
+      const q = (query || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('.song-row');
+      rows.forEach(r => {
+        const txt = r.innerText.toLowerCase();
+        r.style.display = txt.includes(q) ? 'flex' : 'none';
+      });
+    }
+
+    async function playSongAtIndex(idx) {
+      if (window.dspEngine) {
+        await window.dspEngine.playLocalSong(idx);
+        renderLibrarySongs();
+        updateMetadataUI();
       }
     }
 
-    async function removeLocalSong(id) {
-      await window.dspEngine.removeSong(id);
-      renderLocalSongList();
-      updatePlaybackUI();
-    }
-
-    function triggerMediaStoreScan() {
-      if (!window.PioneerBridge) {
-        alert('MediaStore auto-scanning is available on Android devices.');
-        return;
-      }
-      if (!window.PioneerBridge.hasMediaPermission()) {
-        window.PioneerBridge.requestMediaPermission();
-      } else {
-        performMediaStoreScan();
+    async function deleteSong(idx, e) {
+      e.stopPropagation();
+      if (window.dspEngine) {
+        await window.dspEngine.removeSong(idx);
+        renderLibrarySongs();
       }
     }
 
-    window.onMediaPermissionResult = function(granted) {
-      if (granted) {
-        performMediaStoreScan();
-      } else {
-        alert('Audio storage permission is required to discover music files on your device.');
-      }
-    };
+    function updateMetadataUI() {
+      if (!window.dspEngine) return;
+      const song = window.dspEngine.activeTrack || window.dspEngine.songs[window.dspEngine.currentIndex];
+      if (!song) return;
 
-    function performMediaStoreScan() {
-      try {
-        const jsonStr = window.PioneerBridge.scanMediaStoreAudio();
-        const tracks = JSON.parse(jsonStr);
-        if (tracks && tracks.length > 0) {
-          window.dspEngine.importMediaStoreTracks(tracks).then(() => {
-            renderLocalSongList();
-            updatePlaybackUI();
-            alert(`Discovered & indexed ${tracks.length} music tracks from your phone storage!`);
-          });
-        } else {
-          alert('No audio tracks found in device MediaStore.');
-        }
-      } catch(e) {
-        console.error('Scan error:', e);
+      const title = song.title || 'Unknown Track';
+      const artist = song.artist || 'Local Audio';
+
+      document.getElementById('hero-title').innerText = title;
+      document.getElementById('hero-artist').innerText = artist;
+      document.getElementById('dock-title').innerText = title;
+      document.getElementById('dock-artist').querySelector('span').innerText = artist;
+      document.getElementById('np-modal-title').innerText = title;
+      document.getElementById('np-modal-artist').innerText = artist;
+
+      // Fetch LRCLIB lyrics in background
+      if (window.youtubeMusicEngine) {
+        window.youtubeMusicEngine.fetchLyrics(title, artist, song.duration).then(renderLyrics);
       }
     }
 
-    async function clearLibraryCache() {
-      if (confirm('Clear all indexed local songs from the app storage?')) {
-        await window.dspEngine.db.clearAll();
-        window.dspEngine.songs = [];
-        renderLocalSongList();
-        updatePlaybackUI();
+    // --- SPOTIFY INTEGRATION ---
+    function loadSpotifyStation(url, btn) {
+      document.querySelectorAll('.spotify-station-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const frame = document.getElementById('spotify-web-frame');
+      const embedUrl = url.replace('open.spotify.com/playlist/', 'open.spotify.com/embed/playlist/') + '?utm_source=generator&theme=0';
+      if (frame) frame.src = embedUrl;
+    }
+
+    function connectSpotifyOAuth() {
+      if (window.spotifyService) {
+        window.spotifyService.loginPKCE();
       }
     }
 
-    function switchLibrarySegment(seg) {
-      document.getElementById('seg-local').classList.toggle('active', seg === 'local');
-      document.getElementById('seg-spotify').classList.toggle('active', seg === 'spotify');
-      document.getElementById('library-sub-local').style.display = (seg === 'local') ? 'block' : 'none';
-      document.getElementById('library-sub-spotify').style.display = (seg === 'spotify') ? 'block' : 'none';
-
-      if (seg === 'spotify') {
-        loadSpotifyPlaylists();
-      }
+    // --- NOW PLAYING & LYRICS OVERLAY ---
+    function openNowPlaying() {
+      document.getElementById('now-playing-screen').classList.add('open');
+      isNowPlayingOpen = true;
     }
 
-    // --- SPOTIFY INTEGRATION & PLAYBACK POLLER ---
-    async function loadSpotifyPlaylists() {
-      const container = document.getElementById('spotify-library-container');
-      if (!window.spotifyService.isAuthenticated()) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <svg viewBox="0 0 24 24" width="48" height="48" stroke="var(--accent-spotify)" stroke-width="1.5" fill="none">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polygon points="10 8 16 12 10 16 10 8"></polygon>
-            </svg>
-            <h3>Connect Spotify Account</h3>
-            <p>Log in with your Spotify account to view your playlists and stream directly through Spotify Connect.</p>
-            <button class="btn-primary btn-spotify" onclick="toggleSpotifyAuth()">Connect Spotify</button>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = '<div style="text-align: center; padding: 30px; color: var(--text-muted);">Loading playlists...</div>';
-
-      try {
-        const playlists = await window.spotifyService.getUserPlaylists(30);
-        if (playlists.length === 0) {
-          container.innerHTML = '<div class="empty-state"><h3>No Playlists Found</h3></div>';
-          return;
-        }
-
-        container.innerHTML = '';
-        playlists.forEach(pl => {
-          const cover = (pl.images && pl.images[0]) ? pl.images[0].url : 'assets/logo.png';
-          const card = document.createElement('div');
-          card.className = 'track-row';
-          card.style.cursor = 'pointer';
-          card.onclick = () => playSpotifyContext(pl.uri);
-
-          card.innerHTML = `
-            <img src="${cover}" class="track-index-cover" style="border-radius: var(--radius-sm);" alt="Cover">
-            <div class="track-meta">
-              <div class="track-title">${escapeHtml(pl.name)}</div>
-              <div class="track-sub">${pl.tracks ? pl.tracks.total : 0} Tracks • By ${escapeHtml(pl.owner ? pl.owner.display_name : 'Spotify')}</div>
-            </div>
-            <button class="hero-action-btn" style="width: 34px; height: 34px;" onclick="event.stopPropagation(); playSpotifyContext('${pl.uri}')">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                <polygon points="6 4 20 12 6 20 6 4"/>
-              </svg>
-            </button>
-          `;
-          container.appendChild(card);
-        });
-      } catch(e) {
-        container.innerHTML = `<div class="empty-state"><h3>Error loading playlists</h3><p>${escapeHtml(e.message)}</p></div>`;
-      }
+    function closeNowPlaying() {
+      document.getElementById('now-playing-screen').classList.remove('open');
+      isNowPlayingOpen = false;
     }
 
-    async function playSpotifyContext(contextUri) {
-      try {
-        currentSourceMode = 'spotify';
-        window.dspEngine.stopPlayback();
-        await window.spotifyService.play(contextUri);
-        setTimeout(pollSpotifyPlayback, 600);
-      } catch(e) {
-        alert(e.message);
-      }
-    }
-
-    async function playSpotifyTrack(trackUri) {
-      try {
-        currentSourceMode = 'spotify';
-        window.dspEngine.stopPlayback();
-        await window.spotifyService.play(null, [trackUri]);
-        setTimeout(pollSpotifyPlayback, 600);
-      } catch(e) {
-        alert(e.message);
-      }
-    }
-
-    async function pollSpotifyPlayback() {
-      if (!window.spotifyService.isAuthenticated()) return;
-      try {
-        const state = await window.spotifyService.getPlaybackState();
-        if (state && state.item) {
-          spotifyCurrentTrack = state.item;
-          spotifyDurationMs = state.item.duration_ms || 0;
-          spotifyLastProgressMs = state.progress_ms || 0;
-          spotifyLastProgressTimestamp = Date.now();
-          spotifyIsPlaying = state.is_playing || false;
-
-          if (currentSourceMode === 'spotify') {
-            updatePlaybackUI();
-          }
-        }
-      } catch(e) {}
-    }
-
-    function startSpotifyPoller() {
-      if (spotifyPollInterval) clearInterval(spotifyPollInterval);
-      spotifyPollInterval = setInterval(pollSpotifyPlayback, 3000);
-      pollSpotifyPlayback();
-    }
-
-    // --- SEARCH CONTROLLER (SPOTIFY & LOCAL) ---
-    function onSearchInput(val) {
-      const clearBtn = document.getElementById('search-clear-btn');
-      clearBtn.classList.toggle('visible', val.trim().length > 0);
-
-      clearTimeout(searchDebounceTimer);
-      searchDebounceTimer = setTimeout(() => {
-        executeSearch(val);
-      }, 300);
-    }
-
-    function clearSearchInput() {
-      const input = document.getElementById('search-input-field');
-      input.value = '';
-      document.getElementById('search-clear-btn').classList.remove('visible');
-      executeSearch('');
-    }
-
-    function setSearchFilter(filter) {
-      currentSearchFilter = filter;
-      document.getElementById('filter-all').classList.toggle('active', filter === 'all');
-      const streamsFilter = document.getElementById('filter-streams');
-      if (streamsFilter) streamsFilter.classList.toggle('active', filter === 'streams');
-      const ytFilter = document.getElementById('filter-youtube');
-      if (ytFilter) ytFilter.classList.toggle('active', filter === 'youtube');
-      document.getElementById('filter-spotify').classList.toggle('active', filter === 'spotify');
-      document.getElementById('filter-local').classList.toggle('active', filter === 'local');
-      executeSearch(document.getElementById('search-input-field').value);
-    }
-
-    async function executeSearch(query) {
-      const container = document.getElementById('search-results-container');
-      const q = (query || '').trim().toLowerCase();
-
-      // When search query is empty or Online Streams filter is selected
-      if (!q || currentSearchFilter === 'streams') {
-        const stations = window.youtubeMusicEngine ? window.youtubeMusicEngine.getCuratedStations() : [];
-        let stationsHtml = '';
-        stations.forEach((st, idx) => {
-          stationsHtml += `
-            <div class="track-row" onclick="playOnlineStreamTrack(window.youtubeMusicEngine.curatedStations[${idx}])">
-              <div class="track-index-cover" style="background:#111;">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--accent-pioneer)" stroke-width="2" fill="none">
-                  <path d="M4.93 19.07a10 10 0 0 1 0-14.14M19.07 4.93a10 10 0 0 1 0 14.14M7.76 16.24a6 6 0 0 1 0-8.48M16.24 7.76a6 6 0 0 1 0 8.48M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0"></path>
-                </svg>
-              </div>
-              <div class="track-meta">
-                <div class="track-title" style="display:flex; align-items:center; gap:6px;">
-                  <span>${escapeHtml(st.title)}</span>
-                  <span class="badge-live">LIVE</span>
-                </div>
-                <div class="track-sub">${escapeHtml(st.artist)} • <span class="station-badge-dsp">${st.dspRecommendation}</span></div>
-              </div>
-              <span class="track-duration" style="font-weight:700; color:var(--accent-pioneer); font-size:11px;">PLAY</span>
-            </div>
-          `;
-        });
-
-        container.innerHTML = `
-          <!-- Custom Online Stream Player Card -->
-          <div class="custom-stream-card">
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-              <div style="font-size:13px; font-weight:700; color:#fff; display:flex; align-items:center; gap:6px;">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--accent-pioneer)" stroke-width="2" fill="none">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                </svg>
-                <span>Direct Audio Stream URL</span>
-              </div>
-              <span class="badge-live">DSP READY</span>
-            </div>
-            <div style="font-size:11px; color:var(--text-muted); line-height:1.4;">
-              Stream any direct MP3, AAC, or Shoutcast URL with real-time 32-bit floating point Pioneer DSP modulation.
-            </div>
-            <div class="custom-stream-input-row">
-              <input type="text" id="custom-stream-url-input" class="custom-stream-input" placeholder="Enter stream URL (e.g. https://.../stream.mp3)">
-              <button class="custom-stream-btn" onclick="startCustomStreamPlayback()">Stream</button>
-            </div>
-          </div>
-
-          <!-- Curated Live Stations Section -->
-          <div class="results-section-title" style="display:flex; justify-content:space-between; align-items:center;">
-            <span>Curated 24/7 Hi-Fi Live Stations</span>
-            <span style="font-size:10px; color:var(--text-muted);">Real-Time 32-bit DSP</span>
-          </div>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            ${stationsHtml}
-          </div>
-        `;
-        return;
-      }
-
-      // Filter local
-      let localMatches = [];
-      if (currentSearchFilter === 'all' || currentSearchFilter === 'local') {
-        localMatches = (window.dspEngine.songs || []).filter(s =>
-          (s.title && s.title.toLowerCase().includes(q)) ||
-          (s.artist && s.artist.toLowerCase().includes(q)) ||
-          (s.album && s.album.toLowerCase().includes(q))
-        );
-      }
-
-      // Query Spotify if authenticated
-      let spotifyMatches = [];
-      if ((currentSearchFilter === 'all' || currentSearchFilter === 'spotify') && window.spotifyService && window.spotifyService.isAuthenticated()) {
-        try {
-          const res = await window.spotifyService.search(q, 'track');
-          spotifyMatches = res.tracks || [];
-        } catch(e) {}
-      }
-
-      // Query Online Live Streams (Radio Browser Open API)
-      let streamMatches = [];
-      if ((currentSearchFilter === 'all' || currentSearchFilter === 'streams') && window.youtubeMusicEngine) {
-        try {
-          streamMatches = await window.youtubeMusicEngine.searchOnlineStreams(q);
-        } catch (e) {
-          console.warn('Online stream search notice:', e);
-        }
-      }
-
-      // Query YouTube Music Engine (YouTube Data API v3 + High-Speed Gateways)
-      let youtubeMatches = [];
-      if ((currentSearchFilter === 'all' || currentSearchFilter === 'youtube') && window.youtubeMusicEngine) {
-        try {
-          youtubeMatches = await window.youtubeMusicEngine.search(q);
-        } catch(e) {
-          console.warn('YouTube search notice:', e);
-        }
-      }
-
-      container.innerHTML = '';
-
-      if (streamMatches.length === 0 && localMatches.length === 0 && spotifyMatches.length === 0 && youtubeMatches.length === 0) {
-        container.innerHTML = `<div class="empty-state"><h3>No results found</h3><p>Try searching with another keyword.</p></div>`;
-        return;
-      }
-
-      // 0. Render Online Live Streams Matches
-      if (streamMatches.length > 0) {
-        const titleSec = document.createElement('div');
-        titleSec.className = 'results-section-title';
-        titleSec.style.display = 'flex';
-        titleSec.style.justifyContent = 'space-between';
-        titleSec.innerHTML = `<span>Online Streams & Radio (${streamMatches.length})</span><span class="badge-live">LIVE</span>`;
-        container.appendChild(titleSec);
-
-        streamMatches.forEach((track, idx) => {
-          const row = document.createElement('div');
-          row.className = 'track-row';
-          row.onclick = () => playOnlineStreamTrack(track, streamMatches, idx);
-          row.innerHTML = `
-            <div class="track-index-cover" style="background:#111;">
-              <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--accent-pioneer)" stroke-width="2" fill="none">
-                <path d="M4.93 19.07a10 10 0 0 1 0-14.14M19.07 4.93a10 10 0 0 1 0 14.14M7.76 16.24a6 6 0 0 1 0-8.48M16.24 7.76a6 6 0 0 1 0 8.48M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0"></path>
-              </svg>
-            </div>
-            <div class="track-meta">
-              <div class="track-title" style="display:flex; align-items:center; gap:6px;">
-                <span>${escapeHtml(track.title)}</span>
-                <span class="badge-live">LIVE</span>
-              </div>
-              <div class="track-sub">${escapeHtml(track.artist)} • ${escapeHtml(track.album || 'Live Stream')}</div>
-            </div>
-            <span class="track-duration" style="font-weight:700; color:var(--accent-pioneer); font-size:11px;">PLAY</span>
-          `;
-          container.appendChild(row);
-        });
-      }
-
-      // 1. Render YouTube Matches
-      if (youtubeMatches.length > 0) {
-        const titleSec = document.createElement('div');
-        titleSec.className = 'results-section-title';
-        titleSec.innerText = `YouTube Music (${youtubeMatches.length})`;
-        container.appendChild(titleSec);
-
-        youtubeMatches.forEach((track, idx) => {
-          const row = document.createElement('div');
-          row.className = 'track-row';
-          row.onclick = () => playYouTubeTrack(track, youtubeMatches, idx);
-          row.innerHTML = `
-            <img src="${escapeHtml(track.artwork || 'assets/logo.png')}" class="track-index-cover" alt="Cover" onerror="this.src='assets/logo.png'">
-            <div class="track-meta">
-              <div class="track-title">${escapeHtml(track.title)}</div>
-              <div class="track-sub">${escapeHtml(track.artist)} • YouTube Stream</div>
-            </div>
-            <span class="track-duration">${track.duration ? formatTime(track.duration) : ''}</span>
-          `;
-          container.appendChild(row);
-        });
-      }
-
-      // 2. Render Local Matches
-      if (localMatches.length > 0) {
-        const titleSec = document.createElement('div');
-        titleSec.className = 'results-section-title';
-        titleSec.innerText = `Local Music (${localMatches.length})`;
-        container.appendChild(titleSec);
-
-        localMatches.forEach(song => {
-          const origIdx = window.dspEngine.songs.findIndex(s => s.id === song.id);
-          const row = document.createElement('div');
-          row.className = 'track-row';
-          row.onclick = () => playLocalSong(origIdx);
-          row.innerHTML = `
-            <div class="track-index-cover">
-              <svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--accent-pioneer)" stroke-width="2" fill="none">
-                <path d="M9 18V5l12-2v13"></path>
-              </svg>
-            </div>
-            <div class="track-meta">
-              <div class="track-title">${escapeHtml(song.title)}</div>
-              <div class="track-sub">${escapeHtml(song.artist)} • Local File</div>
-            </div>
-            <span class="track-duration">${song.duration ? formatTime(song.duration) : ''}</span>
-          `;
-          container.appendChild(row);
-        });
-      }
-
-      // 3. Render Spotify Matches
-      if (spotifyMatches.length > 0) {
-        const titleSec = document.createElement('div');
-        titleSec.className = 'results-section-title';
-        titleSec.innerText = `Spotify Results (${spotifyMatches.length})`;
-        container.appendChild(titleSec);
-
-        spotifyMatches.forEach(track => {
-          const cover = (track.album && track.album.images && track.album.images[0]) ? track.album.images[0].url : 'assets/logo.png';
-          const artist = (track.artists || []).map(a => a.name).join(', ');
-          const row = document.createElement('div');
-          row.className = 'track-row';
-          row.onclick = () => playSpotifyTrack(track.uri);
-          row.innerHTML = `
-            <img src="${cover}" class="track-index-cover" alt="Cover">
-            <div class="track-meta">
-              <div class="track-title">${escapeHtml(track.name)}</div>
-              <div class="track-sub">${escapeHtml(artist)} • Spotify</div>
-            </div>
-            <span class="track-duration">${track.duration_ms ? formatTime(track.duration_ms / 1000) : ''}</span>
-          `;
-          container.appendChild(row);
-        });
-      }
-    }
-
-    // --- YOUTUBE PLAYBACK ENGINE & AUTHORIZED AUDIO STREAMING ---
-    let currentYoutubeQueue = [];
-    let currentYoutubeIndex = -1;
-
-    async function playOnlineStreamTrack(track, queue = null, index = -1) {
-      try {
-        currentSourceMode = track.source === 'youtube' ? 'youtube' : 'stream';
-        if (spotifyIsPlaying && window.spotifyService) {
-          window.spotifyService.pause().catch(() => {});
-          spotifyIsPlaying = false;
-        }
-
-        if (queue) {
-          currentYoutubeQueue = queue;
-          currentYoutubeIndex = index;
-        }
-
-        // Immediate visual telemetry
-        document.getElementById('dock-title').innerText = track.title;
-        document.getElementById('dock-artist').querySelector('span:first-child').innerText = 'Connecting stream...';
-        document.getElementById('dock-cover-img').src = track.artwork || 'assets/logo.png';
-        updateSourceBadges(track.isLive ? 'radio' : (track.source === 'youtube' ? 'youtube' : 'stream'));
-
-        // Resolve stream if not yet populated
-        if (!track.streamUrl && window.youtubeMusicEngine) {
-          const resolved = await window.youtubeMusicEngine.resolveAudioStream(track.videoId || track.id);
-          Object.assign(track, resolved);
-        }
-
-        // Stream audio through 32-bit float WebAudio DSP pipeline
-        await window.dspEngine.playStreamTrack(track, currentYoutubeQueue, currentYoutubeIndex);
-        updatePlaybackUI();
-        updateMediaSession(track);
-
-        // Fetch synchronized lyrics if regular song, or display live broadcast banner
-        if (!track.isLive) {
-          loadLyricsForTrack(track);
-        } else {
-          clearLyricsDisplay('Live Radio Stream • Real-Time Pioneer DSP Active');
-        }
-      } catch (err) {
-        console.error('Failed to play online stream:', err);
-        alert('Playback error: ' + (err.message || 'Unable to stream audio. Please verify your internet connection.'));
-      }
-    }
-
-    // Alias for backwards compatibility
-    const playYouTubeTrack = playOnlineStreamTrack;
-
-    function startCustomStreamPlayback() {
-      const input = document.getElementById('custom-stream-url-input');
-      const url = (input ? input.value : '').trim();
-      if (!url) {
-        alert('Please enter a valid audio stream URL (HTTP / HTTPS).');
-        return;
-      }
-      if (!window.youtubeMusicEngine) return;
-      const track = window.youtubeMusicEngine.createCustomStreamTrack(url, 'Direct Custom Stream', 'Live DSP Audio');
-      playOnlineStreamTrack(track);
-    }
-
-    // Global hook when queue advances
-    window.onPlaybackTrackChanged = function(track) {
-      updatePlaybackUI();
-      updateMediaSession(track);
-      loadLyricsForTrack(track);
-    };
-
-    // --- W3C MEDIA SESSION API (Lock Screen & Background Notification Controls) ---
-    function updateMediaSession(track) {
-      if (!('mediaSession' in navigator) || !track) return;
-      try {
-        const artworkUrl = track.artwork || 'assets/logo.png';
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: track.title || 'Pioneer Audio Track',
-          artist: track.artist || 'Pioneer DSP',
-          album: track.album || 'Pioneer Hi-Fi Master',
-          artwork: [
-            { src: artworkUrl, sizes: '96x96', type: 'image/png' },
-            { src: artworkUrl, sizes: '128x128', type: 'image/png' },
-            { src: artworkUrl, sizes: '192x192', type: 'image/png' },
-            { src: artworkUrl, sizes: '256x256', type: 'image/png' },
-            { src: artworkUrl, sizes: '512x512', type: 'image/png' }
-          ]
-        });
-        navigator.mediaSession.playbackState = 'playing';
-
-        navigator.mediaSession.setActionHandler('play', () => {
-          toggleMasterPlay();
-          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
-        });
-        navigator.mediaSession.setActionHandler('pause', () => {
-          toggleMasterPlay();
-          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
-        });
-        navigator.mediaSession.setActionHandler('previoustrack', () => masterStepPrev());
-        navigator.mediaSession.setActionHandler('nexttrack', () => masterStepNext());
-        navigator.mediaSession.setActionHandler('seekto', (details) => {
-          if (details.seekTime !== undefined && details.seekTime !== null) {
-            const dur = window.dspEngine.getCurrentDuration();
-            if (dur > 0) window.dspEngine.seek(details.seekTime / dur);
-          }
-        });
-        navigator.mediaSession.setActionHandler('seekforward', (details) => {
-          const skip = details.seekOffset || 10;
-          const cur = window.dspEngine.getCurrentTime();
-          const dur = window.dspEngine.getCurrentDuration();
-          if (dur > 0) window.dspEngine.seek(Math.min(dur, cur + skip) / dur);
-        });
-        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
-          const skip = details.seekOffset || 10;
-          const cur = window.dspEngine.getCurrentTime();
-          const dur = window.dspEngine.getCurrentDuration();
-          if (dur > 0) window.dspEngine.seek(Math.max(0, cur - skip) / dur);
-        });
-      } catch(err) {
-        console.warn('MediaSession setup notice:', err);
-      }
-    }
-
-    // --- LRCLIB SYNCHRONIZED LYRICS ENGINE ---
-    let isLyricsVisible = false;
-    let currentLyricsData = null;
-
-    async function loadLyricsForTrack(track) {
-      currentLyricsData = null;
-      const lyricsContainer = document.getElementById('np-lyrics-content');
-      if (lyricsContainer) {
-        lyricsContainer.innerHTML = '<div class="lyrics-status">Searching LRCLIB lyrics...</div>';
-      }
-
-      if (!window.youtubeMusicEngine) return;
-
-      try {
-        const data = await window.youtubeMusicEngine.fetchLyrics(track.title, track.artist, track.duration);
-        currentLyricsData = data;
-        renderLyricsView();
-      } catch (e) {
-        if (lyricsContainer) {
-          lyricsContainer.innerHTML = '<div class="lyrics-status">No lyrics found for this track.</div>';
-        }
-      }
+    function openNowPlayingWithLyrics() {
+      openNowPlaying();
+      if (!isLyricsViewActive) toggleLyricsView();
     }
 
     function toggleLyricsView() {
-      isLyricsVisible = !isLyricsVisible;
-      const coverImg = document.getElementById('np-cover-img');
-      const lyricsContainer = document.getElementById('np-lyrics-container');
-      const lyricsBtn = document.getElementById('np-lyrics-toggle-btn');
-
-      if (coverImg && lyricsContainer) {
-        if (isLyricsVisible) {
-          coverImg.style.display = 'none';
-          lyricsContainer.style.display = 'flex';
-          if (lyricsBtn) lyricsBtn.style.color = 'var(--accent-pioneer)';
-          renderLyricsView();
-        } else {
-          coverImg.style.display = 'block';
-          lyricsContainer.style.display = 'none';
-          if (lyricsBtn) lyricsBtn.style.color = '';
-        }
-      }
-    }
-
-    function renderLyricsView() {
-      const container = document.getElementById('np-lyrics-content');
-      if (!container) return;
-
-      if (!currentLyricsData) {
-        container.innerHTML = '<div class="lyrics-status">No track playing</div>';
-        return;
-      }
-
-      if (currentLyricsData.instrumental) {
-        container.innerHTML = '<div class="lyrics-status">🎵 Instrumental Track</div>';
-        return;
-      }
-
-      if (currentLyricsData.parsedSynced && currentLyricsData.parsedSynced.length > 0) {
-        let html = '<div class="lyrics-scroll-body">';
-        currentLyricsData.parsedSynced.forEach((line, idx) => {
-          html += `<div class="lyrics-line" id="lyric-line-${idx}" onclick="seekToLyricTime(${line.time})">${escapeHtml(line.text || '...')}</div>`;
-        });
-        html += '</div>';
-        container.innerHTML = html;
-      } else if (currentLyricsData.plainLyrics) {
-        container.innerHTML = `<div class="lyrics-plain">${escapeHtml(currentLyricsData.plainLyrics)}</div>`;
+      isLyricsViewActive = !isLyricsViewActive;
+      const cover = document.getElementById('np-large-cover-wrap');
+      const lyrics = document.getElementById('lyrics-container');
+      if (isLyricsViewActive) {
+        cover.style.display = 'none';
+        lyrics.classList.add('visible');
       } else {
-        container.innerHTML = '<div class="lyrics-status">No lyrics found on LRCLIB</div>';
+        cover.style.display = 'block';
+        lyrics.classList.remove('visible');
       }
     }
 
-    function seekToLyricTime(time) {
-      const dur = window.dspEngine.getCurrentDuration();
-      if (dur > 0) {
-        window.dspEngine.seek(time / dur);
+    function renderLyrics(lyricsData) {
+      const container = document.getElementById('lyrics-scroll-content');
+      if (!container) return;
+      if (!lyricsData || (!lyricsData.plainLyrics && (!lyricsData.syncedLyrics || lyricsData.syncedLyrics.length === 0))) {
+        container.innerHTML = '<div style="color:var(--text-muted); font-size:14px; padding:40px;">No lyrics available for this track.</div>';
+        return;
+      }
+
+      if (lyricsData.parsedSynced && lyricsData.parsedSynced.length > 0) {
+        container.innerHTML = '';
+        lyricsData.parsedSynced.forEach((item, idx) => {
+          const p = document.createElement('div');
+          p.className = 'lyric-line';
+          p.id = `lyric-line-${idx}`;
+          p.innerText = item.text;
+          p.onclick = () => window.dspEngine.seek(item.time / window.dspEngine.getCurrentDuration());
+          container.appendChild(p);
+        });
+      } else if (lyricsData.plainLyrics) {
+        container.innerHTML = `<div style="font-size:14px; line-height:1.8; color:rgba(255,255,255,0.7);">${escapeHtml(lyricsData.plainLyrics).replace(/\n/g, '<br>')}</div>`;
       }
     }
 
-    let lastActiveLyricIdx = -1;
     window.syncLyricsScroll = function(curSec) {
-      if (!isLyricsVisible || !currentLyricsData || !currentLyricsData.parsedSynced || currentLyricsData.parsedSynced.length === 0) return;
+      if (!window.youtubeMusicEngine || !window.youtubeMusicEngine.activeLyrics) return;
+      const synced = window.youtubeMusicEngine.activeLyrics.parsedSynced;
+      if (!synced || synced.length === 0) return;
 
-      const lines = currentLyricsData.parsedSynced;
       let activeIdx = -1;
-      for (let i = 0; i < lines.length; i++) {
-        if (lines[i].time <= curSec + 0.25) {
+      for (let i = 0; i < synced.length; i++) {
+        if (synced[i].time <= curSec + 0.3) {
           activeIdx = i;
         } else {
           break;
         }
       }
 
-      if (activeIdx !== lastActiveLyricIdx) {
-        if (lastActiveLyricIdx >= 0) {
-          const prevEl = document.getElementById(`lyric-line-${lastActiveLyricIdx}`);
-          if (prevEl) prevEl.classList.remove('active');
-        }
-        if (activeIdx >= 0) {
-          const curEl = document.getElementById(`lyric-line-${activeIdx}`);
-          if (curEl) {
-            curEl.classList.add('active');
-            curEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-        }
-        lastActiveLyricIdx = activeIdx;
-      }
-    };
-
-    // --- YOUTUBE CONFIGURATION CONTROLS ---
-    function saveYouTubeConfig() {
-      const input = document.getElementById('cfg-yt-api-key');
-      const val = input ? input.value.trim() : '';
-      if (window.youtubeMusicEngine) {
-        window.youtubeMusicEngine.setApiKey(val);
-      }
-      updateYouTubeConfigUI();
-      alert(val ? 'YouTube Data API v3 key saved!' : 'Custom key cleared. High-speed public gateway active.');
-    }
-
-    function clearYouTubeConfig() {
-      const input = document.getElementById('cfg-yt-api-key');
-      if (input) input.value = '';
-      if (window.youtubeMusicEngine) {
-        window.youtubeMusicEngine.setApiKey('');
-      }
-      updateYouTubeConfigUI();
-    }
-
-    function updateYouTubeConfigUI() {
-      if (!window.youtubeMusicEngine) return;
-      const input = document.getElementById('cfg-yt-api-key');
-      const key = window.youtubeMusicEngine.getApiKey();
-      if (input) input.value = key;
-      const statusTitle = document.getElementById('settings-yt-status-title');
-      const statusDesc = document.getElementById('settings-yt-status-desc');
-      if (statusTitle && statusDesc) {
-        if (key) {
-          statusTitle.innerText = 'YouTube Data API v3 (Custom Key)';
-          statusDesc.innerText = 'Dedicated Google Cloud developer quota active';
-        } else {
-          statusTitle.innerText = 'High-Speed Music Gateway (Auto)';
-          statusDesc.innerText = 'Active (Auto Public Failover)';
-        }
-      }
-    }
-
-    // --- 10-BAND GRAPHIC EQUALIZER CONTROLS ---
-    function renderEQFaders() {
-      const container = document.getElementById('eq-faders-container');
-      if (!container || container.children.length > 0) return;
-
-      const freqs = window.dspEngine.eqFreqs;
-      const gains = window.dspEngine.eqGains;
-
-      container.innerHTML = '';
-      freqs.forEach((freq, idx) => {
-        const label = (freq >= 1000) ? `${freq/1000}k` : `${freq}`;
-        const col = document.createElement('div');
-        col.className = 'eq-band-col';
-
-        col.innerHTML = `
-          <div class="eq-db-tag" id="eq-tag-${idx}">${gains[idx] > 0 ? '+' : ''}${gains[idx]}</div>
-          <div class="eq-slider-vertical-wrap">
-            <input type="range" class="eq-slider-vert" id="eq-slider-${idx}" min="-12" max="12" step="0.5" value="${gains[idx]}" oninput="onEQFaderInput(${idx}, this.value)">
-          </div>
-          <div class="eq-freq-tag">${label}</div>
-        `;
-        container.appendChild(col);
-      });
-    }
-
-    function onEQFaderInput(index, val) {
-      const num = parseFloat(val);
-      window.dspEngine.setEQBand(index, num);
-      const tag = document.getElementById(`eq-tag-${index}`);
-      if (tag) tag.innerText = (num > 0 ? '+' : '') + num;
-    }
-
-    function applyPresetPreset(presetName) {
-      window.dspEngine.applyPreset(presetName);
-
-      // Sync EQ faders UI
-      window.dspEngine.eqGains.forEach((g, idx) => {
-        const slider = document.getElementById(`eq-slider-${idx}`);
-        const tag = document.getElementById(`eq-tag-${idx}`);
-        if (slider) slider.value = g;
-        if (tag) tag.innerText = (g > 0 ? '+' : '') + g;
-      });
-
-      // Sync Sound Tune Sliders
-      syncToneSlidersUI();
-
-      // Highlight chips
-      document.querySelectorAll('.preset-chips-scroll .chip-btn').forEach(b => {
-        b.classList.remove('active');
-        if (b.id === `chip-${presetName}` || b.id === `eqchip-${presetName}`) {
-          b.classList.add('active');
-        }
-      });
-    }
-
-    function resetEQFlat() {
-      applyPresetPreset('flat');
-    }
-
-    function syncToneSlidersUI() {
-      document.getElementById('slider-preamp').value = window.dspEngine.preampGain;
-      document.getElementById('val-preamp').innerText = `${window.dspEngine.preampGain > 0 ? '+' : ''}${window.dspEngine.preampGain} dB`;
-
-      document.getElementById('slider-super-bass').value = window.dspEngine.superBassGain;
-      document.getElementById('home-bass-slider').value = window.dspEngine.superBassGain;
-      document.getElementById('val-super-bass').innerText = `+${window.dspEngine.superBassGain} dB`;
-      document.getElementById('home-bass-val').innerText = `+${window.dspEngine.superBassGain} dB`;
-
-      document.getElementById('slider-deep-bass').value = window.dspEngine.deepBassGain;
-      document.getElementById('val-deep-bass').innerText = `+${window.dspEngine.deepBassGain} dB`;
-
-      document.getElementById('slider-mid').value = window.dspEngine.midGain;
-      document.getElementById('val-mid').innerText = `${window.dspEngine.midGain > 0 ? '+' : ''}${window.dspEngine.midGain} dB`;
-
-      document.getElementById('home-treble-slider').value = window.dspEngine.trebleGain;
-      document.getElementById('home-treble-val').innerText = `${window.dspEngine.trebleGain > 0 ? '+' : ''}${window.dspEngine.trebleGain} dB`;
-
-      document.getElementById('slider-reverb-mix').value = window.dspEngine.reverbMix;
-      document.getElementById('val-reverb-mix').innerText = `${window.dspEngine.reverbMix}%`;
-
-      const hallOn = window.dspEngine.reverbMix > 0;
-      document.getElementById('home-hall-card').classList.toggle('active', hallOn);
-      document.getElementById('home-hall-pill').innerText = hallOn ? 'ENGAGED' : 'OFF';
-      document.getElementById('np-hall-pill').classList.toggle('active', hallOn);
-      document.getElementById('np-hall-label').innerText = `Concert Hall: ${hallOn ? 'ON' : 'OFF'}`;
-    }
-
-    function updatePreamp(v) {
-      window.dspEngine.setPreamp(v);
-      document.getElementById('val-preamp').innerText = `${v > 0 ? '+' : ''}${v} dB`;
-    }
-
-    function updateSuperBass(v) {
-      window.dspEngine.setSuperBass(v);
-      document.getElementById('val-super-bass').innerText = `+${v} dB`;
-      document.getElementById('home-bass-val').innerText = `+${v} dB`;
-      document.getElementById('home-bass-slider').value = v;
-    }
-
-    function updateHomeBass(v) {
-      updateSuperBass(v);
-      document.getElementById('slider-super-bass').value = v;
-    }
-
-    function updateDeepBass(v) {
-      window.dspEngine.setDeepBass(v);
-      document.getElementById('val-deep-bass').innerText = `+${v} dB`;
-    }
-
-    function updateMid(v) {
-      window.dspEngine.setMid(v);
-      document.getElementById('val-mid').innerText = `${v > 0 ? '+' : ''}${v} dB`;
-    }
-
-    function updateHomeTreble(v) {
-      window.dspEngine.setTreble(v);
-      document.getElementById('home-treble-val').innerText = `${v > 0 ? '+' : ''}${v} dB`;
-    }
-
-    function updateReverbMix(v) {
-      window.dspEngine.setReverbMix(v);
-      document.getElementById('val-reverb-mix').innerText = `${v}%`;
-      const on = v > 0;
-      document.getElementById('home-hall-card').classList.toggle('active', on);
-      document.getElementById('home-hall-pill').innerText = on ? 'ENGAGED' : 'OFF';
-      document.getElementById('np-hall-pill').classList.toggle('active', on);
-      document.getElementById('np-hall-label').innerText = `Concert Hall: ${on ? 'ON' : 'OFF'}`;
-    }
-
-    function updateReverbMode(mode) {
-      window.dspEngine.setAmbienceMode(mode);
-    }
-
-    function updateCabin(pos) {
-      window.dspEngine.setCabinPosition(pos);
-    }
-
-    function updateBalance(val) {
-      window.dspEngine.setBalance(val);
-      const v = parseFloat(val);
-      let label = 'Center';
-      if (v < -0.05) label = `L ${Math.round(Math.abs(v)*100)}%`;
-      else if (v > 0.05) label = `R ${Math.round(v*100)}%`;
-      document.getElementById('val-balance').innerText = label;
-    }
-
-    function toggleConcertHall() {
-      if (window.dspEngine.reverbMix > 0) {
-        updateReverbMix(0);
-        document.getElementById('slider-reverb-mix').value = 0;
-      } else {
-        window.dspEngine.setAmbienceMode('hall');
-        document.getElementById('select-reverb-mode').value = 'hall';
-        updateReverbMix(65);
-        document.getElementById('slider-reverb-mix').value = 65;
-      }
-    }
-
-    function saveCustomPresetPrompt() {
-      const name = prompt('Enter a name for your custom DSP preset:');
-      if (name && name.trim()) {
-        window.dspEngine.saveCustomPreset(name.trim());
-        alert(`Preset "${name.trim()}" saved successfully!`);
-      }
-    }
-
-    // --- 60FPS ACOUSTIC SPECTRUM VISUALIZER ---
-    function drawSpectrumLoop() {
-      const engine = window.dspEngine;
-      const homeCanvas = document.getElementById('homeSpectrumCanvas');
-      const eqCanvas = document.getElementById('eqSpectrumCanvas');
-
-      if (engine && engine.analyser && engine.isPlaying) {
-        engine.analyser.getByteFrequencyData(engine.spectrumBuffer);
-      } else if (engine) {
-        engine.spectrumBuffer.fill(2);
-      }
-
-      [homeCanvas, eqCanvas].forEach(canvas => {
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const w = canvas.width;
-        const h = canvas.height;
-        ctx.clearRect(0, 0, w, h);
-
-        const data = engine.spectrumBuffer;
-        const bars = 32;
-        const barW = (w / bars) - 2;
-
-        for (let i = 0; i < bars; i++) {
-          const val = engine.isPlaying ? (data[i * 2] / 255.0) : 0.02;
-          const barH = Math.max(2, val * (h - 4));
-          const x = i * (barW + 2);
-          const y = h - barH;
-
-          // Pioneer gradient bar
-          const grad = ctx.createLinearGradient(0, y, 0, h);
-          grad.addColorStop(0, '#ff8c00');
-          grad.addColorStop(1, '#ff4400');
-          ctx.fillStyle = grad;
-          ctx.fillRect(x, y, barW, barH);
-        }
-      });
-
-      requestAnimationFrame(drawSpectrumLoop);
-    }
-
-    // --- SPOTIFY OAUTH & SETTINGS CONTROLLER ---
-    async function toggleSpotifyAuth() {
-      if (window.spotifyService.isAuthenticated()) {
-        if (confirm('Disconnect your Spotify account?')) {
-          window.spotifyService.logout();
-          updateSpotifyUI();
-        }
-      } else {
-        try {
-          const authUrl = await window.spotifyService.generateAuthUrl();
-          if (window.PioneerBridge && typeof window.PioneerBridge.openExternalBrowser === 'function') {
-            window.PioneerBridge.openExternalBrowser(authUrl);
-          } else {
-            window.location.href = authUrl;
-          }
-        } catch(e) {
-          alert('Spotify Setup Notice:\n' + e.message);
-        }
-      }
-    }
-
-    window.spotifyAuthCallback = async function(callbackUrl) {
-      try {
-        await window.spotifyService.handleAuthCallback(callbackUrl);
-        updateSpotifyUI();
-        startSpotifyPoller();
-        alert('Successfully connected to Spotify!');
-      } catch(e) {
-        alert('Spotify Connection Error: ' + e.message);
-      }
-    };
-
-    function updateSpotifyUI() {
-      const isAuth = window.spotifyService.isAuthenticated();
-      const user = window.spotifyService.userProfile;
-      const btn = document.getElementById('settings-spotify-btn');
-      const userLabel = document.getElementById('settings-spotify-user');
-      const statusLabel = document.getElementById('settings-spotify-status');
-      const devRow = document.getElementById('spotify-device-selector-row');
-
-      if (isAuth && user) {
-        btn.innerText = 'Disconnect';
-        btn.className = 'btn-secondary';
-        userLabel.innerText = user.displayName;
-        statusLabel.innerText = `Connected (${user.product.toUpperCase()} Account)`;
-        devRow.style.display = 'flex';
-      } else {
-        btn.innerText = 'Connect Spotify';
-        btn.className = 'btn-primary btn-spotify';
-        userLabel.innerText = 'Spotify Disconnected';
-        statusLabel.innerText = 'Connect to control playback & browse playlists';
-        devRow.style.display = 'none';
-      }
-    }
-
-    async function refreshSpotifyDevicesPrompt() {
-      try {
-        const devs = await window.spotifyService.getAvailableDevices();
-        if (devs.length === 0) {
-          alert('No Spotify Connect devices found.\n\nPlease open Spotify on your phone or PC to enable playback.');
-          return;
-        }
-
-        let html = '<div class="track-list">';
-        devs.forEach(d => {
-          const isAct = d.is_active;
-          html += `
-            <div class="track-row ${isAct ? 'playing' : ''}" onclick="selectSpotifyDevice('${d.id}')">
-              <div class="track-meta">
-                <div class="track-title">${escapeHtml(d.name)}</div>
-                <div class="track-sub">${d.type} • ${isAct ? 'Active Device' : 'Available'}</div>
-              </div>
-            </div>
-          `;
+      if (activeIdx !== -1) {
+        document.querySelectorAll('.lyric-line').forEach((l, i) => {
+          l.classList.toggle('active', i === activeIdx);
         });
-        html += '</div>';
-
-        openAppModal('Select Playback Device', html);
-      } catch(e) {
-        alert(e.message);
+        const activeEl = document.getElementById(`lyric-line-${activeIdx}`);
+        if (activeEl) {
+          activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       }
-    }
+    };
 
-    async function selectSpotifyDevice(id) {
-      try {
-        await window.spotifyService.transferPlayback(id, true);
-        closeAppModal();
-        alert('Active playback transferred to device!');
-        pollSpotifyPlayback();
-      } catch(e) {
-        alert(e.message);
-      }
+    // --- SETTINGS SHEET ---
+    function openSettings() {
+      document.getElementById('settings-sheet').classList.add('open');
     }
-
-    function saveSpotifyConfig() {
-      const cid = document.getElementById('cfg-client-id').value;
-      const red = document.getElementById('cfg-redirect-uri').value;
-      window.spotifyService.saveConfig(cid, red);
-      alert('Spotify Developer Configuration saved!');
+    function closeSettings() {
+      document.getElementById('settings-sheet').classList.remove('open');
     }
-
-    // Modal Helpers
-    function openAppModal(title, bodyHtml) {
-      document.getElementById('modal-title').innerText = title;
-      document.getElementById('modal-content-body').innerHTML = bodyHtml;
-      document.getElementById('app-modal').classList.add('open');
+    function saveSpotifyClientId(val) {
+      localStorage.setItem('pioneer_spotify_client_id', (val || '').trim());
     }
-
-    function closeAppModal() {
-      document.getElementById('app-modal').classList.remove('open');
+    function saveLatencyHint(val) {
+      localStorage.setItem('pioneer_latency_hint', val);
     }
 
     function escapeHtml(str) {
       if (!str) return '';
       return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
-
-    // --- APPLICATION STARTUP ---
-    window.addEventListener('DOMContentLoaded', async () => {
-      // 1. Setup Canvas Sizes
-      const c1 = document.getElementById('homeSpectrumCanvas');
-      const c2 = document.getElementById('eqSpectrumCanvas');
-      if (c1) { c1.width = c1.clientWidth || 300; c1.height = 64; }
-      if (c2) { c2.width = c2.clientWidth || 300; c2.height = 42; }
-
-      // 2. Load Saved Songs from IndexedDB & Persistent Storage
-      await window.dspEngine.loadSavedSongs();
-      renderLocalSongList();
-      updatePlaybackUI();
-
-      // 3. Render 10-Band EQ
-      renderEQFaders();
-
-      // 4. Load Spotify Configuration
-      const cfg = window.spotifyService.loadConfig();
-      if (cfg.clientId) {
-        document.getElementById('cfg-client-id').value = cfg.clientId;
-        document.getElementById('cfg-redirect-uri').value = cfg.redirectUri || 'pioneerdsp://callback';
-      }
-      updateSpotifyUI();
-
-      if (window.spotifyService.isAuthenticated()) {
-        startSpotifyPoller();
-      }
-
-      // 5. Automatic MediaStore Sync if permission already granted
-      if (window.PioneerBridge && typeof window.PioneerBridge.hasMediaPermission === 'function') {
-        if (window.PioneerBridge.hasMediaPermission()) {
-          setTimeout(performMediaStoreScan, 600);
-        }
-      }
-
-      // 6. Cold Start Pending Callback Check
-      if (window.__pendingSpotifyCallbackUrl) {
-        const u = window.__pendingSpotifyCallbackUrl;
-        window.__pendingSpotifyCallbackUrl = null;
-        window.spotifyAuthCallback(u);
-      }
-
-      // 7. Start Spectrum Visualizer
-      requestAnimationFrame(drawSpectrumLoop);
-    });
   </script>
 </body>
 </html>
