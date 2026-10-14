@@ -49,10 +49,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: v4.5.0
-          name: "Pioneer DSP Android v4.5.0 (UI Layout & Equalizer Cockpit Overhaul Edition)"
+          tag_name: v4.5.1
+          name: "Pioneer DSP Android v4.5.1 (Full Feature Restoration & Refined Cockpit Edition)"
           body: |
-            ## 🎵 Pioneer DSP for Android v4.5.0 — UI Layout & Equalizer Cockpit Overhaul Edition
+            ## 🎵 Pioneer DSP for Android v4.5.1 — Full Feature Restoration & Refined Cockpit Edition
             
             ### 📦 Direct Download:
             * 📱 **Android APK**: `Pioneer_DSP.apk` (Direct install, 100% free)

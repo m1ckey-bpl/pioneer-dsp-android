@@ -8,7 +8,7 @@
 
 ## 📱 Overview
 
-**Pioneer DSP for Android** (v4.5.0) is a comprehensive layout overhaul, restoration, and audiophile upgrade of the Pioneer DSP Android application. It combines a 32-bit floating point WebAudio DSP engine with Android's native `android.media.audiofx` framework, Spotify Web API PKCE integration, MediaStore auto-scanning, and an authentic 6-tab Cockpit Bottom Navigation Bar.
+**Pioneer DSP for Android** (v4.5.1) is a comprehensive layout overhaul, restoration, and audiophile upgrade of the Pioneer DSP Android application. It combines a 32-bit floating point WebAudio DSP engine with Android's native `android.media.audiofx` framework, Spotify Web API PKCE integration, MediaStore auto-scanning, and an authentic 6-tab Cockpit Bottom Navigation Bar.
 
 > [!NOTE]
 > **Pure Dark Acoustic Cockpit**: 100% removal of all anime character artwork, manga portraits, and face wallpapers. Built with a clean midnight-black (`#070a10`) and titanium-navy (`#0a0f17`) background, subtle acoustic frequency waves, neon cyan (`#00E5FF`), magenta (`#FE0979`), and signature Pioneer amber-orange (`#FF6B00`).

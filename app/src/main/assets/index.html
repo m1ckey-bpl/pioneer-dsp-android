@@ -274,15 +274,6 @@
           <button class="btn-rescan-media" style="flex-shrink:0;" onclick="executeOnlineSearch()">SEARCH</button>
         </div>
 
-        <!-- Custom Stream URL Player -->
-        <div class="pioneer-card" style="padding:12px; margin-bottom:14px;">
-          <div style="font-size:11px; font-weight:800; color:var(--amber-orange); font-family:var(--font-mono); margin-bottom:6px;">DIRECT CUSTOM STREAM URL</div>
-          <div style="display:flex; gap:6px;">
-            <input type="text" class="settings-input" id="custom-stream-url" placeholder="https://example.com/live.mp3" style="margin-top:0;">
-            <button class="btn-rescan-media" onclick="playCustomStreamUrl()">PLAY</button>
-          </div>
-        </div>
-
         <!-- Provider Filters -->
         <div class="sort-bar">
           <span class="sort-label">PROVIDER:</span>
@@ -935,8 +926,17 @@
         <button class="btn-add-songs" style="margin-top:8px; width:100%;" onclick="scanMediaStore()">RE-INDEX ALL DEVICE AUDIO FILES</button>
       </div>
 
+      <div class="settings-group">
+        <label style="font-size:11px; font-weight:800; font-family:var(--font-mono); color:var(--amber-orange);">DIRECT CUSTOM AUDIO STREAM URL</label>
+        <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">Route external HTTP/HTTPS live stream into 32-bit DSP engine</div>
+        <div style="display:flex; gap:6px; margin-top:6px;">
+          <input type="text" class="settings-input" id="custom-stream-url" placeholder="https://example.com/live.mp3" style="margin-top:0;">
+          <button class="btn-rescan-media" onclick="playCustomStreamUrl(); closeSettingsModal();">PLAY</button>
+        </div>
+      </div>
+
       <div style="margin-top:24px; padding-top:14px; border-top:1px solid var(--titanium-card-border); font-size:10px; color:var(--text-muted); font-family:var(--font-mono); text-align:center;">
-        PIONEER DSP SOUND TUNE COCKPIT v4.3.0 • 32-BIT FLOATING POINT AUDIO ENGINE
+        PIONEER DSP SOUND TUNE COCKPIT v4.5.0 • 32-BIT FLOATING POINT AUDIO ENGINE
       </div>
     </div>
   </div>
@@ -1591,7 +1591,15 @@
       try {
         await window.spotifyService.play(null, [uri]);
       } catch(e) {
-        alert(e.message);
+        console.warn('Spotify play notice:', e.message);
+        if (e.message.includes('No active device') || e.message.includes('device')) {
+          switchCockpitTab('spotify');
+          switchSpotSubTab('devices');
+          refreshSpotifyDevices();
+          alert('Spotify requires an active playback device. Please launch Spotify on your phone, speaker, or PC, or select a device from the list below.');
+        } else {
+          alert(e.message);
+        }
       }
     }
 
