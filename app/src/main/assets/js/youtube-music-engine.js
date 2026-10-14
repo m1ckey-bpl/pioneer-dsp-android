@@ -29,6 +29,88 @@ class YouTubeMusicEngine {
     // Lyrics cache
     this.lyricsCache = new Map();
     this.activeLyrics = null;
+
+    // Curated 24/7 Hi-Fi Live Radio Streams for Real-Time Pioneer DSP Modulation
+    this.curatedStations = [
+      {
+        id: 'station-concert-hall',
+        title: 'Philharmonic Concert Hall',
+        artist: 'Symphony & Classical Hi-Fi',
+        album: 'Concert Hall Live Stream',
+        artwork: 'assets/logo.png',
+        streamUrl: 'https://stream.srg-ssr.ch/m/rsc_de/mp3_128',
+        source: 'stream_radio',
+        genre: 'Classical',
+        isLive: true,
+        dspRecommendation: 'Hall Reverb'
+      },
+      {
+        id: 'station-808-bass',
+        title: '808 Bass Lab & Electronic',
+        artist: 'Sub-Bass Beats & Deep House',
+        album: 'SomaFM Beat Blender',
+        artwork: 'assets/logo.png',
+        streamUrl: 'https://ice1.somafm.com/beatblender-128-mp3',
+        source: 'stream_radio',
+        genre: 'Bass / EDM',
+        isLive: true,
+        dspRecommendation: 'Todoroki Super Bass'
+      },
+      {
+        id: 'station-synthwave',
+        title: 'Tokyo Synthwave 80s',
+        artist: 'Retro Waves & Neon Beats',
+        album: 'SomaFM Vaporwaves',
+        artwork: 'assets/logo.png',
+        streamUrl: 'https://ice1.somafm.com/vaporwaves-128-mp3',
+        source: 'stream_radio',
+        genre: 'Synthwave',
+        isLive: true,
+        dspRecommendation: 'Studio Preset'
+      },
+      {
+        id: 'station-lofi-chill',
+        title: 'Lo-Fi Chillout & Study',
+        artist: 'Acoustic Room & Ambient',
+        album: 'SomaFM Groove Salad',
+        artwork: 'assets/logo.png',
+        streamUrl: 'https://ice1.somafm.com/groovesalad-128-mp3',
+        source: 'stream_radio',
+        genre: 'Lo-Fi',
+        isLive: true,
+        dspRecommendation: 'Acoustic Preset'
+      },
+      {
+        id: 'station-rock-live',
+        title: 'Rock Antenne Classic Rock',
+        artist: 'Dynamic Guitars & Rock Stage',
+        album: 'Rock Antenne Live',
+        artwork: 'assets/logo.png',
+        streamUrl: 'https://stream.rockantenne.de/rockantenne/stream/mp3',
+        source: 'stream_radio',
+        genre: 'Rock',
+        isLive: true,
+        dspRecommendation: 'Rock Preset'
+      },
+      {
+        id: 'station-jazz-vocal',
+        title: 'Secret Agent Jazz & Lounge',
+        artist: 'Vocal Focus & Brass Ensemble',
+        album: 'SomaFM Secret Agent',
+        artwork: 'assets/logo.png',
+        streamUrl: 'https://ice1.somafm.com/secretagent-128-mp3',
+        source: 'stream_radio',
+        genre: 'Jazz / Vocal',
+        isLive: true,
+        dspRecommendation: 'Vocal Boost'
+      }
+    ];
+
+    this.radioBrowserInstances = [
+      'https://de1.api.radio-browser.info',
+      'https://nl1.api.radio-browser.info',
+      'https://at1.api.radio-browser.info'
+    ];
   }
 
   getApiKey() {
@@ -42,6 +124,71 @@ class YouTubeMusicEngine {
     } else {
       localStorage.removeItem(this.storageKeyApiKey);
     }
+  }
+
+  // --- Online Live Radio & Custom Stream Methods ---
+  getCuratedStations() {
+    return this.curatedStations;
+  }
+
+  async searchOnlineStreams(query) {
+    const q = (query || '').trim();
+    if (!q) return this.curatedStations;
+
+    for (const base of this.radioBrowserInstances) {
+      try {
+        const ctrl = new AbortController();
+        const tid = setTimeout(() => ctrl.abort(), 4500);
+        const url = `${base}/json/stations/search?name=${encodeURIComponent(q)}&limit=25&hidebroken=true&order=clickcount&reverse=true`;
+        const resp = await fetch(url, {
+          signal: ctrl.signal,
+          headers: { 'User-Agent': 'PioneerDSP/4.2' }
+        });
+        clearTimeout(tid);
+        if (resp.ok) {
+          const stations = await resp.json();
+          if (Array.isArray(stations) && stations.length > 0) {
+            return stations.map(s => {
+              const tags = (s.tags || '').split(',').filter(Boolean).slice(0, 2).join(' / ');
+              const subtitle = (tags ? tags : 'Online Radio') + (s.country ? ` • ${s.country}` : '');
+              return {
+                id: 'radio_' + s.stationuuid,
+                title: this.decodeHtmlEntities(s.name || 'Live Radio Stream'),
+                artist: subtitle,
+                album: s.codec ? `${s.codec.toUpperCase()} ${s.bitrate ? s.bitrate + 'kbps' : ''}` : 'Live Radio Broadcast',
+                artwork: s.favicon && s.favicon.startsWith('http') ? s.favicon : 'assets/logo.png',
+                streamUrl: s.url_resolved || s.url,
+                source: 'stream_radio',
+                isLive: true,
+                duration: 0
+              };
+            });
+          }
+        }
+      } catch (e) {}
+    }
+
+    return this.curatedStations.filter(s =>
+      s.title.toLowerCase().includes(q.toLowerCase()) ||
+      s.artist.toLowerCase().includes(q.toLowerCase()) ||
+      s.genre.toLowerCase().includes(q.toLowerCase())
+    );
+  }
+
+  createCustomStreamTrack(url, title = 'Custom Online Stream', artist = 'Direct Audio Stream') {
+    const cleanUrl = (url || '').trim();
+    if (!cleanUrl) return null;
+    return {
+      id: 'custom_stream_' + Date.now(),
+      title: title.trim() || 'Custom Online Stream',
+      artist: artist.trim() || 'Direct Audio Stream',
+      album: 'Custom Live Stream',
+      artwork: 'assets/logo.png',
+      streamUrl: cleanUrl,
+      source: 'stream_custom',
+      isLive: true,
+      duration: 0
+    };
   }
 
   // --- YouTube Search & Metadata ---

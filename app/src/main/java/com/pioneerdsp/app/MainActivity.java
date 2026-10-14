@@ -39,6 +39,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
@@ -213,6 +216,46 @@ public class MainActivity extends AppCompatActivity {
             else if ("arena".equalsIgnoreCase(mode)) preset = PresetReverb.PRESET_PLATE;
             PioneerAudioEffectManager.getInstance().setPresetReverb(preset);
         }
+
+        // Direct online audio buffer downloader for raw PCM decoding via decodeAudioData
+        @JavascriptInterface
+        public String fetchOnlineAudioBase64(String targetUrlStr) {
+            try {
+                if (targetUrlStr == null || targetUrlStr.isEmpty()) return "";
+                URL targetUrl = new URL(targetUrlStr);
+                HttpURLConnection conn = (HttpURLConnection) targetUrl.openConnection();
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(20000);
+                conn.setInstanceFollowRedirects(true);
+                conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 14; PioneerDSP/4.1)");
+                int code = conn.getResponseCode();
+                if (code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_MOVED_TEMP || code == 307 || code == 308) {
+                    String loc = conn.getHeaderField("Location");
+                    if (loc != null) {
+                        targetUrl = new URL(loc);
+                        conn = (HttpURLConnection) targetUrl.openConnection();
+                        conn.setConnectTimeout(10000);
+                        conn.setReadTimeout(20000);
+                        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 14; PioneerDSP/4.1)");
+                        code = conn.getResponseCode();
+                    }
+                }
+                if (code == 200 || code == 206) {
+                    InputStream is = conn.getInputStream();
+                    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                    byte[] data = new byte[16384];
+                    int nRead;
+                    while ((nRead = is.read(data, 0, data.length)) != -1) {
+                        buffer.write(data, 0, nRead);
+                    }
+                    buffer.flush();
+                    return Base64.encodeToString(buffer.toByteArray(), Base64.NO_WRAP);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "";
+        }
     }
 
     @Override
@@ -282,6 +325,69 @@ public class MainActivity extends AppCompatActivity {
                 if (url != null) {
                     boolean isContentScheme = "content".equals(url.getScheme());
                     boolean isLocalMediaProxy = "pioneer.local".equals(url.getHost()) && "/media".equals(url.getPath());
+                    boolean isOnlineStreamProxy = "pioneer.local".equals(url.getHost()) && "/stream".equals(url.getPath());
+
+                    // --- Real-Time Online Stream Proxy (Bypasses CORS & Guarantees Non-Muted WebAudio DSP Pipeline) ---
+                    if (isOnlineStreamProxy) {
+                        try {
+                            String targetUrlStr = url.getQueryParameter("url");
+                            if (targetUrlStr != null && !targetUrlStr.isEmpty()) {
+                                URL targetUrl = new URL(targetUrlStr);
+                                HttpURLConnection conn = (HttpURLConnection) targetUrl.openConnection();
+                                conn.setConnectTimeout(10000);
+                                conn.setReadTimeout(15000);
+                                conn.setInstanceFollowRedirects(true);
+                                conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 14; PioneerDSP/4.1)");
+
+                                Map<String, String> reqHeaders = request.getRequestHeaders();
+                                if (reqHeaders != null && reqHeaders.containsKey("Range")) {
+                                    conn.setRequestProperty("Range", reqHeaders.get("Range"));
+                                }
+
+                                int responseCode = conn.getResponseCode();
+                                if (responseCode == HttpURLConnection.HTTP_MOVED_PERM || 
+                                    responseCode == HttpURLConnection.HTTP_MOVED_TEMP || 
+                                    responseCode == 307 || responseCode == 308) {
+                                    String loc = conn.getHeaderField("Location");
+                                    if (loc != null) {
+                                        targetUrl = new URL(loc);
+                                        conn = (HttpURLConnection) targetUrl.openConnection();
+                                        conn.setConnectTimeout(10000);
+                                        conn.setReadTimeout(15000);
+                                        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 14; PioneerDSP/4.1)");
+                                        if (reqHeaders != null && reqHeaders.containsKey("Range")) {
+                                            conn.setRequestProperty("Range", reqHeaders.get("Range"));
+                                        }
+                                        responseCode = conn.getResponseCode();
+                                    }
+                                }
+
+                                InputStream is = conn.getInputStream();
+                                String mime = conn.getContentType();
+                                if (mime == null || mime.isEmpty() || mime.contains("text/html")) mime = "audio/mpeg";
+                                if (mime.contains(";")) mime = mime.split(";")[0].trim();
+
+                                Map<String, String> headers = new HashMap<>();
+                                headers.put("Access-Control-Allow-Origin", "*");
+                                headers.put("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
+                                headers.put("Access-Control-Allow-Headers", "Range, Content-Type, Accept");
+                                headers.put("Accept-Ranges", "bytes");
+
+                                String contentLen = conn.getHeaderField("Content-Length");
+                                if (contentLen != null) headers.put("Content-Length", contentLen);
+
+                                String contentRange = conn.getHeaderField("Content-Range");
+                                if (contentRange != null) headers.put("Content-Range", contentRange);
+
+                                int status = (responseCode == 206) ? 206 : 200;
+                                String message = (responseCode == 206) ? "Partial Content" : "OK";
+
+                                return new WebResourceResponse(mime, "UTF-8", status, message, headers, is);
+                            }
+                        } catch (Exception e) {
+                            android.util.Log.e("PioneerStreamProxy", "Streaming proxy error: " + e.getMessage());
+                        }
+                    }
 
                     if (isContentScheme || isLocalMediaProxy) {
                         try {

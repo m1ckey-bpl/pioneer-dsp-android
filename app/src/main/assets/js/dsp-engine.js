@@ -406,6 +406,9 @@ class PioneerDSPEngine {
     if (this.eqFilters[index] && this.audioCtx) {
       this.eqFilters[index].gain.setTargetAtTime(this.eqGains[index], this.audioCtx.currentTime, 0.02);
     }
+    if (window.PioneerBridge && typeof window.PioneerBridge.syncNativeEQ === 'function') {
+      window.PioneerBridge.syncNativeEQ(index, this.eqGains[index]);
+    }
   }
 
   setSuperBass(gainDB) {
@@ -418,6 +421,9 @@ class PioneerDSPEngine {
       if (this.superBassPeak) {
         this.superBassPeak.gain.setTargetAtTime(this.superBassGain * 0.6, now, 0.02);
       }
+    }
+    if (window.PioneerBridge && typeof window.PioneerBridge.syncNativeBass === 'function') {
+      window.PioneerBridge.syncNativeBass(this.superBassGain);
     }
   }
 
@@ -446,6 +452,9 @@ class PioneerDSPEngine {
     this.ambienceMode = mode;
     if (this.convolverNode && this.audioCtx) {
       this.convolverNode.buffer = await this.getImpulseResponse(mode);
+    }
+    if (window.PioneerBridge && typeof window.PioneerBridge.syncNativeReverb === 'function') {
+      window.PioneerBridge.syncNativeReverb(mode);
     }
   }
 
@@ -605,6 +614,51 @@ class PioneerDSPEngine {
     this.pauseOffset = 0;
   }
 
+  // Get proxied stream URL to bypass CORS and prevent WebAudio muting on Android WebView
+  getProxiedStreamUrl(url) {
+    if (!url) return '';
+    if (url.startsWith('https://pioneer.local/') || url.startsWith('http://localhost') || url.startsWith('blob:') || url.startsWith('data:')) {
+      return url;
+    }
+    // Route through native Android streaming proxy to guarantee permissive CORS and non-muted 32-bit float WebAudio pipeline
+    return 'https://pioneer.local/stream?url=' + encodeURIComponent(url);
+  }
+
+  // Preload stream audio buffer in background for tracks with finite duration (< 30 minutes)
+  async preloadStreamBuffer(track) {
+    try {
+      const proxiedUrl = this.getProxiedStreamUrl(track.streamUrl);
+      let arrayBuffer = null;
+      try {
+        const resp = await fetch(proxiedUrl);
+        if (resp.ok) {
+          arrayBuffer = await resp.arrayBuffer();
+        }
+      } catch (e) {}
+
+      if (!arrayBuffer && window.PioneerBridge && typeof window.PioneerBridge.fetchOnlineAudioBase64 === 'function') {
+        const b64 = window.PioneerBridge.fetchOnlineAudioBase64(track.streamUrl);
+        if (b64 && b64.length > 0) {
+          const binStr = atob(b64);
+          const len = binStr.length;
+          const bytes = new Uint8Array(len);
+          for (let i = 0; i < len; i++) bytes[i] = binStr.charCodeAt(i);
+          arrayBuffer = bytes.buffer;
+        }
+      }
+
+      if (arrayBuffer && this.audioCtx && this.activeTrack && this.activeTrack.id === track.id) {
+        this.currentBuffer = await this.audioCtx.decodeAudioData(arrayBuffer);
+        if (this.currentBuffer && this.currentBuffer.duration && isFinite(this.currentBuffer.duration)) {
+          this.duration = this.currentBuffer.duration;
+          track.duration = Math.round(this.duration);
+        }
+      }
+    } catch (e) {
+      // Non-critical background task; progressive stream continues playing uninterrupted
+    }
+  }
+
   // Play streaming audio via HTML5 Audio API routed into Pioneer DSP
   async playStreamTrack(track, queue = null, index = -1) {
     if (!track || !track.streamUrl) return false;
@@ -622,11 +676,11 @@ class PioneerDSPEngine {
 
     if (!this.audioElement) {
       this.audioElement = new Audio();
-      this.audioElement.crossOrigin = 'anonymous';
-      this.audioElement.preload = 'auto';
     }
+    this.audioElement.crossOrigin = 'anonymous';
+    this.audioElement.preload = 'auto';
 
-    // Ensure MediaElementSource is hooked into WebAudio DSP
+    // Ensure MediaElementSource is hooked into WebAudio DSP Preamp
     if (!this.mediaElementSource && this.preampNode) {
       try {
         this.mediaElementSource = this.audioCtx.createMediaElementSource(this.audioElement);
@@ -634,7 +688,8 @@ class PioneerDSPEngine {
       } catch (e) {}
     }
 
-    this.audioElement.src = track.streamUrl;
+    const proxiedUrl = this.getProxiedStreamUrl(track.streamUrl);
+    this.audioElement.src = proxiedUrl;
     this.audioElement.playbackRate = this.playbackRate;
 
     this.audioElement.onloadedmetadata = () => {
@@ -655,19 +710,39 @@ class PioneerDSPEngine {
       }
     };
 
-    this.audioElement.onerror = (e) => {
-      console.error('HTML5 Audio playback stream error:', e);
+    this.audioElement.onerror = async (e) => {
+      console.warn('HTML5 Audio stream proxy event, checking fallback...', e);
+      if (this.audioElement.src === proxiedUrl && proxiedUrl !== track.streamUrl) {
+        try {
+          this.audioElement.src = track.streamUrl;
+          await this.audioElement.play();
+        } catch (err2) {}
+      }
     };
 
     try {
       await this.audioElement.play();
       this.isPlaying = true;
       this.isPaused = false;
+
+      // Preload buffer in background for tracks with known finite duration (<30 mins)
+      if (track.duration && track.duration > 0 && track.duration < 1800 && !track.isLive) {
+        this.preloadStreamBuffer(track);
+      }
       return true;
     } catch (err) {
-      console.error('Failed to trigger audio stream playback:', err);
-      this.stopPlayback();
-      throw err;
+      console.warn('Initial proxied stream play error, trying direct stream:', err);
+      try {
+        this.audioElement.src = track.streamUrl;
+        await this.audioElement.play();
+        this.isPlaying = true;
+        this.isPaused = false;
+        return true;
+      } catch (directErr) {
+        console.error('Failed to trigger audio stream playback:', directErr);
+        this.stopPlayback();
+        throw directErr;
+      }
     }
   }
 

@@ -155,6 +155,7 @@
       <!-- Filter Pills -->
       <div class="search-filter-pills">
         <button class="chip-btn active" id="filter-all" onclick="setSearchFilter('all')">All</button>
+        <button class="chip-btn" id="filter-streams" onclick="setSearchFilter('streams')">Online Streams</button>
         <button class="chip-btn" id="filter-youtube" onclick="setSearchFilter('youtube')">YouTube Music</button>
         <button class="chip-btn" id="filter-spotify" onclick="setSearchFilter('spotify')">Spotify</button>
         <button class="chip-btn" id="filter-local" onclick="setSearchFilter('local')">Local Files</button>
@@ -911,15 +912,23 @@
       }
 
       if (!isSeeking) {
-        document.getElementById('np-time-cur').innerText = formatTime(curSec);
-        document.getElementById('np-time-dur').innerText = formatTime(durSec);
+        const activeTrack = window.dspEngine ? window.dspEngine.activeTrack : null;
+        if (activeTrack && activeTrack.isLive) {
+          document.getElementById('np-time-cur').innerText = formatTime(curSec);
+          document.getElementById('np-time-dur').innerText = 'LIVE';
+          document.getElementById('np-seek-slider').value = 100;
+          document.getElementById('dock-progress-fill').style.width = '100%';
+        } else {
+          document.getElementById('np-time-cur').innerText = formatTime(curSec);
+          document.getElementById('np-time-dur').innerText = formatTime(durSec);
 
-        let pct = 0;
-        if (durSec > 0) {
-          pct = Math.min(100, Math.max(0, (curSec / durSec) * 100));
+          let pct = 0;
+          if (durSec > 0) {
+            pct = Math.min(100, Math.max(0, (curSec / durSec) * 100));
+          }
+          document.getElementById('np-seek-slider').value = pct;
+          document.getElementById('dock-progress-fill').style.width = `${pct}%`;
         }
-        document.getElementById('np-seek-slider').value = pct;
-        document.getElementById('dock-progress-fill').style.width = `${pct}%`;
       }
 
       // Live synchronized lyric scrolling
@@ -1061,6 +1070,12 @@
       } else if (mode === 'youtube') {
         text = 'YOUTUBE Hi-Fi';
         cls = 'youtube';
+      } else if (mode === 'stream') {
+        text = 'ONLINE STREAM';
+        cls = 'stream';
+      } else if (mode === 'radio') {
+        text = 'LIVE DSP STREAM';
+        cls = 'stream';
       }
 
       [topBadge, heroBadge, dockBadge, npBadge].forEach(b => {
@@ -1336,6 +1351,8 @@
     function setSearchFilter(filter) {
       currentSearchFilter = filter;
       document.getElementById('filter-all').classList.toggle('active', filter === 'all');
+      const streamsFilter = document.getElementById('filter-streams');
+      if (streamsFilter) streamsFilter.classList.toggle('active', filter === 'streams');
       const ytFilter = document.getElementById('filter-youtube');
       if (ytFilter) ytFilter.classList.toggle('active', filter === 'youtube');
       document.getElementById('filter-spotify').classList.toggle('active', filter === 'spotify');
@@ -1347,15 +1364,59 @@
       const container = document.getElementById('search-results-container');
       const q = (query || '').trim().toLowerCase();
 
-      if (!q) {
+      // When search query is empty or Online Streams filter is selected
+      if (!q || currentSearchFilter === 'streams') {
+        const stations = window.youtubeMusicEngine ? window.youtubeMusicEngine.getCuratedStations() : [];
+        let stationsHtml = '';
+        stations.forEach((st, idx) => {
+          stationsHtml += `
+            <div class="track-row" onclick="playOnlineStreamTrack(window.youtubeMusicEngine.curatedStations[${idx}])">
+              <div class="track-index-cover" style="background:#111;">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--accent-pioneer)" stroke-width="2" fill="none">
+                  <path d="M4.93 19.07a10 10 0 0 1 0-14.14M19.07 4.93a10 10 0 0 1 0 14.14M7.76 16.24a6 6 0 0 1 0-8.48M16.24 7.76a6 6 0 0 1 0 8.48M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0"></path>
+                </svg>
+              </div>
+              <div class="track-meta">
+                <div class="track-title" style="display:flex; align-items:center; gap:6px;">
+                  <span>${escapeHtml(st.title)}</span>
+                  <span class="badge-live">LIVE</span>
+                </div>
+                <div class="track-sub">${escapeHtml(st.artist)} • <span class="station-badge-dsp">${st.dspRecommendation}</span></div>
+              </div>
+              <span class="track-duration" style="font-weight:700; color:var(--accent-pioneer); font-size:11px;">PLAY</span>
+            </div>
+          `;
+        });
+
         container.innerHTML = `
-          <div class="empty-state">
-            <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <h3>Discover Music</h3>
-            <p>Search millions of tracks on YouTube, Spotify, and your indexed local audio library.</p>
+          <!-- Custom Online Stream Player Card -->
+          <div class="custom-stream-card">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <div style="font-size:13px; font-weight:700; color:#fff; display:flex; align-items:center; gap:6px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--accent-pioneer)" stroke-width="2" fill="none">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                </svg>
+                <span>Direct Audio Stream URL</span>
+              </div>
+              <span class="badge-live">DSP READY</span>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); line-height:1.4;">
+              Stream any direct MP3, AAC, or Shoutcast URL with real-time 32-bit floating point Pioneer DSP modulation.
+            </div>
+            <div class="custom-stream-input-row">
+              <input type="text" id="custom-stream-url-input" class="custom-stream-input" placeholder="Enter stream URL (e.g. https://.../stream.mp3)">
+              <button class="custom-stream-btn" onclick="startCustomStreamPlayback()">Stream</button>
+            </div>
+          </div>
+
+          <!-- Curated Live Stations Section -->
+          <div class="results-section-title" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Curated 24/7 Hi-Fi Live Stations</span>
+            <span style="font-size:10px; color:var(--text-muted);">Real-Time 32-bit DSP</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            ${stationsHtml}
           </div>
         `;
         return;
@@ -1380,6 +1441,16 @@
         } catch(e) {}
       }
 
+      // Query Online Live Streams (Radio Browser Open API)
+      let streamMatches = [];
+      if ((currentSearchFilter === 'all' || currentSearchFilter === 'streams') && window.youtubeMusicEngine) {
+        try {
+          streamMatches = await window.youtubeMusicEngine.searchOnlineStreams(q);
+        } catch (e) {
+          console.warn('Online stream search notice:', e);
+        }
+      }
+
       // Query YouTube Music Engine (YouTube Data API v3 + High-Speed Gateways)
       let youtubeMatches = [];
       if ((currentSearchFilter === 'all' || currentSearchFilter === 'youtube') && window.youtubeMusicEngine) {
@@ -1392,9 +1463,41 @@
 
       container.innerHTML = '';
 
-      if (localMatches.length === 0 && spotifyMatches.length === 0 && youtubeMatches.length === 0) {
+      if (streamMatches.length === 0 && localMatches.length === 0 && spotifyMatches.length === 0 && youtubeMatches.length === 0) {
         container.innerHTML = `<div class="empty-state"><h3>No results found</h3><p>Try searching with another keyword.</p></div>`;
         return;
+      }
+
+      // 0. Render Online Live Streams Matches
+      if (streamMatches.length > 0) {
+        const titleSec = document.createElement('div');
+        titleSec.className = 'results-section-title';
+        titleSec.style.display = 'flex';
+        titleSec.style.justifyContent = 'space-between';
+        titleSec.innerHTML = `<span>Online Streams & Radio (${streamMatches.length})</span><span class="badge-live">LIVE</span>`;
+        container.appendChild(titleSec);
+
+        streamMatches.forEach((track, idx) => {
+          const row = document.createElement('div');
+          row.className = 'track-row';
+          row.onclick = () => playOnlineStreamTrack(track, streamMatches, idx);
+          row.innerHTML = `
+            <div class="track-index-cover" style="background:#111;">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--accent-pioneer)" stroke-width="2" fill="none">
+                <path d="M4.93 19.07a10 10 0 0 1 0-14.14M19.07 4.93a10 10 0 0 1 0 14.14M7.76 16.24a6 6 0 0 1 0-8.48M16.24 7.76a6 6 0 0 1 0 8.48M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0"></path>
+              </svg>
+            </div>
+            <div class="track-meta">
+              <div class="track-title" style="display:flex; align-items:center; gap:6px;">
+                <span>${escapeHtml(track.title)}</span>
+                <span class="badge-live">LIVE</span>
+              </div>
+              <div class="track-sub">${escapeHtml(track.artist)} • ${escapeHtml(track.album || 'Live Stream')}</div>
+            </div>
+            <span class="track-duration" style="font-weight:700; color:var(--accent-pioneer); font-size:11px;">PLAY</span>
+          `;
+          container.appendChild(row);
+        });
       }
 
       // 1. Render YouTube Matches
@@ -1478,9 +1581,9 @@
     let currentYoutubeQueue = [];
     let currentYoutubeIndex = -1;
 
-    async function playYouTubeTrack(track, queue = null, index = -1) {
+    async function playOnlineStreamTrack(track, queue = null, index = -1) {
       try {
-        currentSourceMode = 'youtube';
+        currentSourceMode = track.source === 'youtube' ? 'youtube' : 'stream';
         if (spotifyIsPlaying && window.spotifyService) {
           window.spotifyService.pause().catch(() => {});
           spotifyIsPlaying = false;
@@ -1493,27 +1596,46 @@
 
         // Immediate visual telemetry
         document.getElementById('dock-title').innerText = track.title;
-        document.getElementById('dock-artist').querySelector('span:first-child').innerText = 'Resolving audio stream...';
+        document.getElementById('dock-artist').querySelector('span:first-child').innerText = 'Connecting stream...';
         document.getElementById('dock-cover-img').src = track.artwork || 'assets/logo.png';
-        updateSourceBadges('youtube');
+        updateSourceBadges(track.isLive ? 'radio' : (track.source === 'youtube' ? 'youtube' : 'stream'));
 
-        // Resolve direct audio stream from authorized source
+        // Resolve stream if not yet populated
         if (!track.streamUrl && window.youtubeMusicEngine) {
           const resolved = await window.youtubeMusicEngine.resolveAudioStream(track.videoId || track.id);
           Object.assign(track, resolved);
         }
 
-        // Stream via HTML5 Audio through 32-bit float WebAudio DSP pipeline
+        // Stream audio through 32-bit float WebAudio DSP pipeline
         await window.dspEngine.playStreamTrack(track, currentYoutubeQueue, currentYoutubeIndex);
         updatePlaybackUI();
         updateMediaSession(track);
 
-        // Fetch synchronized lyrics from LRCLIB API in parallel
-        loadLyricsForTrack(track);
+        // Fetch synchronized lyrics if regular song, or display live broadcast banner
+        if (!track.isLive) {
+          loadLyricsForTrack(track);
+        } else {
+          clearLyricsDisplay('Live Radio Stream • Real-Time Pioneer DSP Active');
+        }
       } catch (err) {
-        console.error('Failed to play YouTube track:', err);
-        alert('Playback error: ' + (err.message || 'Unable to stream audio. Please try again.'));
+        console.error('Failed to play online stream:', err);
+        alert('Playback error: ' + (err.message || 'Unable to stream audio. Please verify your internet connection.'));
       }
+    }
+
+    // Alias for backwards compatibility
+    const playYouTubeTrack = playOnlineStreamTrack;
+
+    function startCustomStreamPlayback() {
+      const input = document.getElementById('custom-stream-url-input');
+      const url = (input ? input.value : '').trim();
+      if (!url) {
+        alert('Please enter a valid audio stream URL (HTTP / HTTPS).');
+        return;
+      }
+      if (!window.youtubeMusicEngine) return;
+      const track = window.youtubeMusicEngine.createCustomStreamTrack(url, 'Direct Custom Stream', 'Live DSP Audio');
+      playOnlineStreamTrack(track);
     }
 
     // Global hook when queue advances
