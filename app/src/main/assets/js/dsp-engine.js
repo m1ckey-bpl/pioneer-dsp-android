@@ -988,7 +988,7 @@ class PioneerDSPEngine {
   seek(ratio) {
     if (this.sourceType === 'stream' && this.audioElement) {
       const dur = this.getCurrentDuration();
-      if (dur > 0) {
+      if (dur > 0 && isFinite(dur)) {
         this.audioElement.currentTime = Math.max(0, Math.min(dur, dur * ratio));
       }
       return;
@@ -998,11 +998,18 @@ class PioneerDSPEngine {
     const targetTime = Math.max(0, Math.min(this.duration, this.duration * ratio));
     this.pauseOffset = targetTime;
 
-    if (this.isPlaying && this.sourceNode) {
-      try {
-        this.sourceNode.stop();
-        this.sourceNode.disconnect();
-      } catch(e) {}
+    if (this.isPlaying) {
+      if (this.sourceNode) {
+        // CRITICAL BUG FIX: Clear onended BEFORE stopping so stopping the old node doesn't trigger playNext()!
+        this.sourceNode.onended = null;
+        try {
+          this.sourceNode.stop(0);
+        } catch(e) {}
+        try {
+          this.sourceNode.disconnect();
+        } catch(e) {}
+        this.sourceNode = null;
+      }
       this.sourceNode = this.audioCtx.createBufferSource();
       this.sourceNode.buffer = this.currentBuffer;
       this.sourceNode.playbackRate.value = this.playbackRate;
@@ -1154,6 +1161,7 @@ class PioneerDSPEngine {
           fileSize: (t.size / (1024 * 1024)).toFixed(1) + ' MB',
           contentUri: t.contentUri,
           albumId: t.albumId,
+          artwork: t.artworkUri || '',
           addedAt: Date.now()
         };
         this.songs.push(songObj);
@@ -1163,9 +1171,37 @@ class PioneerDSPEngine {
     this.db.syncMetadataCache();
   }
 
-  async removeSong(id) {
-    const idx = this.songs.findIndex(s => s.id === id);
-    if (idx !== -1) {
+  async addDownloadedTrack(trackMeta, arrayBuffer) {
+    if (!arrayBuffer) return null;
+    const blob = new Blob([arrayBuffer], { type: trackMeta.mimeType || 'audio/mpeg' });
+    const trackId = 'download_' + Date.now();
+    const songObj = {
+      id: trackId,
+      title: trackMeta.title || 'Downloaded Audio',
+      artist: trackMeta.artist || 'Pioneer Downloads',
+      album: trackMeta.album || 'Downloaded Tracks',
+      duration: trackMeta.duration || 0,
+      fileSize: (arrayBuffer.byteLength / (1024 * 1024)).toFixed(1) + ' MB',
+      artwork: trackMeta.artwork || 'assets/logo.png',
+      blob: blob,
+      source: 'download',
+      addedAt: Date.now()
+    };
+    this.songs.unshift(songObj);
+    await this.db.saveSong(songObj);
+    this.db.syncMetadataCache();
+    return songObj;
+  }
+
+  async removeSong(identifier) {
+    let idx = -1;
+    if (typeof identifier === 'number') {
+      idx = identifier;
+    } else {
+      idx = this.songs.findIndex(s => s.id === identifier);
+    }
+    if (idx >= 0 && idx < this.songs.length) {
+      const id = this.songs[idx].id;
       if (idx === this.currentIndex) {
         this.stopPlayback();
         this.currentIndex = -1;
@@ -1174,6 +1210,7 @@ class PioneerDSPEngine {
       }
       this.songs.splice(idx, 1);
       await this.db.deleteSong(id);
+      this.db.syncMetadataCache();
     }
   }
 }

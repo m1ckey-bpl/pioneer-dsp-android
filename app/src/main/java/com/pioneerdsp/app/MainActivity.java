@@ -32,10 +32,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.media.AudioManager;
+import android.media.MediaScannerConnection;
+import android.os.Environment;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -128,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
                             if (durationMs < 1000) continue;
 
                             Uri trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+                            Uri albumArtUri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId);
 
                             JSONObject obj = new JSONObject();
                             obj.put("id", "mediastore_" + id);
@@ -137,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
                             obj.put("duration", Math.round(durationMs / 1000.0));
                             obj.put("size", sizeBytes);
                             obj.put("albumId", albumId);
+                            obj.put("artworkUri", albumArtUri.toString());
                             obj.put("contentUri", trackUri.toString());
 
                             tracks.put(obj);
@@ -256,11 +266,49 @@ public class MainActivity extends AppCompatActivity {
             }
             return "";
         }
+
+        @JavascriptInterface
+        public boolean saveDownloadedAudio(String base64Data, String fileName, String mimeType) {
+            try {
+                if (base64Data == null || base64Data.isEmpty() || fileName == null) return false;
+                byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
+                File musicDir = new File(getExternalFilesDir(Environment.DIRECTORY_MUSIC), "PioneerDSP");
+                if (!musicDir.exists()) musicDir.mkdirs();
+                File destFile = new File(musicDir, fileName);
+                try (FileOutputStream fos = new FileOutputStream(destFile)) {
+                    fos.write(bytes);
+                    fos.flush();
+                }
+                MediaScannerConnection.scanFile(MainActivity.this,
+                        new String[]{destFile.getAbsolutePath()},
+                        new String[]{mimeType != null && !mimeType.isEmpty() ? mimeType : "audio/mpeg"},
+                        null);
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
     }
+
+    private final BroadcastReceiver noisyReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+                if (webView != null) {
+                    webView.post(() -> webView.evaluateJavascript("if (window.dspEngine) window.dspEngine.pause();", null));
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            registerReceiver(noisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
+        } catch (Exception ignored) {}
 
         webView = new WebView(this);
         setContentView(webView);
@@ -528,5 +576,13 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        try {
+            unregisterReceiver(noisyReceiver);
+        } catch (Exception ignored) {}
+        super.onDestroy();
     }
 }

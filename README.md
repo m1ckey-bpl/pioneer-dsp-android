@@ -8,24 +8,22 @@
 
 ## 📱 Overview
 
-**Pioneer DSP for Android** (v4.3.0) is a faithful re-creation of the original iOS Pioneer DSP cockpit music and audio-effects application. It combines a 32-bit floating point WebAudio DSP engine with Android's native `android.media.audiofx` framework, Spotify Web API integration, and an authentic 6-tab Cockpit Bottom Navigation Bar.
+**Pioneer DSP for Android** (v4.4.0) is a comprehensive restoration and upgrade of the Android music and audio-effects application. It combines a 32-bit floating point WebAudio DSP engine with Android's native `android.media.audiofx` framework, Spotify Web API PKCE integration, MediaStore auto-scanning, and an authentic 6-tab Cockpit Bottom Navigation Bar.
 
 > [!NOTE]
 > **Pure Dark Titanium Audio Theme**: 100% removal of all anime character artwork, manga girl portraits, and face wallpapers. Built with iOS `PioneerTheme` titanium surfaces, deep charcoal gradients, neon cyan (`#00E5FF`), magenta (`#FE0979`), and signature Pioneer amber-orange (`#FF6B00`).
 
-### 🎛️ Authentic 6-Tab Cockpit Architecture:
-* **`TUNER` (Main DSP Cockpit)**: Now Playing banner, Master Concert Hall toggle, Rotary Master Volume Dial (with smooth touch-angle tracking and dynamic SVG progress arc), Todoroki Super Bass quick-switch, Presets selector, and live 20-band Spectrum Analyser.
-* **`LIBRARY` (Local Music Repository)**: Android Storage Access Framework (SAF) folder/file import, automatic MediaStore scanner, track list, and instant search.
-* **`SPOTIFY` (Spotify Player & DSP)**: Spotify Web API Player & hardware AudioEffect integration, Curated Quick Stations, and floating DSP Quick Tuning Bar.
-* **`EQ` (10-Band Graphic Equalizer)**: ISO standard frequency faders (31Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz, 8kHz, 16kHz) with $\pm12\text{ dB}$ range, real-time frequency curve preview canvas, and Reset Flat button.
-* **`HALL` (Acoustic Reverb Environment)**: Selectable reverb spaces (Concert Hall, Large Arena, Cathedral, Live Studio, Plate Reverb) with synthetic impulse response convolution and 0–100% Wet/Dry mix slider.
-* **`CABIN` (Listening Position Alignment)**: Car Cabin Visualizer with 4 interactive speaker seats (FL, FR, RL, RR) and listening modes (`ALL SEATS`, `DRIVER FOCUS`, `PASSENGER FOCUS`) driving WebAudio ChannelDelay and StereoPanner wavefront correction.
-
-### ✨ Additional Features:
-* **Real-Time Online Music Streaming & Live DSP**: Stream remote audio directly through the 32-bit floating point WebAudio DSP pipeline.
-* **Native Android Streaming Proxy**: Android WebView proxy in `MainActivity.java` injecting CORS headers (`Access-Control-Allow-Origin: *`) and Range 206 support.
-* **Device Layout Optimization**: Optimized for modern Android devices including OnePlus Nord CE5 (safe area insets, zero control clipping, minimum 44px touch targets).
-* **Dual DSP Architecture**: High-resolution WebAudio processing for local files & streams + native hardware `AudioEffect` routing for external Spotify sessions.
+### 🎛️ Key Restorations & Features:
+* **Seeking & Playback Glitch Permanent Fix**: Detaches `onended` before stopping `AudioBufferSourceNode` to eliminate unintended track skips or restarts, with an `isUserSeeking` state lock on progress sliders.
+* **Automatic Local Music Scanning**: Android MediaStore indexed audio scanning with dynamic permission checks (`READ_MEDIA_AUDIO` on Android 13/14, `READ_EXTERNAL_STORAGE` on older versions), extracting real album art, titles, artists, and durations.
+* **Spotify Web API & PKCE OAuth**: Complete PKCE authorization flow (`loginPKCE()`), Android deep-link handling (`pioneerdsp://callback`), track/album search, user playlists explorer, Spotify Connect device discovery, and hardware `AudioEffect` synchronization.
+* **Unified Online Music Discovery**: Instant search across YouTube Music (Data API v3 + public gateways) and over 40,000 public international live radio stations, streamed through the native proxy directly into the 32-bit floating point WebAudio DSP pipeline.
+* **Legitimate Media Downloader**: Dedicated download manager for direct user audio URLs, podcasts, and Creative Commons open audio, with progress feedback and automatic IndexedDB & device library integration.
+* **10-Band Graphic Equalizer**: ISO standard frequency faders (31Hz – 16kHz, $\pm12\text{ dB}$) with dynamic cubic bezier curve preview canvas.
+* **Todoroki Super Bass**: Dual-stage bass architecture (80Hz low-shelf + 60Hz punch peaking filter) up to $+14\text{ dB}$.
+* **Concert Hall 3D Reverb**: Synthetic impulse convolution reverb (Concert Hall, Large Arena, Cathedral, Live Studio, Plate Reverb) with equal-power trigonometric wet/dry mixing.
+* **Car Cabin Listening Position Alignment**: Interactive 4-seat visualizer (`FL`, `FR`, `RL`, `RR`) driving channel delay and stereo panning wavefront alignment.
+* **Audiophile Safety & Background Operation**: 100% zero demo sounds or test tones; `AudioBecomingNoisy` receiver to pause on headphone disconnect; W3C MediaSession API for lock-screen controls.
 
 ---
 

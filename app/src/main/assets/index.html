@@ -3,30 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Pioneer DSP - Sound Tune Cockpit Edition</title>
+  <title>Pioneer DSP Sound Tune Cockpit</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
   <!-- ==========================================================================
-       APP HEADER BAR
+       TOP COCKPIT STATUS & NAVIGATION HEADER
        ========================================================================== -->
-  <header class="app-header">
-    <div class="header-left">
-      <img src="assets/logo.png" alt="Pioneer DSP Logo" class="header-logo" onerror="this.style.display='none'">
-      <div class="header-title-block">
-        <span class="header-app-name">PIONEER DSP</span>
-        <span class="header-app-sub">SOUND TUNE ACOUSTIC ENGINE</span>
+  <header class="cockpit-header">
+    <div class="brand-cluster">
+      <div class="logo-wrapper">
+        <img src="assets/logo.png" alt="Pioneer DSP Logo" class="brand-logo" onerror="this.style.display='none'">
+      </div>
+      <div class="brand-titles">
+        <div class="brand-main">PIONEER DSP SOUND TUNE</div>
+        <div class="brand-sub">AUDIOPHILE COCKPIT • 32-BIT FLOAT DSP</div>
       </div>
     </div>
 
-    <div class="header-right">
-      <div class="badge-hires">
-        <span class="badge-hires-title">HI-RES</span>
-        <span class="badge-hires-spec">96kHz/24b</span>
+    <div class="header-right-actions">
+      <div class="hi-res-badge">
+        <span class="hi-res-dot"></span>
+        <span>HI-RES AUDIO</span>
       </div>
-      <button class="header-icon-btn" onclick="openSettings()" aria-label="Settings">
-        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+      <button class="settings-gear-btn" onclick="openSettingsModal()" aria-label="Settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3"></circle>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
         </svg>
@@ -35,283 +37,425 @@
   </header>
 
   <!-- ==========================================================================
-       MAIN VIEWPORT (6 iOS COCKPIT TABS)
+       MAIN COCKPIT CONTENT AREA (6 AUTHENTIC TABS)
        ========================================================================== -->
-  <main class="main-viewport">
+  <main class="cockpit-main" id="cockpit-viewport">
 
     <!-- ------------------------------------------------------------------------
-         TAB 1: TUNER (Main DSP Cockpit, Concert Hall, Rotary Dial, Super Bass)
+         TAB 1: TUNER (Main Cockpit View, Rotary Dial, Super Bass, Presets, FFT)
          ------------------------------------------------------------------------ -->
     <section id="tab-tuner" class="tab-view active">
-      <div class="tuner-container">
-
-        <!-- Concert Hall Acoustics Engagement Button (iOS MainDSPView match) -->
-        <div class="pioneer-card concert-hall-card" id="concert-hall-card" onclick="uiToggleConcertHall()">
-          <div class="ch-left">
-            <div class="ch-icon-circle">
-              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
-                <path d="M4 22h16M4 18h16M4 6h16M2 22V6l10-4 10 4v16M8 10v4M12 10v4M16 10v4"></path>
-              </svg>
-            </div>
-            <div class="ch-meta">
-              <div class="ch-title">
-                <span>CONCERT HALL ACOUSTICS</span>
-                <span class="ch-indicator-dot"></span>
-              </div>
-              <div class="ch-subtitle" id="ch-status-text">Tap to Engage Real-Time Concert Hall Reverb</div>
-            </div>
+      <!-- Cockpit Hero Now Playing Card -->
+      <div class="pioneer-card hero-now-playing" onclick="openNowPlaying()">
+        <div class="hero-np-top">
+          <div class="hero-np-art">
+            <img src="assets/logo.png" alt="Album Cover" class="hero-cover-img" id="hero-cover-img" onerror="this.src='assets/logo.png'">
+            <div class="hero-live-badge" id="hero-source-badge">32-BIT DSP</div>
           </div>
-          <div class="ch-btn-pill" id="ch-btn-text">ENGAGE</div>
+          <div class="hero-np-info">
+            <div class="hero-track-title" id="hero-title">Concert Hall Acoustic Master</div>
+            <div class="hero-artist-name" id="hero-artist">Pioneer Philharmonic Studio</div>
+            <div class="hero-album-name" id="hero-album">Hi-Fi Reference Calibration</div>
+          </div>
         </div>
 
-        <!-- Master Rotary Dial Knob (PioneerDialKnob from iOS) -->
-        <div class="pioneer-card dial-knob-section">
-          <div class="section-label" style="margin-bottom:0;">
-            <span>MASTER ACOUSTIC OUTPUT LEVEL</span>
-            <span style="color:var(--amber-orange);">32-BIT FLOAT</span>
+        <!-- Master Concert Hall Switch Button -->
+        <button class="hero-concert-hall-toggle" id="hero-hall-toggle" onclick="uiToggleConcertHall(event)">
+          <div class="hch-left">
+            <span class="hch-icon">🏛️</span>
+            <div>
+              <div class="hch-title">CONCERT HALL REVERB</div>
+              <div class="hch-sub">3D ACOUSTIC IMPULSE ENVIRONMENT</div>
+            </div>
           </div>
+          <div class="hch-pill" id="hero-hall-pill">OFF</div>
+        </button>
 
-          <div class="dial-container" id="master-dial-touch-area">
-            <svg class="dial-svg" viewBox="0 0 140 140">
-              <defs>
-                <linearGradient id="dialGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#00e5ff"/>
-                  <stop offset="100%" stop-color="#ff6b00"/>
-                </linearGradient>
-              </defs>
-              <circle class="dial-track-circle" cx="70" cy="70" r="54"/>
-              <circle class="dial-arc-fill" id="dial-arc-progress" cx="70" cy="70" r="54"/>
+        <!-- Master Rotary Volume Dial Knob -->
+        <div class="rotary-dial-card">
+          <div class="dial-container">
+            <div class="rotary-knob" id="master-dial-knob">
+              <svg class="dial-svg-track" viewBox="0 0 160 160">
+                <circle cx="80" cy="80" r="68" class="dial-bg-arc" />
+                <circle cx="80" cy="80" r="68" class="dial-progress-arc" id="dial-progress-arc" />
+              </svg>
+              <div class="rotary-dial-cap">
+                <div class="dial-indicator-dot" id="dial-indicator-dot"></div>
+                <div class="dial-center-val" id="dial-val-text">80%</div>
+                <div class="dial-center-label">MASTER LEVEL</div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:10px; color:var(--text-muted); font-family:var(--font-mono); text-align:center;">
+            Drag or rotate dial to adjust master DSP output level
+          </div>
+        </div>
+
+        <!-- Seek Scrubber -->
+        <div class="hero-scrubber" onclick="event.stopPropagation()">
+          <div class="scrubber-time-row">
+            <span class="scrubber-time" id="hero-time-cur">0:00</span>
+            <span class="scrubber-time" id="hero-time-dur">0:00</span>
+          </div>
+          <input type="range" class="seek-slider" id="hero-seek-slider" min="0" max="100" value="0"
+                 oninput="onSeekSliderInput(this.value)" onchange="onSeekSliderChange(this.value)">
+        </div>
+
+        <!-- Transport Buttons -->
+        <div class="hero-transport-row" onclick="event.stopPropagation()">
+          <button class="hero-btn-sub" id="hero-shuffle-btn" onclick="toggleShuffle()" title="Shuffle">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 3 21 3 21 8"></polyline>
+              <line x1="4" y1="20" x2="21" y2="3"></line>
+              <polyline points="21 16 21 21 16 21"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <line x1="4" y1="4" x2="9" y2="9"></line>
             </svg>
+          </button>
+          <button class="hero-btn-step" onclick="masterStepPrev()" title="Previous">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <polygon points="19 20 9 12 19 4 19 20"></polygon>
+              <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5"></line>
+            </svg>
+          </button>
+          <button class="hero-btn-play" onclick="toggleMasterPlay()" title="Play/Pause">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+              <polygon points="6 4 20 12 6 20 6 4" id="hero-play-icon"/>
+            </svg>
+          </button>
+          <button class="hero-btn-step" onclick="masterStepNext()" title="Next">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <polygon points="5 4 15 12 5 20 5 4"></polygon>
+              <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
+            </svg>
+          </button>
+          <button class="hero-btn-sub" id="hero-repeat-btn" onclick="toggleRepeat()" title="Repeat">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="17 1 21 5 17 9"></polyline>
+              <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+              <polyline points="7 23 3 19 7 15"></polyline>
+              <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
 
-            <div class="dial-center-knob">
-              <div class="dial-value-text" id="dial-val-text">80</div>
-              <div class="dial-unit-text">LEVEL %</div>
+      <!-- Super Bass Dual-Stage Controls -->
+      <div class="pioneer-card super-bass-card">
+        <div class="sb-header">
+          <div class="sb-titles">
+            <span class="sb-icon">🔊</span>
+            <div>
+              <div class="sb-main-title">TODOROKI SUPER BASS</div>
+              <div class="sb-sub-title">80Hz LOW-SHELF & 60Hz PUNCH BOOST</div>
             </div>
           </div>
-          <div style="font-size:10px; color:var(--text-muted); font-family:var(--font-mono);">Drag or rotate dial to adjust master volume</div>
+          <div class="sb-gain-val" id="super-bass-val">+0.0 dB</div>
         </div>
-
-        <!-- Now Playing Hero Deck Card -->
-        <div class="pioneer-card now-playing-card">
-          <div class="np-top-row">
-            <div class="np-cover-wrap">
-              <img src="assets/logo.png" alt="Cover" class="np-cover-img" id="hero-cover-img" onerror="this.src='assets/logo.png'">
-            </div>
-            <div class="np-meta-wrap">
-              <div class="np-title" id="hero-title">Concert Hall Acoustic Master</div>
-              <div class="np-artist" id="hero-artist">Pioneer Philharmonic Studio</div>
-              <div class="source-pill-row">
-                <span class="source-pill local" id="hero-source-pill">HI-FI DSP</span>
-                <span style="font-size:9.5px; font-family:var(--font-mono); color:var(--text-muted);" id="hero-format-spec">PCM • 44.1kHz</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Scrub Progress Bar -->
-          <div class="np-progress-row">
-            <input type="range" class="seek-slider" id="hero-seek-slider" min="0" max="100" value="0" oninput="onSeekInput(this.value)">
-            <div class="time-labels-row">
-              <span id="hero-time-cur">0:00</span>
-              <span id="hero-time-dur">3:00</span>
-            </div>
-          </div>
-
-          <!-- Transport Controls Row -->
-          <div class="np-transport-row">
-            <button class="transport-btn" id="hero-shuffle-btn" onclick="toggleShuffle()" title="Shuffle">
-              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
-                <polyline points="16 3 21 3 21 8"></polyline>
-                <line x1="4" y1="20" x2="21" y2="3"></line>
-                <polyline points="21 16 21 21 16 21"></polyline>
-                <line x1="15" y1="15" x2="21" y2="21"></line>
-                <line x1="4" y1="4" x2="9" y2="9"></line>
-              </svg>
-            </button>
-
-            <button class="transport-btn" onclick="masterStepPrev()" title="Previous Track">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                <polygon points="19 20 9 12 19 4 19 20"></polygon>
-                <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5"></line>
-              </svg>
-            </button>
-
-            <button class="transport-btn-play" id="hero-play-btn" onclick="toggleMasterPlay()" title="Play / Pause">
-              <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
-                <polygon points="6 4 20 12 6 20 6 4" id="hero-play-icon"/>
-              </svg>
-            </button>
-
-            <button class="transport-btn" onclick="masterStepNext()" title="Next Track">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                <polygon points="5 4 15 12 5 20 5 4"></polygon>
-                <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
-              </svg>
-            </button>
-
-            <button class="transport-btn" id="hero-lyrics-btn" onclick="openNowPlayingWithLyrics()" title="Synced Lyrics">
-              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                <line x1="9" y1="9" x2="15" y2="9"></line>
-                <line x1="9" y1="13" x2="13" y2="13"></line>
-              </svg>
-            </button>
-          </div>
+        <div class="sb-slider-wrap">
+          <input type="range" class="super-bass-slider" id="super-bass-slider" min="0" max="14" step="0.5" value="0" oninput="uiUpdateSuperBass(this.value)">
         </div>
-
-        <!-- Todoroki Super Bass & Sub-Bass Depth Slider -->
-        <div class="pioneer-card super-bass-card highlight-amber">
-          <div class="sb-header">
-            <div class="sb-title-wrap">
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--amber-orange)" stroke-width="2" fill="none">
-                <path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-              </svg>
-              <span class="sb-title">TODOROKI SUPER BASS (80Hz + 60Hz PUNCH)</span>
-            </div>
-            <span class="sb-val-badge" id="super-bass-val">+0.0 dB</span>
-          </div>
-          <input type="range" class="super-bass-slider" id="super-bass-slider" min="0" max="14" step="0.5" value="0" oninput="onSuperBassInput(this.value)">
-          <div style="display:flex; justify-content:space-between; font-size:9.5px; font-family:var(--font-mono); color:var(--text-muted);">
-            <span>0 dB (DIRECT)</span>
-            <span>+7 dB (PUNCH)</span>
-            <span>+14 dB (MAX BASS)</span>
-          </div>
+        <div class="sb-quick-presets">
+          <button class="sb-pill-btn" onclick="setSuperBassDirect(0)">OFF (0dB)</button>
+          <button class="sb-pill-btn" onclick="setSuperBassDirect(4.5)">SUBTLE (+4.5dB)</button>
+          <button class="sb-pill-btn" onclick="setSuperBassDirect(9.0)">PUNCH (+9.0dB)</button>
+          <button class="sb-pill-btn" onclick="setSuperBassDirect(14.0)">MAX (+14dB)</button>
         </div>
+      </div>
 
-        <!-- DSP Presets Selector (Exact 6 Presets from iOS DSPSettings.swift) -->
-        <div>
-          <div class="section-label">
-            <span>ACOUSTIC DSP PRESETS</span>
-            <span style="color:var(--cyber-cyan);">REAL-TIME</span>
-          </div>
-          <div class="presets-grid">
-            <button class="preset-btn active" id="preset-flat" onclick="selectPreset('flat')">
-              <span class="preset-icon">〰️</span>
-              <span class="preset-name">FLAT / DIRECT</span>
-            </button>
-            <button class="preset-btn" id="preset-concertHall" onclick="selectPreset('concertHall')">
-              <span class="preset-icon">🏛️</span>
-              <span class="preset-name">CONCERT HALL</span>
-            </button>
-            <button class="preset-btn" id="preset-superBass" onclick="selectPreset('superBass')">
-              <span class="preset-icon">🔊</span>
-              <span class="preset-name">SUPER BASS</span>
-            </button>
-            <button class="preset-btn" id="preset-dynamic" onclick="selectPreset('dynamic')">
-              <span class="preset-icon">⚡</span>
-              <span class="preset-name">DYNAMIC LIVE</span>
-            </button>
-            <button class="preset-btn" id="preset-vocal" onclick="selectPreset('vocal')">
-              <span class="preset-icon">🎙️</span>
-              <span class="preset-name">VOCAL CLARITY</span>
-            </button>
-            <button class="preset-btn" id="preset-club" onclick="selectPreset('club')">
-              <span class="preset-icon">🎶</span>
-              <span class="preset-name">CLUB DANCE</span>
-            </button>
-          </div>
+      <!-- DSP Presets Selector Bar -->
+      <div class="section-label">
+        <span>ACOUSTIC DSP PRESETS</span>
+        <span style="color:var(--amber-orange);">STUDIO PROFILE</span>
+      </div>
+      <div class="presets-scroll-bar">
+        <button class="preset-btn active" id="preset-flat" onclick="selectPreset('flat')">
+          <span class="preset-icon">🎚️</span>
+          <span class="preset-name">FLAT</span>
+        </button>
+        <button class="preset-btn" id="preset-concertHall" onclick="selectPreset('concertHall')">
+          <span class="preset-icon">🏛️</span>
+          <span class="preset-name">CONCERT HALL</span>
+        </button>
+        <button class="preset-btn" id="preset-superBass" onclick="selectPreset('superBass')">
+          <span class="preset-icon">🔊</span>
+          <span class="preset-name">SUPER BASS</span>
+        </button>
+        <button class="preset-btn" id="preset-dynamic" onclick="selectPreset('dynamic')">
+          <span class="preset-icon">⚡</span>
+          <span class="preset-name">DYNAMIC</span>
+        </button>
+        <button class="preset-btn" id="preset-vocal" onclick="selectPreset('vocal')">
+          <span class="preset-icon">🎤</span>
+          <span class="preset-name">VOCAL</span>
+        </button>
+        <button class="preset-btn" id="preset-club" onclick="selectPreset('club')">
+          <span class="preset-icon">🎛️</span>
+          <span class="preset-name">CLUB</span>
+        </button>
+      </div>
+
+      <!-- Live 20-Band Spectrum Analyser Card -->
+      <div class="pioneer-card spectrum-card">
+        <div class="spectrum-header">
+          <span class="spectrum-title">REAL-TIME FAST FOURIER FFT ANALYSER</span>
+          <span class="spectrum-status">32-BIT DSP ACTIVE</span>
         </div>
-
-        <!-- Dynamic 18-Bar Spectrum Visualizer (SpectrumVisualizerView from iOS) -->
-        <div class="spectrum-card">
-          <div class="section-label" style="margin-bottom:6px;">
-            <span>REAL-TIME 32-BIT SPECTRUM ANALYSER</span>
-            <span style="color:var(--amber-orange);">LIVE FFT</span>
-          </div>
-          <div class="spectrum-bars-row" id="spectrum-bars-row">
-            <!-- 18 gradient bars generated dynamically -->
-          </div>
+        <div class="spectrum-bars-container" id="spectrum-bars-container">
+          <!-- 18 to 20 dynamically populated spectrum bars -->
         </div>
-
+        <div class="spectrum-freq-axis">
+          <span>31Hz</span><span>125Hz</span><span>500Hz</span><span>2kHz</span><span>8kHz</span><span>16kHz</span>
+        </div>
       </div>
     </section>
 
     <!-- ------------------------------------------------------------------------
-         TAB 2: LIBRARY (Local Library, MediaStore, SAF Import)
+         TAB 2: LIBRARY (Discovery, Local MediaStore, YouTube Music Search, Downloads)
          ------------------------------------------------------------------------ -->
     <section id="tab-library" class="tab-view">
-      <div class="section-label">
-        <span>LOCAL MUSIC REPOSITORY</span>
-        <span id="lib-count-label">0 TRACKS</span>
+      <!-- Sub-Tabs: Local Library | Online Discovery | Downloads -->
+      <div class="sub-tabs-bar">
+        <button class="sub-tab-pill active amber" id="lib-subtab-local" onclick="switchLibSubTab('local')">LOCAL TRACKS</button>
+        <button class="sub-tab-pill" id="lib-subtab-online" onclick="switchLibSubTab('online')">ONLINE DISCOVERY</button>
+        <button class="sub-tab-pill" id="lib-subtab-downloads" onclick="switchLibSubTab('downloads')">DOWNLOADS</button>
       </div>
 
-      <div class="library-actions-bar">
-        <button class="btn-add-songs" onclick="triggerFileImport()">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          <span>ADD SONGS (SAF)</span>
-        </button>
-        <button class="btn-rescan-media" onclick="scanMediaStore()">
-          SCAN DEVICE
-        </button>
+      <!-- SECTION A: LOCAL TRACKS -->
+      <div id="lib-panel-local">
+        <div class="section-label">
+          <span>LOCAL MUSIC REPOSITORY</span>
+          <span id="lib-count-label">0 TRACKS</span>
+        </div>
+
+        <div class="library-actions-bar">
+          <button class="btn-rescan-media" onclick="scanMediaStore()">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle; margin-right:4px;">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+            SCAN DEVICE
+          </button>
+          <button class="btn-add-songs" onclick="triggerFileImport()">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" style="vertical-align:middle; margin-right:4px;">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            ADD SONGS (SAF)
+          </button>
+        </div>
+
+        <div class="sort-bar">
+          <span class="sort-label">SORT:</span>
+          <button class="sort-pill active" id="sort-title" onclick="sortLibrary('title')">Title</button>
+          <button class="sort-pill" id="sort-artist" onclick="sortLibrary('artist')">Artist</button>
+          <button class="sort-pill" id="sort-dur" onclick="sortLibrary('duration')">Duration</button>
+          <button class="sort-pill" id="sort-date" onclick="sortLibrary('date')">Recent</button>
+        </div>
+
+        <input type="text" class="library-search-box" id="lib-search-input" placeholder="Search local tracks, artists, albums..." oninput="filterLocalSongs(this.value)">
+
+        <div class="song-list-container" id="library-songs-list">
+          <!-- Rendered local songs -->
+        </div>
       </div>
 
-      <input type="text" class="library-search-box" id="lib-search-input" placeholder="Search tracks, artists, albums..." oninput="filterLocalSongs(this.value)">
+      <!-- SECTION B: ONLINE DISCOVERY (YouTube Music & Curated Radio Streams) -->
+      <div id="lib-panel-online" style="display:none;">
+        <div class="section-label">
+          <span>ONLINE MUSIC DISCOVERY</span>
+          <span style="color:var(--cyber-cyan);">REAL-TIME STREAMING</span>
+        </div>
 
-      <div class="song-list-container" id="library-songs-list">
-        <!-- Rendered local songs -->
+        <!-- Unified Search Input -->
+        <div style="display:flex; gap:8px; margin-bottom:12px;">
+          <input type="text" class="library-search-box" id="online-search-input" placeholder="Search YouTube Music, artists, tracks..." style="margin-bottom:0;" onkeydown="if(event.key==='Enter') executeOnlineSearch()">
+          <button class="btn-rescan-media" style="flex-shrink:0;" onclick="executeOnlineSearch()">SEARCH</button>
+        </div>
+
+        <!-- Custom Stream URL Player -->
+        <div class="pioneer-card" style="padding:12px; margin-bottom:14px;">
+          <div style="font-size:11px; font-weight:800; color:var(--amber-orange); font-family:var(--font-mono); margin-bottom:6px;">DIRECT CUSTOM STREAM URL</div>
+          <div style="display:flex; gap:6px;">
+            <input type="text" class="settings-input" id="custom-stream-url" placeholder="https://example.com/live.mp3" style="margin-top:0;">
+            <button class="btn-rescan-media" onclick="playCustomStreamUrl()">PLAY</button>
+          </div>
+        </div>
+
+        <!-- Provider Filters -->
+        <div class="sort-bar">
+          <span class="sort-label">PROVIDER:</span>
+          <button class="sort-pill active" id="prov-all" onclick="filterOnlineProvider('all')">ALL</button>
+          <button class="sort-pill" id="prov-yt" onclick="filterOnlineProvider('youtube')">YouTube Music</button>
+          <button class="sort-pill" id="prov-radio" onclick="filterOnlineProvider('radio')">24/7 Live Radio</button>
+        </div>
+
+        <div id="online-loading-spinner" style="display:none; text-align:center; padding:30px; color:var(--amber-orange);">
+          <div style="font-size:24px; animation:spin 1s linear infinite;">⏳</div>
+          <div style="font-size:11px; font-family:var(--font-mono); margin-top:8px;">SEARCHING HIGH-SPEED GATEWAYS...</div>
+        </div>
+
+        <!-- Search Results List -->
+        <div class="search-results-list" id="online-results-list">
+          <!-- Curated / Search items will appear here -->
+        </div>
+      </div>
+
+      <!-- SECTION C: DOWNLOADS -->
+      <div id="lib-panel-downloads" style="display:none;">
+        <div class="section-label">
+          <span>LEGITIMATE MEDIA DOWNLOADER</span>
+          <span style="color:var(--hifi-gold);">OFFLINE DSP READY</span>
+        </div>
+
+        <!-- Compliance Notice -->
+        <div class="drm-notice-card">
+          <span style="font-size:18px;">🔒</span>
+          <div>
+            <strong>Platform License Notice:</strong> Spotify & YouTube Music streams are DRM-protected for authorized real-time streaming only. This download tool accepts direct user audio URLs, podcast MP3s, and Creative Commons open music for offline 32-bit DSP playback.
+          </div>
+        </div>
+
+        <!-- Direct URL Downloader Card -->
+        <div class="download-card">
+          <div style="font-size:12px; font-weight:800; color:#fff; font-family:var(--font-mono); margin-bottom:8px;">SAVE OPEN AUDIO URL TO LIBRARY</div>
+          <input type="text" class="settings-input" id="dl-url-input" placeholder="Direct MP3 / AAC / Audio URL (https://...)" style="margin-bottom:8px;">
+          <div style="display:flex; gap:8px;">
+            <input type="text" class="settings-input" id="dl-title-input" placeholder="Track Title" style="flex:1; margin-top:0;">
+            <input type="text" class="settings-input" id="dl-artist-input" placeholder="Artist" style="flex:1; margin-top:0;">
+          </div>
+          <button class="btn-add-songs" style="width:100%; margin-top:10px;" onclick="startDirectDownload()">START DOWNLOAD & SAVE TO LIBRARY</button>
+
+          <!-- Download Progress Indicator -->
+          <div class="download-progress-box" id="dl-progress-box" style="display:none;">
+            <div style="display:flex; justify-content:space-between; font-size:10px; font-family:var(--font-mono); color:var(--text-muted);">
+              <span id="dl-status-text">Downloading audio stream...</span>
+              <span id="dl-pct-text">0%</span>
+            </div>
+            <div class="download-progress-bar">
+              <div class="download-progress-fill" id="dl-progress-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completed Downloads List -->
+        <div class="section-label">
+          <span>COMPLETED OFFLINE DOWNLOADS</span>
+          <span id="dl-count-label">0 FILES</span>
+        </div>
+        <div class="song-list-container" id="downloaded-songs-list">
+          <!-- Rendered downloaded files -->
+        </div>
       </div>
     </section>
 
     <!-- ------------------------------------------------------------------------
-         TAB 3: SPOTIFY (Quick Stations, Web Player, Floating DSP Quick Tuning)
+         TAB 3: SPOTIFY (PKCE OAuth, Curated Stations, Web Player, Devices, DSP)
          ------------------------------------------------------------------------ -->
     <section id="tab-spotify" class="tab-view">
       <div class="spotify-top-bar">
         <div class="spotify-brand-pill">
-          <span class="spotify-dot"></span>
-          <span class="spotify-brand-text" id="spotify-conn-status">SPOTIFY CONNECT ACTIVE</span>
+          <span class="spotify-dot" id="spotify-conn-dot"></span>
+          <span class="spotify-brand-text" id="spotify-conn-status">SPOTIFY DISCONNECTED</span>
         </div>
-        <button class="btn-reset-flat" onclick="connectSpotifyOAuth()">AUTH SPOTIFY</button>
-      </div>
-
-      <!-- Quick Curated Stations (Exact match from iOS SpotifyService.swift) -->
-      <div class="section-label">
-        <span>CURATED SPOTIFY BROADCASTS</span>
-        <span style="color:var(--spotify-green);">PIONEER READY</span>
-      </div>
-      <div class="spotify-stations-scroll">
-        <button class="spotify-station-btn active" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M', this)">
-          <span>🔥</span><span>Today's Top Hits</span>
-        </button>
-        <button class="spotify-station-btn" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DX0hWmn8726Rh', this)">
-          <span>🏛️</span><span>Live Concert Hall</span>
-        </button>
-        <button class="spotify-station-btn" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd', this)">
-          <span>🔊</span><span>Bass Heavy Drive</span>
-        </button>
-        <button class="spotify-station-btn" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DWXRqgorJj26U', this)">
-          <span>🎸</span><span>Rock Classics</span>
-        </button>
-        <button class="spotify-station-btn" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DXdLEN7aqioXM', this)">
-          <span>🎧</span><span>Chill Lo-Fi Vibes</span>
-        </button>
-      </div>
-
-      <!-- Embedded Spotify Web Player Container -->
-      <div class="spotify-web-container">
-        <iframe id="spotify-web-frame" class="spotify-iframe" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-      </div>
-
-      <!-- Floating DSP Quick Tuning Companion for Spotify -->
-      <div class="pioneer-card spotify-dsp-companion">
-        <div class="s-dsp-header">
-          <span class="s-dsp-title">FLOATING DSP HARDWARE SYNC</span>
-          <span class="s-dsp-status" id="spotify-audiofx-status">AudioEffect Session Active</span>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-reset-flat" id="spotify-login-btn" onclick="connectSpotifyOAuth()">CONNECT</button>
+          <button class="btn-reset-flat" id="spotify-logout-btn" style="display:none;" onclick="logoutSpotify()">LOGOUT</button>
         </div>
-        <div class="s-dsp-controls-row">
-          <button class="preset-btn" onclick="uiToggleConcertHall()">
-            <span class="preset-icon">🏛️</span>
-            <span class="preset-name">TOGGLE HALL</span>
+      </div>
+
+      <!-- Spotify Sub-Tabs -->
+      <div class="sub-tabs-bar" style="margin-top:10px;">
+        <button class="sub-tab-pill active spotify" id="spot-subtab-stations" onclick="switchSpotSubTab('stations')">CURATED STATIONS</button>
+        <button class="sub-tab-pill" id="spot-subtab-search" onclick="switchSpotSubTab('search')">SEARCH & PLAYLISTS</button>
+        <button class="sub-tab-pill" id="spot-subtab-devices" onclick="switchSpotSubTab('devices')">DEVICES & DSP</button>
+      </div>
+
+      <!-- SPOTIFY PANEL 1: CURATED STATIONS & WEB PLAYER -->
+      <div id="spot-panel-stations">
+        <div class="section-label">
+          <span>CURATED SPOTIFY BROADCASTS</span>
+          <span style="color:var(--spotify-green);">PIONEER READY</span>
+        </div>
+        <div class="spotify-stations-scroll">
+          <button class="spotify-station-btn active" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M', this)">
+            <span>🔥</span><span>Today's Top Hits</span>
           </button>
-          <button class="preset-btn" onclick="selectPreset('superBass')">
-            <span class="preset-icon">🔊</span>
-            <span class="preset-name">SUPER BASS +9dB</span>
+          <button class="spotify-station-btn" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DX0hWmn8726Rh', this)">
+            <span>🏛️</span><span>Live Concert Hall</span>
+          </button>
+          <button class="spotify-station-btn" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd', this)">
+            <span>🔊</span><span>Bass Heavy Drive</span>
+          </button>
+          <button class="spotify-station-btn" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DWXRqgorJj26U', this)">
+            <span>🎸</span><span>Rock Classics</span>
+          </button>
+          <button class="spotify-station-btn" onclick="loadSpotifyStation('https://open.spotify.com/playlist/37i9dQZF1DXdLEN7aqioXM', this)">
+            <span>🎧</span><span>Chill Lo-Fi Vibes</span>
           </button>
         </div>
-        <div style="font-size:10px; color:var(--text-muted); line-height:1.4;">
-          Pioneer Android hooks directly into Android's native <code>android.media.audiofx</code> session to synchronize hardware Equalizer, BassBoost, and Reverb presets with Spotify playback.
+
+        <!-- Embedded Spotify Web Player Container -->
+        <div class="spotify-web-container">
+          <iframe id="spotify-web-frame" class="spotify-iframe" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+        </div>
+      </div>
+
+      <!-- SPOTIFY PANEL 2: SEARCH & PLAYLISTS -->
+      <div id="spot-panel-search" style="display:none;">
+        <div style="display:flex; gap:8px; margin-bottom:12px;">
+          <input type="text" class="library-search-box" id="spotify-search-input" placeholder="Search Spotify tracks, artists, albums..." style="margin-bottom:0;" onkeydown="if(event.key==='Enter') executeSpotifySearch()">
+          <button class="btn-rescan-media" style="flex-shrink:0; background:var(--spotify-green); color:#000;" onclick="executeSpotifySearch()">SEARCH</button>
+        </div>
+
+        <div id="spotify-search-loading" style="display:none; text-align:center; padding:20px; color:var(--spotify-green);">
+          <span>Searching Spotify Web API...</span>
+        </div>
+
+        <!-- Search Results List -->
+        <div class="search-results-list" id="spotify-results-list">
+          <!-- Populated results -->
+        </div>
+
+        <!-- User Playlists Section -->
+        <div class="section-label" style="margin-top:16px;">
+          <span>YOUR SAVED PLAYLISTS</span>
+          <span style="color:var(--spotify-green);">SPOTIFY LIBRARY</span>
+        </div>
+        <div class="spotify-playlists-grid" id="spotify-playlists-container">
+          <!-- Populated playlists -->
+        </div>
+      </div>
+
+      <!-- SPOTIFY PANEL 3: DEVICES & DSP -->
+      <div id="spot-panel-devices" style="display:none;">
+        <div class="section-label">
+          <span>ACTIVE SPOTIFY CONNECT DEVICES</span>
+          <button class="sort-pill" onclick="refreshSpotifyDevices()">REFRESH</button>
+        </div>
+        <div id="spotify-devices-list" style="margin-bottom:14px;">
+          <!-- Populated devices -->
+        </div>
+
+        <!-- Floating DSP Quick Tuning Companion for Spotify -->
+        <div class="pioneer-card spotify-dsp-companion">
+          <div class="s-dsp-header">
+            <span class="s-dsp-title">FLOATING DSP HARDWARE SYNC</span>
+            <span class="s-dsp-status" id="spotify-audiofx-status">AudioEffect Session Active</span>
+          </div>
+          <div class="s-dsp-controls-row">
+            <button class="preset-btn" onclick="uiToggleConcertHall()">
+              <span class="preset-icon">🏛️</span>
+              <span class="preset-name">TOGGLE HALL</span>
+            </button>
+            <button class="preset-btn" onclick="selectPreset('superBass')">
+              <span class="preset-icon">🔊</span>
+              <span class="preset-name">SUPER BASS +9dB</span>
+            </button>
+          </div>
+          <div style="font-size:10.5px; color:var(--text-muted); line-height:1.4; margin-top:8px;">
+            Pioneer Android automatically hooks into Android's native <code>android.media.audiofx</code> session to synchronize hardware Equalizer, BassBoost, and Reverb presets with Spotify playback.
+          </div>
         </div>
       </div>
     </section>
@@ -360,69 +504,67 @@
           <div class="rr-left">
             <span class="rr-icon">🏛️</span>
             <div>
-              <div class="rr-title">CONCERT HALL</div>
-              <div class="rr-sub">Symphonic 3.2s decay with rich diffuse reflections</div>
+              <div class="rr-name">CONCERT HALL</div>
+              <div class="rr-desc">Warm, expansive symphonic hall with rich lateral reflections</div>
             </div>
           </div>
-          <span class="rr-check">✓</span>
+          <span class="rr-pill">2.4s DECAY</span>
         </div>
 
         <div class="reverb-room-card" id="room-largeHall" onclick="selectReverbRoom('largeHall', this)">
           <div class="rr-left">
             <span class="rr-icon">🏟️</span>
             <div>
-              <div class="rr-title">LARGE ARENA</div>
-              <div class="rr-sub">Expansive 4.5s soundstage with wide stereo imaging</div>
+              <div class="rr-name">LARGE ARENA</div>
+              <div class="rr-desc">Cavernous auditorium with broad dispersion and high diffusion</div>
             </div>
           </div>
-          <span class="rr-check">✓</span>
+          <span class="rr-pill">3.1s DECAY</span>
         </div>
 
         <div class="reverb-room-card" id="room-cathedral" onclick="selectReverbRoom('cathedral', this)">
           <div class="rr-left">
             <span class="rr-icon">⛪</span>
             <div>
-              <div class="rr-title">CATHEDRAL</div>
-              <div class="rr-sub">Long 5.5s grand stone architecture reverberation</div>
+              <div class="rr-name">CATHEDRAL</div>
+              <div class="rr-desc">Towering stone nave with airy reflections and prolonged tail</div>
             </div>
           </div>
-          <span class="rr-check">✓</span>
+          <span class="rr-pill">3.8s DECAY</span>
         </div>
 
         <div class="reverb-room-card" id="room-mediumRoom" onclick="selectReverbRoom('mediumRoom', this)">
           <div class="rr-left">
             <span class="rr-icon">🎙️</span>
             <div>
-              <div class="rr-title">LIVE STUDIO</div>
-              <div class="rr-sub">Intimate 1.4s acoustic chamber for warm presence</div>
+              <div class="rr-name">LIVE STUDIO</div>
+              <div class="rr-desc">Controlled, tight room acoustics with transparent decay</div>
             </div>
           </div>
-          <span class="rr-check">✓</span>
+          <span class="rr-pill">1.2s DECAY</span>
         </div>
 
         <div class="reverb-room-card" id="room-plate" onclick="selectReverbRoom('plate', this)">
           <div class="rr-left">
-            <span class="rr-icon">⚡</span>
+            <span class="rr-icon">🎚️</span>
             <div>
-              <div class="rr-title">PLATE REVERB</div>
-              <div class="rr-sub">Dense 2.0s metallic vintage reflections with crisp top-end</div>
+              <div class="rr-name">PLATE REVERB</div>
+              <div class="rr-desc">Classic vintage metal plate with dense high-frequency shimmer</div>
             </div>
           </div>
-          <span class="rr-check">✓</span>
+          <span class="rr-pill">1.8s DECAY</span>
         </div>
       </div>
 
       <!-- Wet / Dry Mix Slider Card -->
-      <div class="pioneer-card reverb-mix-card highlight-cyan">
+      <div class="pioneer-card reverb-mix-card">
         <div class="rm-header">
-          <span class="rm-title">WET / DRY REVERBERATION MIX (EQUAL-POWER CURVE)</span>
-          <span class="rm-val" id="reverb-mix-val">0%</span>
+          <span class="rm-title">REVERB WET / DRY MIX</span>
+          <span class="rm-val" id="reverb-mix-val">0% (DRY)</span>
         </div>
-        <input type="range" class="reverb-mix-slider" id="reverb-mix-slider" min="0" max="100" value="0" oninput="onReverbMixInput(this.value)">
-        <div style="display:flex; justify-content:space-between; font-size:9.5px; font-family:var(--font-mono); color:var(--text-muted);">
-          <span>DRY (0%)</span>
-          <span>50%</span>
-          <span>WET (100%)</span>
+        <input type="range" class="reverb-mix-slider" id="reverb-mix-slider" min="0" max="100" value="0" oninput="uiUpdateReverbWetDry(this.value)">
+        <div style="font-size:10px; color:var(--text-muted); font-family:var(--font-mono); margin-top:8px;">
+          Trigonometric equal-power crossfade preserving perceived loudness between dry direct and reverberant wet signals.
         </div>
       </div>
     </section>
@@ -431,17 +573,15 @@
          TAB 6: CABIN (Car Cabin Listening Position Alignment)
          ------------------------------------------------------------------------ -->
     <section id="tab-cabin" class="tab-view">
-      <div class="section-label">
-        <span>LISTENING POSITION ALIGNMENT</span>
-        <span style="color:var(--amber-orange);">TIME DELAY</span>
-      </div>
-
-      <!-- Car Cabin Diagram Container (Matching iOS CarCabinVisualizer) -->
       <div class="pioneer-card cabin-diagram-card highlight-amber">
-        <div class="car-outline-box">
-          <div class="windshield-arc"></div>
+        <div class="cabin-diagram-header">
+          <span class="cdh-title">LISTENING POSITION ALIGNMENT</span>
+          <span class="cdh-status" id="cabin-active-pos">ALL SEATS</span>
+        </div>
 
-          <div class="seats-grid">
+        <!-- Vehicle Schematic Diagram -->
+        <div class="cabin-car-frame">
+          <div class="cabin-seats-grid">
             <div class="seat-pill" id="seat-fl" onclick="selectCabinPosition('frontLeft')">
               <span class="seat-icon">👤</span>
               <span class="seat-label">DRIVER</span>
@@ -574,87 +714,81 @@
   </nav>
 
   <!-- ==========================================================================
-       DEDICATED FULL-SCREEN NOW PLAYING & LYRICS MODAL
+       FULL-SCREEN NOW PLAYING & SYNCHRONIZED LYRICS MODAL
        ========================================================================== -->
-  <div class="now-playing-overlay" id="now-playing-screen">
-    <div class="np-modal-header">
-      <button class="np-modal-btn" onclick="closeNowPlaying()">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none">
+  <div class="now-playing-screen" id="now-playing-screen">
+    <div class="np-header">
+      <button class="np-close-btn" onclick="closeNowPlaying()">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
       </button>
-
-      <div style="text-align:center;">
-        <div style="font-size:10px; font-weight:800; font-family:var(--font-mono); color:var(--amber-orange);">PIONEER NOW PLAYING</div>
-        <div style="font-size:12px; font-weight:700; color:#fff;" id="np-modal-source">32-Bit Float DSP Active</div>
-      </div>
-
-      <button class="np-modal-btn" onclick="toggleLyricsView()">
-        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      <div class="np-header-title">NOW PLAYING</div>
+      <button class="np-lyrics-btn" onclick="toggleLyricsView()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16M4 12h16M4 18h7"></path>
         </svg>
       </button>
     </div>
 
-    <!-- Large Artwork Cover -->
+    <!-- Large Album Art / Vinyl Presentation -->
     <div class="np-large-cover-wrap" id="np-large-cover-wrap">
-      <img src="assets/logo.png" alt="Cover Large" class="np-large-cover-img" id="np-large-cover" onerror="this.src='assets/logo.png'">
+      <img src="assets/logo.png" alt="Large Artwork" class="np-large-cover-img" id="np-modal-cover-img" onerror="this.src='assets/logo.png'">
     </div>
 
-    <!-- Lyrics Container -->
+    <!-- Lyrics Scroll Container -->
     <div class="lyrics-overlay-container" id="lyrics-container">
       <div id="lyrics-scroll-content">
-        <!-- Rendered lyric lines -->
+        <div style="color:var(--text-muted); font-size:14px; padding:40px;">Searching synchronized lyrics...</div>
       </div>
     </div>
 
     <!-- Track Meta -->
-    <div style="text-align:center; margin-bottom:16px;">
-      <div style="font-size:20px; font-weight:900; color:#fff; font-family:var(--font-rounded);" id="np-modal-title">Concert Hall Acoustic Master</div>
-      <div style="font-size:14px; color:var(--text-muted); margin-top:4px;" id="np-modal-artist">Pioneer Philharmonic Studio</div>
+    <div class="np-track-meta">
+      <div class="np-title" id="np-modal-title">Concert Hall Acoustic Master</div>
+      <div class="np-artist" id="np-modal-artist">Pioneer Philharmonic Studio</div>
     </div>
 
     <!-- Seek Scrubber -->
-    <div style="margin-bottom:20px;">
-      <input type="range" class="seek-slider" id="np-modal-seek" min="0" max="100" value="0" oninput="onSeekInput(this.value)">
-      <div class="time-labels-row" style="margin-top:6px;">
+    <div class="np-scrubber-box">
+      <input type="range" class="seek-slider" id="np-modal-seek" min="0" max="100" value="0"
+             oninput="onSeekSliderInput(this.value)" onchange="onSeekSliderChange(this.value)">
+      <div class="np-time-row">
         <span id="np-modal-time-cur">0:00</span>
-        <span id="np-modal-time-dur">3:00</span>
+        <span id="np-modal-time-dur">0:00</span>
       </div>
     </div>
 
-    <!-- Transport Buttons -->
-    <div class="np-transport-row" style="margin-bottom:30px;">
-      <button class="transport-btn" onclick="toggleShuffle()">
-        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
-          <polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line>
-          <polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line>
+    <!-- Transport Controls -->
+    <div class="np-transport-row">
+      <button class="np-ctrl-btn" onclick="toggleShuffle()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="16 3 21 3 21 8"></polyline>
+          <line x1="4" y1="20" x2="21" y2="3"></line>
+          <polyline points="21 16 21 21 16 21"></polyline>
+          <line x1="15" y1="15" x2="21" y2="21"></line>
           <line x1="4" y1="4" x2="9" y2="9"></line>
         </svg>
       </button>
-
-      <button class="transport-btn" onclick="masterStepPrev()">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+      <button class="np-ctrl-btn" onclick="masterStepPrev()">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
           <polygon points="19 20 9 12 19 4 19 20"></polygon>
           <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5"></line>
         </svg>
       </button>
-
-      <button class="transport-btn-play" onclick="toggleMasterPlay()">
+      <button class="np-play-btn" onclick="toggleMasterPlay()">
         <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor">
           <polygon points="6 4 20 12 6 20 6 4" id="np-modal-play-icon"/>
         </svg>
       </button>
-
-      <button class="transport-btn" onclick="masterStepNext()">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+      <button class="np-ctrl-btn" onclick="masterStepNext()">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
           <polygon points="5 4 15 12 5 20 5 4"></polygon>
           <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
         </svg>
       </button>
-
-      <button class="transport-btn" onclick="toggleRepeat()">
-        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
+      <button class="np-ctrl-btn" onclick="toggleRepeat()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="17 1 21 5 17 9"></polyline>
           <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
           <polyline points="7 23 3 19 7 15"></polyline>
@@ -665,18 +799,18 @@
   </div>
 
   <!-- ==========================================================================
-       SETTINGS SHEET
+       SETTINGS SHEET MODAL
        ========================================================================== -->
-  <div class="settings-sheet-overlay" id="settings-sheet" onclick="closeSettings()">
+  <div class="settings-sheet-overlay" id="settings-modal" onclick="closeSettingsModal()">
     <div class="settings-sheet-card" onclick="event.stopPropagation()">
       <div class="settings-header-row">
-        <span style="font-size:16px; font-weight:900; color:#fff; font-family:var(--font-rounded);">PIONEER SETTINGS</span>
-        <button class="header-icon-btn" onclick="closeSettings()">✕</button>
+        <div style="font-size:15px; font-weight:900; font-family:var(--font-rounded); color:#fff;">PIONEER DSP COCKPIT CONFIGURATION</div>
+        <button class="np-close-btn" onclick="closeSettingsModal()">✕</button>
       </div>
 
       <div class="settings-group">
-        <label style="font-size:11px; font-weight:800; font-family:var(--font-mono); color:var(--amber-orange);">SPOTIFY CLIENT CONFIGURATION</label>
-        <div style="font-size:10.5px; color:var(--text-muted); margin-top:2px;">Custom Spotify Developer App Client ID for OAuth PKCE login:</div>
+        <label style="font-size:11px; font-weight:800; font-family:var(--font-mono); color:var(--spotify-green);">SPOTIFY DEVELOPER CLIENT ID</label>
+        <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">Redirect URI configured: <code>pioneerdsp://callback</code></div>
         <input type="text" class="settings-input" id="cfg-spotify-client-id" placeholder="Enter Spotify Client ID" onchange="saveSpotifyClientId(this.value)">
       </div>
 
@@ -695,7 +829,7 @@
       </div>
 
       <div style="margin-top:24px; padding-top:14px; border-top:1px solid var(--titanium-card-border); font-size:10px; color:var(--text-muted); font-family:var(--font-mono); text-align:center;">
-        PIONEER DSP SOUND TUNE COCKPIT v4.2.0 • 32-BIT FLOATING POINT AUDIO ENGINE
+        PIONEER DSP SOUND TUNE COCKPIT v4.3.0 • 32-BIT FLOATING POINT AUDIO ENGINE
       </div>
     </div>
   </div>
@@ -717,6 +851,17 @@
     let isLyricsViewActive = false;
     let activeSpectrumData = new Uint8Array(18);
     let spectrumInterval = null;
+    let currentLibSubTab = 'local';
+    let currentSpotSubTab = 'stations';
+    let currentSortMode = 'title';
+
+    // Seeking state guards
+    let isUserSeeking = false;
+    let seekDebounceTimeout = null;
+
+    // Online discovery search state
+    let cachedOnlineResults = [];
+    let activeProviderFilter = 'all';
 
     // Initialize UI on DOM Ready
     document.addEventListener('DOMContentLoaded', async () => {
@@ -738,367 +883,1000 @@
         console.warn('AudioContext auto-init deferred until user interaction:', e);
       }
 
-      // 5. Start Spectrum Animation Loop
-      startSpectrumVisualizerLoop();
+      // 5. Automatic MediaStore Scan on Startup
+      initAutoMediaScan();
 
-      // 6. Start Playback Sync Loop
+      // 6. Start Visualizer & Sync Loops
+      startSpectrumVisualizerLoop();
       startPlaybackSyncTimer();
 
       // 7. Initial EQ Curve Render
       drawEQCurve();
+
+      // 8. Restore Spotify Client ID in Settings
+      const savedCid = localStorage.getItem('pioneer_spotify_client_id') || (window.spotifyService ? window.spotifyService.clientId : '');
+      const cidInput = document.getElementById('cfg-spotify-client-id');
+      if (cidInput && savedCid && savedCid !== 'YOUR_SPOTIFY_CLIENT_ID') {
+        cidInput.value = savedCid;
+      }
+
+      // 9. Check Pending Spotify Callback
+      if (window.__pendingSpotifyCallbackUrl) {
+        window.spotifyAuthCallback(window.__pendingSpotifyCallbackUrl);
+        window.__pendingSpotifyCallbackUrl = null;
+      }
+
+      // 10. Update Spotify Auth UI
+      updateSpotifyAuthStatus();
+
+      // 11. Initial Curated Online Streams population
+      populateInitialOnlineStations();
+
+      // 12. Render Downloaded Tracks List
+      renderDownloadedSongsList();
     });
 
     // --- COCKPIT NAVIGATION (6 Authentic iOS Cockpit Tabs) ---
     function switchCockpitTab(tabKey) {
       currentTab = tabKey;
 
-      // Update Nav Buttons
       const navIds = ['tuner', 'library', 'spotify', 'equalizer', 'hall', 'cabin'];
       navIds.forEach(id => {
         const btn = document.getElementById(`nav-${id}`);
         if (btn) btn.classList.toggle('active', id === tabKey);
       });
 
-      // Update Tab Views
       navIds.forEach(id => {
         const view = document.getElementById(`tab-${id}`);
         if (view) view.classList.toggle('active', id === tabKey);
       });
 
-      // Special Tab Transitions
       if (tabKey === 'equalizer') {
         setTimeout(drawEQCurve, 50);
       }
     }
 
-    // --- MASTER DIAL ROTARY KNOB (PioneerDialKnob from iOS) ---
+    // --- SUB-NAVIGATION: LIBRARY TABS ---
+    function switchLibSubTab(sub) {
+      currentLibSubTab = sub;
+      ['local', 'online', 'downloads'].forEach(s => {
+        const pill = document.getElementById(`lib-subtab-${s}`);
+        if (pill) pill.classList.toggle('active', s === sub);
+        const panel = document.getElementById(`lib-panel-${s}`);
+        if (panel) panel.style.display = (s === sub) ? 'block' : 'none';
+      });
+
+      if (sub === 'local') renderLibrarySongs();
+      if (sub === 'downloads') renderDownloadedSongsList();
+    }
+
+    // --- SUB-NAVIGATION: SPOTIFY TABS ---
+    function switchSpotSubTab(sub) {
+      currentSpotSubTab = sub;
+      ['stations', 'search', 'devices'].forEach(s => {
+        const pill = document.getElementById(`spot-subtab-${s}`);
+        if (pill) pill.classList.toggle('active', s === sub);
+        const panel = document.getElementById(`spot-panel-${s}`);
+        if (panel) panel.style.display = (s === sub) ? 'block' : 'none';
+      });
+
+      if (sub === 'devices') refreshSpotifyDevices();
+      if (sub === 'search' && window.spotifyService && window.spotifyService.isAuthenticated()) {
+        loadUserSpotifyPlaylists();
+      }
+    }
+
+    // --- AUTOMATIC MEDIASTORE SCAN & SAF IMPORT ---
+    function initAutoMediaScan() {
+      if (window.PioneerBridge && typeof window.PioneerBridge.hasMediaPermission === 'function') {
+        if (window.PioneerBridge.hasMediaPermission()) {
+          scanMediaStore();
+        } else {
+          window.PioneerBridge.requestMediaPermission();
+        }
+      }
+    }
+
+    window.onMediaPermissionResult = function(granted) {
+      if (granted) {
+        scanMediaStore();
+      } else {
+        console.warn('Storage permission denied by user; fallback to SAF manual import.');
+      }
+    };
+
+    function scanMediaStore() {
+      if (window.PioneerBridge && typeof window.PioneerBridge.scanMediaStoreAudio === 'function') {
+        const json = window.PioneerBridge.scanMediaStoreAudio();
+        if (json) {
+          try {
+            const tracks = JSON.parse(json);
+            if (window.dspEngine && Array.isArray(tracks)) {
+              window.dspEngine.importMediaStoreTracks(tracks);
+              renderLibrarySongs();
+            }
+          } catch(e) {
+            console.error('Error parsing MediaStore audio JSON:', e);
+          }
+        }
+      }
+    }
+
+    function triggerFileImport() {
+      const input = document.getElementById('saf-file-input');
+      if (input) input.click();
+    }
+
+    async function handleFileSelect(e) {
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
+      if (window.dspEngine) {
+        await window.dspEngine.importFiles(files);
+        renderLibrarySongs();
+      }
+      e.target.value = '';
+    }
+
+    function sortLibrary(mode) {
+      currentSortMode = mode;
+      ['title', 'artist', 'dur', 'date'].forEach(m => {
+        const pill = document.getElementById(`sort-${m}`);
+        if (pill) pill.classList.toggle('active', m === mode);
+      });
+      renderLibrarySongs();
+    }
+
+    function renderLibrarySongs() {
+      const container = document.getElementById('library-songs-list');
+      if (!container || !window.dspEngine) return;
+      let songs = [...(window.dspEngine.songs || [])];
+      document.getElementById('lib-count-label').innerText = `${songs.length} TRACKS`;
+
+      if (songs.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+            <div style="font-size:28px; margin-bottom:8px;">🎵</div>
+            <div style="font-size:14px; font-weight:700; color:#fff;">No local audio files indexed</div>
+            <div style="font-size:11px; margin-top:4px;">Tap "SCAN DEVICE" or "ADD SONGS (SAF)" to load music.</div>
+          </div>
+        `;
+        return;
+      }
+
+      // Sort
+      if (currentSortMode === 'title') {
+        songs.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      } else if (currentSortMode === 'artist') {
+        songs.sort((a, b) => (a.artist || '').localeCompare(b.artist || ''));
+      } else if (currentSortMode === 'dur') {
+        songs.sort((a, b) => (b.duration || 0) - (a.duration || 0));
+      } else if (currentSortMode === 'date') {
+        songs.sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0));
+      }
+
+      container.innerHTML = '';
+      songs.forEach((song, idx) => {
+        const origIdx = window.dspEngine.songs.indexOf(song);
+        const isCurrent = window.dspEngine.currentIndex === origIdx;
+        const row = document.createElement('div');
+        row.className = `song-row ${isCurrent ? 'playing' : ''}`;
+        row.onclick = () => playSongAtIndex(origIdx);
+
+        const artworkSrc = song.artwork || 'assets/logo.png';
+        row.innerHTML = `
+          <div class="song-index-pill">${isCurrent ? '▶' : (idx + 1)}</div>
+          <img src="${escapeHtml(artworkSrc)}" class="song-artwork-thumb" onerror="this.src='assets/logo.png'">
+          <div class="song-meta">
+            <div class="song-title">${escapeHtml(song.title)}</div>
+            <div class="song-artist">${escapeHtml(song.artist || 'Local Audio')} • <span style="color:var(--text-dim); font-size:10px;">${song.fileSize || ''}</span></div>
+          </div>
+          <span class="song-dur">${formatTime(song.duration)}</span>
+          <button class="song-delete-btn" onclick="deleteSong(${origIdx}, event)" title="Delete track">✕</button>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function filterLocalSongs(query) {
+      const q = (query || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('#library-songs-list .song-row');
+      rows.forEach(r => {
+        const txt = r.innerText.toLowerCase();
+        r.style.display = txt.includes(q) ? 'flex' : 'none';
+      });
+    }
+
+    async function playSongAtIndex(idx) {
+      if (window.dspEngine) {
+        await window.dspEngine.playLocalSong(idx);
+        renderLibrarySongs();
+        updateMetadataUI();
+      }
+    }
+
+    async function deleteSong(idx, e) {
+      e.stopPropagation();
+      if (window.dspEngine) {
+        await window.dspEngine.removeSong(idx);
+        renderLibrarySongs();
+      }
+    }
+
+    // --- SEEKING AND PLAYBACK GLITCH FIX ---
+    function onSeekSliderInput(valPct) {
+      isUserSeeking = true;
+      const dur = window.dspEngine ? window.dspEngine.getCurrentDuration() : 0;
+      if (dur > 0) {
+        const curTime = (dur * parseFloat(valPct)) / 100.0;
+        const curStr = formatTime(curTime);
+        const heroCur = document.getElementById('hero-time-cur');
+        if (heroCur) heroCur.innerText = curStr;
+        const npModalCur = document.getElementById('np-modal-time-cur');
+        if (npModalCur) npModalCur.innerText = curStr;
+      }
+    }
+
+    function onSeekSliderChange(valPct) {
+      if (window.dspEngine) {
+        window.dspEngine.seek(parseFloat(valPct) / 100.0);
+      }
+      if (seekDebounceTimeout) clearTimeout(seekDebounceTimeout);
+      seekDebounceTimeout = setTimeout(() => {
+        isUserSeeking = false;
+      }, 400);
+    }
+
+    // --- ONLINE MUSIC DISCOVERY & YOUTUBE MUSIC ---
+    function populateInitialOnlineStations() {
+      if (!window.youtubeMusicEngine) return;
+      const stations = window.youtubeMusicEngine.getCuratedStations();
+      cachedOnlineResults = stations;
+      renderOnlineResults(stations);
+    }
+
+    async function executeOnlineSearch() {
+      const input = document.getElementById('online-search-input');
+      const q = input ? input.value.trim() : '';
+      if (!q) {
+        populateInitialOnlineStations();
+        return;
+      }
+
+      const spinner = document.getElementById('online-loading-spinner');
+      if (spinner) spinner.style.display = 'block';
+
+      try {
+        let results = [];
+        if (window.youtubeMusicEngine) {
+          results = await window.youtubeMusicEngine.search(q);
+        }
+        cachedOnlineResults = results;
+        renderOnlineResults(results);
+      } catch (err) {
+        console.error('Online search error:', err);
+      } finally {
+        if (spinner) spinner.style.display = 'none';
+      }
+    }
+
+    function filterOnlineProvider(prov) {
+      activeProviderFilter = prov;
+      ['all', 'yt', 'radio'].forEach(p => {
+        const pill = document.getElementById(`prov-${p}`);
+        if (pill) pill.classList.toggle('active', (p === 'all' && prov === 'all') || (p === 'yt' && prov === 'youtube') || (p === 'radio' && prov === 'radio'));
+      });
+
+      if (!cachedOnlineResults) return;
+      let filtered = cachedOnlineResults;
+      if (prov === 'youtube') {
+        filtered = cachedOnlineResults.filter(r => r.source === 'youtube');
+      } else if (prov === 'radio') {
+        filtered = cachedOnlineResults.filter(r => r.source === 'stream_radio' || r.source === 'stream_custom');
+      }
+      renderOnlineResults(filtered);
+    }
+
+    function renderOnlineResults(items) {
+      const list = document.getElementById('online-results-list');
+      if (!list) return;
+
+      if (!items || items.length === 0) {
+        list.innerHTML = `
+          <div style="text-align:center; padding:30px; color:var(--text-muted); font-size:12px;">
+            No online tracks found. Try searching by artist or song title.
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = '';
+      items.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'search-result-card';
+        card.onclick = () => playOnlineTrack(item, items, idx);
+
+        let badgeClass = 'youtube';
+        let badgeText = 'YOUTUBE';
+        if (item.source === 'stream_radio') {
+          badgeClass = 'radio';
+          badgeText = 'LIVE 24/7';
+        } else if (item.source === 'stream_custom') {
+          badgeClass = 'local';
+          badgeText = 'CUSTOM';
+        }
+
+        const art = item.artwork || 'assets/logo.png';
+        card.innerHTML = `
+          <div class="result-art-wrap">
+            <img src="${escapeHtml(art)}" class="result-art-img" onerror="this.src='assets/logo.png'">
+          </div>
+          <div class="result-info">
+            <div class="result-title">${escapeHtml(item.title)}</div>
+            <div class="result-meta-row">
+              <span class="provider-badge ${badgeClass}">${badgeText}</span>
+              <span class="result-artist">${escapeHtml(item.artist || 'Online Audio')}</span>
+            </div>
+          </div>
+          <button class="btn-play-stream" title="Play Stream">▶</button>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    async function playOnlineTrack(track, queue = [], index = 0) {
+      if (!window.dspEngine) return;
+      // Resolve audio stream if YouTube track
+      if (track.source === 'youtube' && !track.streamUrl && window.youtubeMusicEngine) {
+        try {
+          const resolved = await window.youtubeMusicEngine.resolveAudioStream(track.videoId || track.id);
+          Object.assign(track, resolved);
+        } catch(e) {
+          alert('Stream resolution error: ' + (e.message || 'Unable to load stream.'));
+          return;
+        }
+      }
+
+      await window.dspEngine.playStreamTrack(track, queue, index);
+      updateMetadataUI();
+    }
+
+    function playCustomStreamUrl() {
+      const input = document.getElementById('custom-stream-url');
+      const url = input ? input.value.trim() : '';
+      if (!url) return;
+      if (window.youtubeMusicEngine) {
+        const track = window.youtubeMusicEngine.createCustomStreamTrack(url);
+        if (track) playOnlineTrack(track);
+      }
+    }
+
+    // --- LEGITIMATE DOWNLOADS INTERFACE ---
+    async function startDirectDownload() {
+      const urlInput = document.getElementById('dl-url-input');
+      const titleInput = document.getElementById('dl-title-input');
+      const artistInput = document.getElementById('dl-artist-input');
+
+      const url = urlInput ? urlInput.value.trim() : '';
+      if (!url) {
+        alert('Please enter a valid direct audio URL.');
+        return;
+      }
+
+      const title = (titleInput && titleInput.value.trim()) ? titleInput.value.trim() : 'Downloaded Audio ' + new Date().toLocaleTimeString();
+      const artist = (artistInput && artistInput.value.trim()) ? artistInput.value.trim() : 'Pioneer Downloads';
+
+      const progressBox = document.getElementById('dl-progress-box');
+      const progressFill = document.getElementById('dl-progress-fill');
+      const statusText = document.getElementById('dl-status-text');
+      const pctText = document.getElementById('dl-pct-text');
+
+      if (progressBox) progressBox.style.display = 'block';
+      if (statusText) statusText.innerText = 'Connecting to audio stream...';
+      if (pctText) pctText.innerText = '10%';
+      if (progressFill) progressFill.style.width = '10%';
+
+      try {
+        const proxiedUrl = (window.dspEngine && window.dspEngine.isAndroidApp) 
+          ? ('https://pioneer.local/stream?url=' + encodeURIComponent(url)) 
+          : url;
+
+        const resp = await fetch(proxiedUrl);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status + ' ' + resp.statusText);
+
+        if (pctText) pctText.innerText = '45%';
+        if (progressFill) progressFill.style.width = '45%';
+        if (statusText) statusText.innerText = 'Downloading audio buffer...';
+
+        const arrayBuffer = await resp.arrayBuffer();
+
+        if (pctText) pctText.innerText = '85%';
+        if (progressFill) progressFill.style.width = '85%';
+        if (statusText) statusText.innerText = 'Decoding & saving to local library...';
+
+        // Save to IndexedDB local library
+        const trackMeta = { title, artist, album: 'Pioneer Downloads', mimeType: resp.headers.get('content-type') || 'audio/mpeg' };
+        if (window.dspEngine) {
+          const savedSong = await window.dspEngine.addDownloadedTrack(trackMeta, arrayBuffer);
+          
+          // Also save physically via Native Bridge if available
+          if (window.PioneerBridge && typeof window.PioneerBridge.saveDownloadedAudio === 'function') {
+            const bytes = new Uint8Array(arrayBuffer);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+            const b64 = btoa(binary);
+            const fileName = title.replace(/[^a-zA-Z0-9_\-]/g, '_') + '.mp3';
+            window.PioneerBridge.saveDownloadedAudio(b64, fileName, trackMeta.mimeType);
+          }
+        }
+
+        if (pctText) pctText.innerText = '100%';
+        if (progressFill) progressFill.style.width = '100%';
+        if (statusText) statusText.innerText = 'Download complete! Saved to library.';
+
+        setTimeout(() => {
+          if (progressBox) progressBox.style.display = 'none';
+          if (urlInput) urlInput.value = '';
+          if (titleInput) titleInput.value = '';
+          if (artistInput) artistInput.value = '';
+          renderDownloadedSongsList();
+        }, 1200);
+
+      } catch (err) {
+        console.error('Download error:', err);
+        if (statusText) statusText.innerText = 'Download failed: ' + err.message;
+        if (progressFill) progressFill.style.backgroundColor = '#fe0979';
+      }
+    }
+
+    function renderDownloadedSongsList() {
+      const container = document.getElementById('downloaded-songs-list');
+      if (!container || !window.dspEngine) return;
+      const dlSongs = (window.dspEngine.songs || []).filter(s => s.source === 'download' || s.blob);
+      const countLabel = document.getElementById('dl-count-label');
+      if (countLabel) countLabel.innerText = `${dlSongs.length} FILES`;
+
+      if (dlSongs.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:30px 20px; color:var(--text-muted); font-size:12px;">
+            No downloaded audio files yet. Enter an open media URL above to save for offline 32-bit DSP playback.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      dlSongs.forEach((song, idx) => {
+        const origIdx = window.dspEngine.songs.indexOf(song);
+        const row = document.createElement('div');
+        row.className = 'song-row';
+        row.onclick = () => playSongAtIndex(origIdx);
+        row.innerHTML = `
+          <div class="song-index-pill">💾</div>
+          <div class="song-meta">
+            <div class="song-title">${escapeHtml(song.title)}</div>
+            <div class="song-artist">${escapeHtml(song.artist)} • <span style="color:var(--hifi-gold);">${song.fileSize || ''}</span></div>
+          </div>
+          <span class="song-dur">${formatTime(song.duration)}</span>
+          <button class="song-delete-btn" onclick="deleteSong(${origIdx}, event)">✕</button>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    // --- SPOTIFY INTEGRATION CONTROLLER ---
+    function updateSpotifyAuthStatus() {
+      const isAuth = window.spotifyService && window.spotifyService.isAuthenticated();
+      const dot = document.getElementById('spotify-conn-dot');
+      const text = document.getElementById('spotify-conn-status');
+      const loginBtn = document.getElementById('spotify-login-btn');
+      const logoutBtn = document.getElementById('spotify-logout-btn');
+
+      if (isAuth) {
+        if (dot) dot.style.background = 'var(--spotify-green)';
+        const name = (window.spotifyService.userProfile && window.spotifyService.userProfile.displayName) || 'Connected';
+        if (text) text.innerText = 'SPOTIFY CONNECTED: ' + name.toUpperCase();
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'block';
+      } else {
+        if (dot) dot.style.background = '#fe0979';
+        if (text) text.innerText = 'SPOTIFY DISCONNECTED';
+        if (loginBtn) loginBtn.style.display = 'block';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+      }
+    }
+
+    window.addEventListener('spotify-auth-changed', () => {
+      updateSpotifyAuthStatus();
+      if (window.spotifyService && window.spotifyService.isAuthenticated()) {
+        loadUserSpotifyPlaylists();
+        refreshSpotifyDevices();
+      }
+    });
+
+    window.spotifyAuthCallback = async function(url) {
+      if (!window.spotifyService) return;
+      try {
+        await window.spotifyService.handleAuthCallback(url);
+        updateSpotifyAuthStatus();
+      } catch(err) {
+        console.error('Spotify auth callback failed:', err);
+        alert('Spotify Connection Error: ' + err.message);
+      }
+    };
+
+    function connectSpotifyOAuth() {
+      if (window.spotifyService) {
+        window.spotifyService.loginPKCE();
+      }
+    }
+
+    function logoutSpotify() {
+      if (window.spotifyService) {
+        window.spotifyService.logout();
+      }
+    }
+
+    function loadSpotifyStation(url, btn) {
+      document.querySelectorAll('.spotify-station-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const frame = document.getElementById('spotify-web-frame');
+      const embedUrl = url.replace('open.spotify.com/playlist/', 'open.spotify.com/embed/playlist/') + '?utm_source=generator&theme=0';
+      if (frame) frame.src = embedUrl;
+    }
+
+    async function executeSpotifySearch() {
+      if (!window.spotifyService || !window.spotifyService.isAuthenticated()) {
+        alert('Please tap CONNECT to authorize your Spotify account first.');
+        return;
+      }
+      const input = document.getElementById('spotify-search-input');
+      const q = input ? input.value.trim() : '';
+      if (!q) return;
+
+      const loading = document.getElementById('spotify-search-loading');
+      if (loading) loading.style.display = 'block';
+
+      try {
+        const results = await window.spotifyService.search(q, 'track');
+        renderSpotifySearchResults(results.tracks || []);
+      } catch(e) {
+        alert(e.message || 'Spotify search failed.');
+      } finally {
+        if (loading) loading.style.display = 'none';
+      }
+    }
+
+    function renderSpotifySearchResults(tracks) {
+      const container = document.getElementById('spotify-results-list');
+      if (!container) return;
+      if (!tracks || tracks.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted); font-size:12px; padding:20px; text-align:center;">No matching Spotify tracks found.</div>';
+        return;
+      }
+
+      container.innerHTML = '';
+      tracks.forEach(track => {
+        const card = document.createElement('div');
+        card.className = 'search-result-card';
+        card.onclick = () => playSpotifyTrackUri(track.uri);
+
+        const img = (track.album && track.album.images && track.album.images[0]) ? track.album.images[0].url : 'assets/logo.png';
+        const artist = (track.artists && track.artists[0]) ? track.artists[0].name : 'Spotify Artist';
+        card.innerHTML = `
+          <div class="result-art-wrap">
+            <img src="${escapeHtml(img)}" class="result-art-img" onerror="this.src='assets/logo.png'">
+          </div>
+          <div class="result-info">
+            <div class="result-title">${escapeHtml(track.name)}</div>
+            <div class="result-meta-row">
+              <span class="provider-badge spotify">SPOTIFY</span>
+              <span class="result-artist">${escapeHtml(artist)}</span>
+            </div>
+          </div>
+          <button class="btn-play-stream" title="Play on Spotify">▶</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function playSpotifyTrackUri(uri) {
+      if (!window.spotifyService) return;
+      try {
+        await window.spotifyService.play(null, [uri]);
+      } catch(e) {
+        alert(e.message);
+      }
+    }
+
+    async function loadUserSpotifyPlaylists() {
+      const container = document.getElementById('spotify-playlists-container');
+      if (!container || !window.spotifyService || !window.spotifyService.isAuthenticated()) return;
+      try {
+        const playlists = await window.spotifyService.getUserPlaylists();
+        if (!playlists || playlists.length === 0) {
+          container.innerHTML = '<div style="color:var(--text-muted); font-size:12px; grid-column:span 2; padding:20px; text-align:center;">No playlists found on your account.</div>';
+          return;
+        }
+
+        container.innerHTML = '';
+        playlists.forEach(pl => {
+          const item = document.createElement('div');
+          item.className = 'spotify-playlist-item';
+          item.onclick = () => {
+            if (pl.external_urls && pl.external_urls.spotify) {
+              loadSpotifyStation(pl.external_urls.spotify, document.querySelector('.spotify-station-btn'));
+              switchSpotSubTab('stations');
+            }
+          };
+          const cover = (pl.images && pl.images[0]) ? pl.images[0].url : 'assets/logo.png';
+          item.innerHTML = `
+            <img src="${escapeHtml(cover)}" class="spotify-pl-cover" onerror="this.src='assets/logo.png'">
+            <div class="spotify-pl-title">${escapeHtml(pl.name)}</div>
+            <div class="spotify-pl-tracks">${pl.tracks ? pl.tracks.total : 0} tracks</div>
+          `;
+          container.appendChild(item);
+        });
+      } catch(e) {
+        console.warn('Error loading Spotify playlists:', e);
+      }
+    }
+
+    async function refreshSpotifyDevices() {
+      const container = document.getElementById('spotify-devices-list');
+      if (!container || !window.spotifyService || !window.spotifyService.isAuthenticated()) {
+        if (container) container.innerHTML = '<div style="color:var(--text-muted); font-size:12px; padding:20px; text-align:center;">Connect Spotify account to see available playback devices.</div>';
+        return;
+      }
+
+      try {
+        const devices = await window.spotifyService.getAvailableDevices();
+        if (!devices || devices.length === 0) {
+          container.innerHTML = `
+            <div style="color:var(--text-muted); font-size:11px; padding:16px; background:rgba(0,0,0,0.3); border-radius:12px;">
+              ⚠️ No active Spotify devices found.<br>Launch Spotify on your phone, desktop, or smart speaker to connect.
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = '';
+        devices.forEach(d => {
+          const card = document.createElement('div');
+          card.className = `spotify-device-card ${d.is_active ? 'active' : ''}`;
+          card.onclick = async () => {
+            try {
+              await window.spotifyService.transferPlayback(d.id, true);
+              refreshSpotifyDevices();
+            } catch(err) {
+              alert(err.message);
+            }
+          };
+          card.innerHTML = `
+            <div>
+              <div style="font-size:13px; font-weight:700; color:#fff;">${escapeHtml(d.name)}</div>
+              <div style="font-size:10px; color:var(--text-muted); font-family:var(--font-mono);">${d.type} • ${d.volume_percent}% vol</div>
+            </div>
+            ${d.is_active ? '<div class="device-active-dot" title="Active Device"></div>' : '<span style="font-size:10px; color:var(--text-muted);">TAP TO CONNECT</span>'}
+          `;
+          container.appendChild(card);
+        });
+      } catch(e) {
+        console.warn('Device fetch error:', e);
+      }
+    }
+
+    // --- ROTARY DIAL KNOB ---
     function setupRotaryDialKnob() {
-      const area = document.getElementById('master-dial-touch-area');
+      const knob = document.getElementById('master-dial-knob');
+      if (!knob) return;
+
       let isDragging = false;
       let startY = 0;
-      let startVal = currentDialLevel;
+      let startLevel = 80;
 
-      function onStart(e) {
+      const onStart = (clientY) => {
         isDragging = true;
-        startY = e.touches ? e.touches[0].clientY : e.clientY;
-        startVal = currentDialLevel;
-      }
+        startY = clientY;
+        startLevel = currentDialLevel;
+      };
 
-      function onMove(e) {
+      const onMove = (clientY) => {
         if (!isDragging) return;
-        const curY = e.touches ? e.touches[0].clientY : e.clientY;
-        const delta = startY - curY; // drag up = increase, down = decrease
-        const newVal = Math.max(0, Math.min(100, Math.round(startVal + delta * 0.75)));
-        setDialLevel(newVal);
-      }
+        const delta = startY - clientY;
+        const newLevel = Math.max(0, Math.min(100, Math.round(startLevel + (delta * 0.5))));
+        setMasterDialLevel(newLevel);
+      };
 
-      function onEnd() {
+      const onEnd = () => {
         isDragging = false;
-      }
+      };
 
-      area.addEventListener('mousedown', onStart);
-      window.addEventListener('mousemove', onMove);
+      knob.addEventListener('mousedown', (e) => onStart(e.clientY));
+      window.addEventListener('mousemove', (e) => onMove(e.clientY));
       window.addEventListener('mouseup', onEnd);
 
-      area.addEventListener('touchstart', onStart, { passive: true });
-      window.addEventListener('touchmove', onMove, { passive: true });
+      knob.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) onStart(e.touches[0].clientY);
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) onMove(e.touches[0].clientY);
+      }, { passive: true });
+
       window.addEventListener('touchend', onEnd);
 
-      // Set initial 80%
-      setDialLevel(80);
+      setMasterDialLevel(80);
     }
 
-    function setDialLevel(val) {
-      currentDialLevel = val;
-      document.getElementById('dial-val-text').innerText = val;
+    function setMasterDialLevel(percent) {
+      currentDialLevel = percent;
+      const text = document.getElementById('dial-val-text');
+      if (text) text.innerText = `${percent}%`;
 
-      // Arc dashoffset: circumference = 2 * PI * 54 = 339.29
-      const circ = 339.29;
-      const offset = circ - (circ * (val / 100.0));
-      const arc = document.getElementById('dial-arc-progress');
+      const dot = document.getElementById('dial-indicator-dot');
+      if (dot) {
+        const angle = -135 + (percent / 100) * 270;
+        dot.style.transform = `rotate(${angle}deg) translate(0, -56px)`;
+      }
+
+      const arc = document.getElementById('dial-progress-arc');
       if (arc) {
-        arc.style.strokeDasharray = circ;
-        arc.style.strokeDashoffset = offset;
+        const radius = 68;
+        const circumference = 2 * Math.PI * radius;
+        const maxArcLen = circumference * (270 / 360);
+        const arcFill = (percent / 100) * maxArcLen;
+        arc.style.strokeDasharray = `${arcFill} ${circumference}`;
       }
 
-      // Update WebAudio master gain
-      if (window.dspEngine && typeof window.dspEngine.setMasterGain === 'function') {
-        window.dspEngine.setMasterGain(val);
-      }
-    }
-
-    // --- CONCERT HALL ACOUSTICS TOGGLE (iOS MainDSPView match) ---
-    async function uiToggleConcertHall() {
-      if (!window.dspEngine) return;
-      const isEnabled = await window.dspEngine.toggleConcertHall();
-      updateConcertHallUI(isEnabled);
-    }
-
-    function updateConcertHallUI(isEnabled) {
-      const card = document.getElementById('concert-hall-card');
-      const text = document.getElementById('ch-status-text');
-      const pill = document.getElementById('ch-btn-text');
-      if (!card) return;
-
-      card.classList.toggle('active', isEnabled);
-      if (isEnabled) {
-        text.innerText = '3D Spatial Reverb Active • Live Stage Acoustics';
-        pill.innerText = 'ACTIVE';
-        highlightPreset('concertHall');
-        document.getElementById('reverb-mix-slider').value = 65;
-        document.getElementById('reverb-mix-val').innerText = '65%';
-      } else {
-        text.innerText = 'Tap to Engage Real-Time Concert Hall Reverb';
-        pill.innerText = 'ENGAGE';
-        document.getElementById('reverb-mix-slider').value = 0;
-        document.getElementById('reverb-mix-val').innerText = '0%';
-      }
-      drawEQCurve();
-    }
-
-    // --- TODOROKI SUPER BASS SLIDER ---
-    function onSuperBassInput(val) {
-      const g = parseFloat(val);
-      document.getElementById('super-bass-val').innerText = `+${g.toFixed(1)} dB`;
       if (window.dspEngine) {
-        window.dspEngine.setSuperBass(g);
+        window.dspEngine.setMasterGain(percent / 100.0);
       }
-      drawEQCurve();
     }
 
-    // --- DSP PRESETS (6 iOS Presets) ---
-    function selectPreset(presetKey) {
-      if (!window.dspEngine) return;
-      window.dspEngine.applyPreset(presetKey);
-      highlightPreset(presetKey);
+    // --- EQUALIZER FADERS & CURVE CANVAS ---
+    const EQ_BANDS = [
+      { freq: '31', label: '31Hz', idx: 0 },
+      { freq: '63', label: '63Hz', idx: 1 },
+      { freq: '125', label: '125Hz', idx: 2 },
+      { freq: '250', label: '250Hz', idx: 3 },
+      { freq: '500', label: '500Hz', idx: 4 },
+      { freq: '1k', label: '1kHz', idx: 5 },
+      { freq: '2k', label: '2kHz', idx: 6 },
+      { freq: '4k', label: '4kHz', idx: 7 },
+      { freq: '8k', label: '8kHz', idx: 8 },
+      { freq: '16k', label: '16kHz', idx: 9 }
+    ];
 
-      // Sync UI sliders
-      const gains = window.dspEngine.eqGains;
-      gains.forEach((g, idx) => {
-        const slider = document.getElementById(`eq-slider-${idx}`);
-        const lbl = document.getElementById(`eq-gain-lbl-${idx}`);
-        if (slider) slider.value = g;
-        if (lbl) lbl.innerText = `${g > 0 ? '+' : ''}${g}dB`;
-      });
-
-      // Sync Super Bass slider
-      const sbSlider = document.getElementById('super-bass-slider');
-      if (sbSlider) {
-        sbSlider.value = window.dspEngine.superBassGain;
-        document.getElementById('super-bass-val').innerText = `+${window.dspEngine.superBassGain.toFixed(1)} dB`;
-      }
-
-      // Sync Reverb
-      if (presetKey === 'concertHall') {
-        updateConcertHallUI(true);
-      } else {
-        updateConcertHallUI(false);
-      }
-
-      // Update Curve description
-      updatePresetDescription(presetKey);
-      drawEQCurve();
-    }
-
-    function highlightPreset(presetKey) {
-      const allPresets = ['flat', 'concertHall', 'superBass', 'dynamic', 'vocal', 'club'];
-      allPresets.forEach(p => {
-        const btn = document.getElementById(`preset-${p}`);
-        if (btn) btn.classList.toggle('active', p === presetKey);
-      });
-    }
-
-    function updatePresetDescription(presetKey) {
-      const descMap = {
-        flat: { title: 'ACTIVE CURVE: FLAT / DIRECT', body: 'Studio reference response with zero coloration across the entire 20Hz-20kHz acoustic spectrum.' },
-        concertHall: { title: 'ACTIVE CURVE: CONCERT HALL', body: '3D spatial acoustics with wide reverberation and high-frequency stage reflections.' },
-        superBass: { title: 'ACTIVE CURVE: SUPER BASS (TODOROKI)', body: 'Pioneer Todoroki dual-stage sub-bass booster (+9dB) at 80Hz and 60Hz.' },
-        dynamic: { title: 'ACTIVE CURVE: DYNAMIC LIVE', body: 'V-shape dynamic frequency curve with elevated presence and punch.' },
-        vocal: { title: 'ACTIVE CURVE: VOCAL CLARITY', body: 'Enhanced 1kHz-4kHz mid frequencies for crystal-clear vocals and speech.' },
-        club: { title: 'ACTIVE CURVE: CLUB DANCE', body: 'Punchy low-end kick and sharp high-shelf sparkle for electronic dance tracks.' }
-      };
-      const info = descMap[presetKey] || descMap.flat;
-      document.getElementById('eq-desc-title').innerText = info.title;
-      document.getElementById('eq-desc-body').innerText = info.body;
-    }
-
-    // --- 10-BAND GRAPHIC EQUALIZER ---
     function setupEqualizerFaders() {
       const container = document.getElementById('eq-faders-container');
+      if (!container) return;
       container.innerHTML = '';
 
-      const freqs = [
-        { f: 31, l: '31Hz' },
-        { f: 63, l: '63Hz' },
-        { f: 125, l: '125Hz' },
-        { f: 250, l: '250Hz' },
-        { f: 500, l: '500Hz' },
-        { f: 1000, l: '1kHz' },
-        { f: 2000, l: '2kHz' },
-        { f: 4000, l: '4kHz' },
-        { f: 8000, l: '8kHz' },
-        { f: 16000, l: '16kHz' }
-      ];
-
-      freqs.forEach((item, idx) => {
+      EQ_BANDS.forEach(b => {
         const col = document.createElement('div');
-        col.className = 'eq-fader-column';
+        col.className = 'eq-fader-col';
         col.innerHTML = `
-          <span class="eq-gain-label" id="eq-gain-lbl-${idx}">0dB</span>
-          <div class="eq-slider-vertical-wrap">
-            <input type="range" class="eq-slider-vert" id="eq-slider-${idx}" min="-12" max="12" step="0.5" value="0" oninput="onEQFaderInput(${idx}, this.value)">
+          <span class="eq-fader-val" id="eq-val-${b.idx}">0.0</span>
+          <div class="eq-slider-vert-track">
+            <input type="range" class="eq-slider-vert" id="eq-slider-${b.idx}" min="-12" max="12" step="0.5" value="0" oninput="uiUpdateEQBand(${b.idx}, this.value)">
           </div>
-          <span class="eq-freq-label">${item.l}</span>
+          <span class="eq-fader-freq">${b.freq}</span>
         `;
         container.appendChild(col);
       });
     }
 
-    function onEQFaderInput(index, val) {
-      const gain = parseFloat(val);
-      document.getElementById(`eq-gain-lbl-${index}`).innerText = `${gain > 0 ? '+' : ''}${gain}dB`;
+    function uiUpdateEQBand(idx, valDb) {
+      const parsed = parseFloat(valDb);
+      const text = document.getElementById(`eq-val-${idx}`);
+      if (text) text.innerText = (parsed > 0 ? '+' : '') + parsed.toFixed(1);
       if (window.dspEngine) {
-        window.dspEngine.setEQBand(index, gain);
+        window.dspEngine.setEQGain(idx, parsed);
       }
       drawEQCurve();
     }
 
     function uiResetEQ() {
-      if (!window.dspEngine) return;
-      window.dspEngine.resetEQToZero();
-      selectPreset('flat');
+      EQ_BANDS.forEach(b => {
+        const slider = document.getElementById(`eq-slider-${b.idx}`);
+        if (slider) slider.value = 0;
+        const text = document.getElementById(`eq-val-${b.idx}`);
+        if (text) text.innerText = '0.0';
+      });
+      if (window.dspEngine) {
+        window.dspEngine.resetEQToZero();
+      }
+      drawEQCurve();
     }
 
-    // Draw Smooth Frequency Curve Preview Line
     function drawEQCurve() {
       const canvas = document.getElementById('eq-curve-canvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       const w = canvas.width;
       const h = canvas.height;
+
       ctx.clearRect(0, 0, w, h);
 
-      // Draw Center Baseline
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      // Center reference baseline
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(0, h / 2);
       ctx.lineTo(w, h / 2);
       ctx.stroke();
 
-      // Read current gains
-      const gains = window.dspEngine ? window.dspEngine.eqGains : [0,0,0,0,0,0,0,0,0,0];
-      const step = w / (gains.length - 1);
-      const midY = h / 2;
-
-      ctx.beginPath();
-      gains.forEach((g, i) => {
-        const x = i * step;
-        const norm = g / 12.0; // -1 to +1
-        const y = midY - (norm * (h * 0.42));
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      // Read gains
+      const gains = EQ_BANDS.map(b => {
+        const s = document.getElementById(`eq-slider-${b.idx}`);
+        return s ? parseFloat(s.value) : 0;
       });
 
-      const grad = ctx.createLinearGradient(0, 0, w, 0);
-      grad.addColorStop(0, '#ff6b00');
-      grad.addColorStop(0.5, '#00e5ff');
-      grad.addColorStop(1, '#ff6b00');
+      const step = w / (EQ_BANDS.length - 1);
+      const pts = gains.map((g, i) => {
+        const y = (h / 2) - (g / 12.0) * (h / 2.2);
+        return { x: i * step, y: y };
+      });
 
-      ctx.strokeStyle = grad;
+      // Gradient Curve
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 0; i < pts.length - 1; i++) {
+        const xc = (pts[i].x + pts[i + 1].x) / 2;
+        const yc = (pts[i].y + pts[i + 1].y) / 2;
+        ctx.quadraticCurveTo(pts[i].x, pts[i].y, xc, yc);
+      }
+      ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+
+      ctx.strokeStyle = '#00e5ff';
       ctx.lineWidth = 2.5;
+      ctx.shadowColor = 'rgba(0, 229, 255, 0.5)';
+      ctx.shadowBlur = 8;
       ctx.stroke();
+      ctx.shadowBlur = 0;
     }
 
-    // --- REVERB ROOMS & WET/DRY MIX ---
-    function selectReverbRoom(roomKey, element) {
+    // --- SUPER BASS & CONCERT HALL ---
+    function uiUpdateSuperBass(gainDb) {
+      const parsed = parseFloat(gainDb);
+      const text = document.getElementById('super-bass-val');
+      if (text) text.innerText = (parsed > 0 ? '+' : '') + parsed.toFixed(1) + ' dB';
+      if (window.dspEngine) {
+        window.dspEngine.setSuperBass(parsed);
+      }
+    }
+
+    function setSuperBassDirect(gainDb) {
+      const slider = document.getElementById('super-bass-slider');
+      if (slider) slider.value = gainDb;
+      uiUpdateSuperBass(gainDb);
+    }
+
+    function uiToggleConcertHall(e) {
+      if (e) e.stopPropagation();
+      if (!window.dspEngine) return;
+      const isEnabled = window.dspEngine.toggleConcertHall();
+      updateHallButtonUI(isEnabled);
+    }
+
+    function updateHallButtonUI(isEnabled) {
+      const btn = document.getElementById('hero-hall-toggle');
+      const pill = document.getElementById('hero-hall-pill');
+      if (btn) btn.classList.toggle('active', isEnabled);
+      if (pill) {
+        pill.innerText = isEnabled ? 'ACTIVE' : 'OFF';
+        pill.classList.toggle('active', isEnabled);
+      }
+    }
+
+    // --- DSP PRESETS ---
+    function selectPreset(presetKey) {
+      document.querySelectorAll('.presets-scroll-bar .preset-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`preset-${presetKey}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (window.dspEngine) {
+        window.dspEngine.loadPreset(presetKey);
+
+        // Reflect EQ gains in faders
+        if (window.dspEngine.eqGains) {
+          window.dspEngine.eqGains.forEach((g, idx) => {
+            const slider = document.getElementById(`eq-slider-${idx}`);
+            if (slider) slider.value = g;
+            const text = document.getElementById(`eq-val-${idx}`);
+            if (text) text.innerText = (g > 0 ? '+' : '') + g.toFixed(1);
+          });
+          drawEQCurve();
+        }
+
+        // Reflect Super Bass
+        setSuperBassDirect(window.dspEngine.superBassGain || 0);
+
+        // Reflect Concert Hall state
+        updateHallButtonUI(window.dspEngine.isConcertHallEnabled);
+      }
+    }
+
+    // --- REVERB ACOUSTIC ENVIRONMENT ---
+    function selectReverbRoom(roomKey, el) {
       document.querySelectorAll('.reverb-room-card').forEach(c => c.classList.remove('selected'));
-      element.classList.add('selected');
+      if (el) el.classList.add('selected');
+
       if (window.dspEngine) {
         window.dspEngine.setReverbRoom(roomKey);
       }
     }
 
-    function onReverbMixInput(val) {
-      const p = parseFloat(val);
-      document.getElementById('reverb-mix-val').innerText = `${Math.round(p)}%`;
+    function uiUpdateReverbWetDry(valPct) {
+      const parsed = parseFloat(valPct);
+      const text = document.getElementById('reverb-mix-val');
+      if (text) text.innerText = `${Math.round(parsed)}% (${parsed > 0 ? 'WET' : 'DRY'})`;
       if (window.dspEngine) {
-        window.dspEngine.setReverbWetDry(p);
+        window.dspEngine.setReverbWetDry(parsed / 100.0);
       }
     }
 
-    // --- CAR CABIN LISTENING POSITION ALIGNMENT ---
+    // --- CABIN LISTENING POSITION ALIGNMENT ---
     function selectCabinPosition(pos) {
-      const allSeats = ['seat-fl', 'seat-fr', 'seat-rl', 'seat-rr'];
-      allSeats.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.remove('selected');
+      ['all', 'frontLeft', 'frontRight'].forEach(p => {
+        const id = p === 'all' ? 'btn-seat-all' : (p === 'frontLeft' ? 'btn-seat-fl' : 'btn-seat-fr');
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.toggle('active', p === pos);
       });
 
-      const allBtns = ['btn-seat-all', 'btn-seat-fl', 'btn-seat-fr'];
-      allBtns.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.remove('active');
-      });
-
-      if (pos === 'frontLeft') {
-        document.getElementById('seat-fl').classList.add('selected');
-        document.getElementById('btn-seat-fl').classList.add('active');
-        document.getElementById('cabin-status-title').innerText = 'ACTIVE FOCUS: DRIVER FOCUS (FL)';
-      } else if (pos === 'frontRight') {
-        document.getElementById('seat-fr').classList.add('selected');
-        document.getElementById('btn-seat-fr').classList.add('active');
-        document.getElementById('cabin-status-title').innerText = 'ACTIVE FOCUS: PASSENGER FOCUS (FR)';
-      } else {
-        document.getElementById('btn-seat-all').classList.add('active');
-        document.getElementById('cabin-status-title').innerText = 'ACTIVE FOCUS: ALL SEATS';
-      }
+      const label = document.getElementById('cabin-active-pos');
+      const title = document.getElementById('cabin-status-title');
+      const name = pos === 'all' ? 'ALL SEATS' : (pos === 'frontLeft' ? 'DRIVER FOCUS' : 'PASSENGER FOCUS');
+      if (label) label.innerText = name;
+      if (title) title.innerText = 'ACTIVE FOCUS: ' + name;
 
       if (window.dspEngine) {
         window.dspEngine.setListeningPosition(pos);
       }
     }
 
-    // --- SPECTRUM VISUALIZER LOOP ---
+    // --- SPECTRUM ANALYSER ---
     function initSpectrumBars() {
-      const row = document.getElementById('spectrum-bars-row');
-      row.innerHTML = '';
+      const container = document.getElementById('spectrum-bars-container');
+      if (!container) return;
+      container.innerHTML = '';
       for (let i = 0; i < 18; i++) {
         const bar = document.createElement('div');
         bar.className = 'spectrum-bar';
         bar.id = `spec-bar-${i}`;
-        row.appendChild(bar);
+        bar.style.height = '10%';
+        container.appendChild(bar);
       }
     }
 
     function startSpectrumVisualizerLoop() {
-      const data = new Uint8Array(18);
-      function update() {
-        if (window.dspEngine && window.dspEngine.isPlaying && !window.dspEngine.isPaused) {
-          window.dspEngine.getByteFrequencyData(data);
+      setInterval(() => {
+        if (!window.dspEngine) return;
+        const isPlaying = window.dspEngine.isPlaying;
+        if (isPlaying) {
+          window.dspEngine.getByteFrequencyData(activeSpectrumData);
           for (let i = 0; i < 18; i++) {
             const bar = document.getElementById(`spec-bar-${i}`);
             if (bar) {
-              const val = data[i] || 0;
-              const h = Math.max(6, (val / 255.0) * 52);
-              bar.style.height = `${h}px`;
+              const val = activeSpectrumData[i] || 0;
+              const pct = Math.max(8, Math.min(100, Math.round((val / 255.0) * 100)));
+              bar.style.height = `${pct}%`;
             }
           }
         } else {
           for (let i = 0; i < 18; i++) {
             const bar = document.getElementById(`spec-bar-${i}`);
-            if (bar) bar.style.height = '6px';
+            if (bar) bar.style.height = '8%';
           }
         }
-        requestAnimationFrame(update);
-      }
-      requestAnimationFrame(update);
+      }, 50);
     }
 
-    // --- PLAYBACK SYNC & CLOCK ---
+    // --- PLAYBACK SYNC TIMER ---
     function startPlaybackSyncTimer() {
       setInterval(() => {
         if (!window.dspEngine) return;
+
         const cur = window.dspEngine.getCurrentTime();
         const dur = window.dspEngine.getCurrentDuration();
         const isPlaying = window.dspEngine.isPlaying;
@@ -1106,17 +1884,28 @@
         const curStr = formatTime(cur);
         const durStr = formatTime(dur);
 
-        document.getElementById('hero-time-cur').innerText = curStr;
-        document.getElementById('hero-time-dur').innerText = durStr;
-        document.getElementById('np-modal-time-cur').innerText = curStr;
-        document.getElementById('np-modal-time-dur').innerText = durStr;
+        const heroDur = document.getElementById('hero-time-dur');
+        if (heroDur) heroDur.innerText = durStr;
+        const npDur = document.getElementById('np-modal-time-dur');
+        if (npDur) npDur.innerText = durStr;
 
         let pct = 0;
-        if (dur > 0) pct = Math.min(100, Math.max(0, (cur / dur) * 100));
+        if (dur > 0 && isFinite(dur)) pct = Math.min(100, Math.max(0, (cur / dur) * 100));
 
-        document.getElementById('hero-seek-slider').value = pct;
-        document.getElementById('np-modal-seek').value = pct;
-        document.getElementById('dock-progress-fill').style.width = `${pct}%`;
+        // Only update seek slider thumb if the user is NOT actively dragging it
+        if (!isUserSeeking) {
+          const heroCur = document.getElementById('hero-time-cur');
+          if (heroCur) heroCur.innerText = curStr;
+          const npCur = document.getElementById('np-modal-time-cur');
+          if (npCur) npCur.innerText = curStr;
+
+          const heroSeek = document.getElementById('hero-seek-slider');
+          if (heroSeek) heroSeek.value = pct;
+          const npSeek = document.getElementById('np-modal-seek');
+          if (npSeek) npSeek.value = pct;
+          const dockFill = document.getElementById('dock-progress-fill');
+          if (dockFill) dockFill.style.width = `${pct}%`;
+        }
 
         // Update Play/Pause Icons
         updatePlayIcons(isPlaying);
@@ -1156,18 +1945,14 @@
     function masterStepNext() {
       if (window.dspEngine) {
         window.dspEngine.playNext();
+        updateMetadataUI();
       }
     }
 
     function masterStepPrev() {
       if (window.dspEngine) {
         window.dspEngine.playPrev();
-      }
-    }
-
-    function onSeekInput(ratioPct) {
-      if (window.dspEngine) {
-        window.dspEngine.seek(parseFloat(ratioPct) / 100.0);
+        updateMetadataUI();
       }
     }
 
@@ -1180,98 +1965,13 @@
     }
 
     function toggleRepeat() {
-      if (!window.dspEngine) return;
-      const modes = ['off', 'all', 'one'];
-      const curIdx = modes.indexOf(window.dspEngine.isRepeat || 'all');
-      window.dspEngine.isRepeat = modes[(curIdx + 1) % modes.length];
-    }
-
-    // --- LOCAL LIBRARY & SAF ---
-    function triggerFileImport() {
-      document.getElementById('saf-file-input').click();
-    }
-
-    async function handleFileSelect(e) {
-      const files = e.target.files;
-      if (!files || files.length === 0) return;
       if (window.dspEngine) {
-        await window.dspEngine.importFiles(files);
-        renderLibrarySongs();
-      }
-    }
+        if (!window.dspEngine.isRepeat) window.dspEngine.isRepeat = 'all';
+        else if (window.dspEngine.isRepeat === 'all') window.dspEngine.isRepeat = 'one';
+        else window.dspEngine.isRepeat = false;
 
-    function scanMediaStore() {
-      if (window.PioneerBridge && typeof window.PioneerBridge.scanMediaStoreAudio === 'function') {
-        const json = window.PioneerBridge.scanMediaStoreAudio();
-        if (json) {
-          try {
-            const tracks = JSON.parse(json);
-            if (window.dspEngine) {
-              window.dspEngine.importMediaStoreTracks(tracks);
-              renderLibrarySongs();
-            }
-          } catch(e) {}
-        }
-      }
-    }
-
-    function renderLibrarySongs() {
-      const container = document.getElementById('library-songs-list');
-      if (!container || !window.dspEngine) return;
-      const songs = window.dspEngine.songs || [];
-      document.getElementById('lib-count-label').innerText = `${songs.length} TRACKS`;
-
-      if (songs.length === 0) {
-        container.innerHTML = `
-          <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
-            <div style="font-size:24px; margin-bottom:8px;">🎵</div>
-            <div style="font-size:13px; font-weight:700; color:#fff;">No local audio files imported</div>
-            <div style="font-size:11px; margin-top:4px;">Tap "ADD SONGS" to select audio files from device storage.</div>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = '';
-      songs.forEach((song, idx) => {
-        const row = document.createElement('div');
-        row.className = `song-row ${window.dspEngine.currentIndex === idx ? 'playing' : ''}`;
-        row.onclick = () => playSongAtIndex(idx);
-        row.innerHTML = `
-          <div class="song-index-pill">${idx + 1}</div>
-          <div class="song-meta">
-            <div class="song-title">${escapeHtml(song.title)}</div>
-            <div class="song-artist">${escapeHtml(song.artist || 'Local Audio')}</div>
-          </div>
-          <span class="song-dur">${formatTime(song.duration)}</span>
-          <button class="song-delete-btn" onclick="deleteSong(${idx}, event)">✕</button>
-        `;
-        container.appendChild(row);
-      });
-    }
-
-    function filterLocalSongs(query) {
-      const q = (query || '').toLowerCase().trim();
-      const rows = document.querySelectorAll('.song-row');
-      rows.forEach(r => {
-        const txt = r.innerText.toLowerCase();
-        r.style.display = txt.includes(q) ? 'flex' : 'none';
-      });
-    }
-
-    async function playSongAtIndex(idx) {
-      if (window.dspEngine) {
-        await window.dspEngine.playLocalSong(idx);
-        renderLibrarySongs();
-        updateMetadataUI();
-      }
-    }
-
-    async function deleteSong(idx, e) {
-      e.stopPropagation();
-      if (window.dspEngine) {
-        await window.dspEngine.removeSong(idx);
-        renderLibrarySongs();
+        const btn = document.getElementById('hero-repeat-btn');
+        if (btn) btn.classList.toggle('active', !!window.dspEngine.isRepeat);
       }
     }
 
@@ -1282,32 +1982,39 @@
 
       const title = song.title || 'Unknown Track';
       const artist = song.artist || 'Local Audio';
+      const album = song.album || 'Hi-Fi Audio Master';
+      const art = song.artwork || 'assets/logo.png';
 
-      document.getElementById('hero-title').innerText = title;
-      document.getElementById('hero-artist').innerText = artist;
-      document.getElementById('dock-title').innerText = title;
-      document.getElementById('dock-artist').querySelector('span').innerText = artist;
-      document.getElementById('np-modal-title').innerText = title;
-      document.getElementById('np-modal-artist').innerText = artist;
+      const heroT = document.getElementById('hero-title'); if (heroT) heroT.innerText = title;
+      const heroA = document.getElementById('hero-artist'); if (heroA) heroA.innerText = artist;
+      const heroAl = document.getElementById('hero-album'); if (heroAl) heroAl.innerText = album;
+      const heroImg = document.getElementById('hero-cover-img'); if (heroImg) heroImg.src = art;
+
+      const dockT = document.getElementById('dock-title'); if (dockT) dockT.innerText = title;
+      const dockA = document.getElementById('dock-artist'); if (dockA && dockA.querySelector('span')) dockA.querySelector('span').innerText = artist;
+      const dockImg = document.getElementById('dock-cover-img'); if (dockImg) dockImg.src = art;
+
+      const npT = document.getElementById('np-modal-title'); if (npT) npT.innerText = title;
+      const npA = document.getElementById('np-modal-artist'); if (npA) npA.innerText = artist;
+      const npImg = document.getElementById('np-modal-cover-img'); if (npImg) npImg.src = art;
+
+      // Update W3C MediaSession API for lock-screen controls
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: title,
+          artist: artist,
+          album: album,
+          artwork: [{ src: art, sizes: '512x512', type: 'image/png' }]
+        });
+        navigator.mediaSession.setActionHandler('play', () => toggleMasterPlay());
+        navigator.mediaSession.setActionHandler('pause', () => toggleMasterPlay());
+        navigator.mediaSession.setActionHandler('previoustrack', () => masterStepPrev());
+        navigator.mediaSession.setActionHandler('nexttrack', () => masterStepNext());
+      }
 
       // Fetch LRCLIB lyrics in background
       if (window.youtubeMusicEngine) {
         window.youtubeMusicEngine.fetchLyrics(title, artist, song.duration).then(renderLyrics);
-      }
-    }
-
-    // --- SPOTIFY INTEGRATION ---
-    function loadSpotifyStation(url, btn) {
-      document.querySelectorAll('.spotify-station-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const frame = document.getElementById('spotify-web-frame');
-      const embedUrl = url.replace('open.spotify.com/playlist/', 'open.spotify.com/embed/playlist/') + '?utm_source=generator&theme=0';
-      if (frame) frame.src = embedUrl;
-    }
-
-    function connectSpotifyOAuth() {
-      if (window.spotifyService) {
-        window.spotifyService.loginPKCE();
       }
     }
 
@@ -1322,21 +2029,16 @@
       isNowPlayingOpen = false;
     }
 
-    function openNowPlayingWithLyrics() {
-      openNowPlaying();
-      if (!isLyricsViewActive) toggleLyricsView();
-    }
-
     function toggleLyricsView() {
       isLyricsViewActive = !isLyricsViewActive;
       const cover = document.getElementById('np-large-cover-wrap');
       const lyrics = document.getElementById('lyrics-container');
       if (isLyricsViewActive) {
-        cover.style.display = 'none';
-        lyrics.classList.add('visible');
+        if (cover) cover.style.display = 'none';
+        if (lyrics) lyrics.classList.add('visible');
       } else {
-        cover.style.display = 'block';
-        lyrics.classList.remove('visible');
+        if (cover) cover.style.display = 'block';
+        if (lyrics) lyrics.classList.remove('visible');
       }
     }
 
@@ -1348,63 +2050,72 @@
         return;
       }
 
+      container.innerHTML = '';
       if (lyricsData.parsedSynced && lyricsData.parsedSynced.length > 0) {
-        container.innerHTML = '';
         lyricsData.parsedSynced.forEach((item, idx) => {
           const p = document.createElement('div');
           p.className = 'lyric-line';
           p.id = `lyric-line-${idx}`;
-          p.innerText = item.text;
-          p.onclick = () => window.dspEngine.seek(item.time / window.dspEngine.getCurrentDuration());
+          p.innerText = item.text || '...';
+          p.onclick = () => {
+            const dur = window.dspEngine ? window.dspEngine.getCurrentDuration() : 0;
+            if (dur > 0) window.dspEngine.seek(item.time / dur);
+          };
           container.appendChild(p);
         });
+
+        window.syncLyricsScroll = function(currentTime) {
+          const items = lyricsData.parsedSynced;
+          let activeIndex = -1;
+          for (let i = 0; i < items.length; i++) {
+            if (currentTime >= items[i].time) activeIndex = i;
+            else break;
+          }
+          if (activeIndex >= 0) {
+            document.querySelectorAll('.lyric-line').forEach((l, i) => l.classList.toggle('active', i === activeIndex));
+            const activeEl = document.getElementById(`lyric-line-${activeIndex}`);
+            if (activeEl && container.parentElement) {
+              const top = activeEl.offsetTop - (container.parentElement.clientHeight / 2);
+              container.parentElement.scrollTo({ top, behavior: 'smooth' });
+            }
+          }
+        };
       } else if (lyricsData.plainLyrics) {
-        container.innerHTML = `<div style="font-size:14px; line-height:1.8; color:rgba(255,255,255,0.7);">${escapeHtml(lyricsData.plainLyrics).replace(/\n/g, '<br>')}</div>`;
+        container.innerHTML = `<div style="color:rgba(255,255,255,0.85); font-size:14px; line-height:1.8; white-space:pre-wrap; padding:20px;">${escapeHtml(lyricsData.plainLyrics)}</div>`;
       }
     }
-
-    window.syncLyricsScroll = function(curSec) {
-      if (!window.youtubeMusicEngine || !window.youtubeMusicEngine.activeLyrics) return;
-      const synced = window.youtubeMusicEngine.activeLyrics.parsedSynced;
-      if (!synced || synced.length === 0) return;
-
-      let activeIdx = -1;
-      for (let i = 0; i < synced.length; i++) {
-        if (synced[i].time <= curSec + 0.3) {
-          activeIdx = i;
-        } else {
-          break;
-        }
-      }
-
-      if (activeIdx !== -1) {
-        document.querySelectorAll('.lyric-line').forEach((l, i) => {
-          l.classList.toggle('active', i === activeIdx);
-        });
-        const activeEl = document.getElementById(`lyric-line-${activeIdx}`);
-        if (activeEl) {
-          activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }
-    };
 
     // --- SETTINGS SHEET ---
-    function openSettings() {
-      document.getElementById('settings-sheet').classList.add('open');
+    function openSettingsModal() {
+      const m = document.getElementById('settings-modal');
+      if (m) m.classList.add('open');
     }
-    function closeSettings() {
-      document.getElementById('settings-sheet').classList.remove('open');
+
+    function closeSettingsModal() {
+      const m = document.getElementById('settings-modal');
+      if (m) m.classList.remove('open');
     }
+
     function saveSpotifyClientId(val) {
-      localStorage.setItem('pioneer_spotify_client_id', (val || '').trim());
+      const trimmed = (val || '').trim();
+      localStorage.setItem('pioneer_spotify_client_id', trimmed);
+      if (window.spotifyService) {
+        window.spotifyService.saveConfig(trimmed);
+      }
     }
+
     function saveLatencyHint(val) {
       localStorage.setItem('pioneer_latency_hint', val);
     }
 
     function escapeHtml(str) {
       if (!str) return '';
-      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
   </script>
 </body>

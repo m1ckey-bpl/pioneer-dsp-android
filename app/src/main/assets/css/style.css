@@ -1539,3 +1539,356 @@ body::after {
 .settings-input:focus {
   border-color: var(--amber-orange);
 }
+
+/* ==========================================================================
+   ENHANCED COCKPIT SUB-NAVIGATION & MODULAR CONTROLS (v4.3.0)
+   ========================================================================== */
+
+/* Sub-Navigation Segmented Bar (Matching iOS Picker segment style) */
+.sub-tabs-bar {
+  display: flex;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--titanium-card-border);
+  margin-bottom: 14px;
+  gap: 4px;
+}
+
+.sub-tab-pill {
+  flex: 1;
+  padding: 8px 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.sub-tab-pill.active {
+  background: var(--titanium-card);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.sub-tab-pill.active.amber {
+  color: var(--amber-orange);
+  border-color: rgba(255, 107, 0, 0.4);
+}
+
+.sub-tab-pill.active.spotify {
+  color: var(--spotify-green);
+  border-color: rgba(29, 185, 84, 0.4);
+}
+
+.sub-tab-pill.active.cyan {
+  color: var(--cyber-cyan);
+  border-color: rgba(0, 229, 255, 0.4);
+}
+
+/* Local Song Row with Artwork */
+.song-artwork-thumb {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+/* Sorting Bar */
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.sort-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.sort-pill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--titanium-card-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sort-pill.active {
+  background: rgba(255, 107, 0, 0.15);
+  border-color: var(--amber-orange);
+  color: var(--amber-orange);
+}
+
+/* Search Results Cards */
+.search-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.search-result-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(20, 28, 41, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--titanium-card-border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.search-result-card:active {
+  transform: scale(0.98);
+  border-color: var(--amber-orange);
+}
+
+.result-art-wrap {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.result-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.result-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.result-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.result-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+}
+
+.result-artist {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.provider-badge {
+  font-size: 8.5px;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.provider-badge.youtube {
+  background: rgba(255, 0, 0, 0.2);
+  color: #ff4444;
+  border: 1px solid rgba(255, 0, 0, 0.35);
+}
+
+.provider-badge.spotify {
+  background: rgba(29, 185, 84, 0.2);
+  color: var(--spotify-green);
+  border: 1px solid rgba(29, 185, 84, 0.35);
+}
+
+.provider-badge.radio {
+  background: rgba(0, 229, 255, 0.15);
+  color: var(--cyber-cyan);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+.provider-badge.local {
+  background: rgba(255, 107, 0, 0.15);
+  color: var(--amber-orange);
+  border: 1px solid rgba(255, 107, 0, 0.3);
+}
+
+.provider-badge.cc {
+  background: rgba(242, 196, 64, 0.2);
+  color: var(--hifi-gold);
+  border: 1px solid rgba(242, 196, 64, 0.35);
+}
+
+.btn-play-stream {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.btn-play-stream:active {
+  background: var(--amber-orange);
+  color: #000;
+}
+
+/* Download Interface Styles */
+.download-card {
+  background: rgba(20, 28, 41, 0.85);
+  border: 1px solid var(--titanium-card-border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.download-progress-box {
+  margin-top: 12px;
+}
+
+.download-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.download-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--amber-orange), var(--hifi-gold));
+  transition: width 0.2s ease;
+}
+
+/* DRM Compliance Notice Badge */
+.drm-notice-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 229, 255, 0.06);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  margin-bottom: 14px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.drm-notice-card strong {
+  color: var(--cyber-cyan);
+}
+
+/* Spotify Playlists Grid */
+.spotify-playlists-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.spotify-playlist-item {
+  background: rgba(20, 28, 41, 0.7);
+  border: 1px solid var(--titanium-card-border);
+  border-radius: 14px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.spotify-playlist-item:active {
+  border-color: var(--spotify-green);
+  transform: scale(0.98);
+}
+
+.spotify-pl-cover {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #000;
+  margin-bottom: 8px;
+}
+
+.spotify-pl-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spotify-pl-tracks {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Spotify Device Item Card */
+.spotify-device-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: rgba(20, 28, 41, 0.7);
+  border: 1px solid var(--titanium-card-border);
+  border-radius: 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.spotify-device-card.active {
+  border-color: var(--spotify-green);
+  background: rgba(29, 185, 84, 0.1);
+}
+
+.device-active-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--spotify-green);
+  box-shadow: 0 0 8px var(--spotify-green);
+}

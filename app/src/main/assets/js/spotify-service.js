@@ -144,9 +144,33 @@ class SpotifyPKCEService {
   }
 
   // Step 1: Initiate Spotify Authorization Code with PKCE
+  async loginPKCE() {
+    try {
+      const authUrl = await this.generateAuthUrl();
+      if (window.PioneerBridge && typeof window.PioneerBridge.openExternalBrowser === 'function') {
+        window.PioneerBridge.openExternalBrowser(authUrl);
+      } else {
+        window.location.href = authUrl;
+      }
+    } catch(err) {
+      console.error('Spotify login error:', err);
+      if (typeof window.showSpotifyConfigPrompt === 'function') {
+        window.showSpotifyConfigPrompt(err.message);
+      } else {
+        alert(err.message || 'Unable to open Spotify authorization.');
+      }
+    }
+  }
+
   async generateAuthUrl() {
+    // If not configured, check if user saved it in pioneer_spotify_client_id or prompt
     if (!this.clientId || this.clientId === 'YOUR_SPOTIFY_CLIENT_ID') {
-      throw new Error('CONFIG_REQUIRED: Please enter your Spotify Client ID in Settings first.');
+      const saved = localStorage.getItem('pioneer_spotify_client_id');
+      if (saved && saved.trim()) {
+        this.clientId = saved.trim();
+      } else {
+        throw new Error('CONFIG_REQUIRED: Please enter your Spotify Client ID in Settings first.');
+      }
     }
 
     const codeVerifier = this.generateRandomString(64);
@@ -286,6 +310,10 @@ class SpotifyPKCEService {
       await this.fetchUserProfile();
       await this.getAvailableDevices();
       this.saveSession();
+
+      try {
+        window.dispatchEvent(new CustomEvent('spotify-auth-changed', { detail: { authenticated: true, profile: this.userProfile } }));
+      } catch(e) {}
 
       return { success: true, profile: this.userProfile };
     } catch(err) {
@@ -548,6 +576,9 @@ class SpotifyPKCEService {
 
   logout() {
     this.clearSession();
+    try {
+      window.dispatchEvent(new CustomEvent('spotify-auth-changed', { detail: { authenticated: false } }));
+    } catch(e) {}
   }
 }
 

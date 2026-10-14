@@ -49,29 +49,44 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: v4.3.0
-          name: "Pioneer DSP Android v4.3.0 (iOS Cockpit Re-creation Edition — Pure Dark Titanium Theme)"
+          tag_name: v4.4.0
+          name: "Pioneer DSP Android v4.4.0 (Complete Restoration Edition — MediaStore Auto-Scan, Spotify PKCE, Unified Discovery, Legitimate Downloads & Seeking Glitch Fix)"
           body: |
-            ## 🎵 Pioneer DSP for Android v4.3.0 — iOS Cockpit Re-creation Edition (Pure Dark Titanium Theme)
+            ## 🎵 Pioneer DSP for Android v4.4.0 — Complete Restoration & Feature Enhancement Edition
             
             ### 📦 Direct Download:
             * 📱 **Android APK**: `Pioneer_DSP.apk` (Direct install, 100% free)
 
-            ### ✨ Key Upgrades in this Release:
-            1. **Faithful iOS Cockpit Parity (6-Tab Navigation)**:
-               - **TUNER**: Main DSP cockpit featuring Now Playing banner, Concert Hall master toggle, Rotary Master Volume Dial (with smooth drag/touch angle tracking), Todoroki Super Bass quick-switch, Presets bar, and dynamic 20-band live Spectrum Analyser.
-               - **LIBRARY**: Local Music Repository with Android SAF file picker, automatic MediaStore scanner, track list, and instant search.
-               - **SPOTIFY**: Spotify Web API Player & hardware AudioEffect integration, Curated Quick Stations, and floating DSP Quick Tuning Bar.
-               - **EQ**: 10-Band Graphic Equalizer with ISO standard frequency faders (31Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz, 8kHz, 16kHz) with ±12 dB range, real-time frequency curve preview canvas, and Reset Flat button.
-               - **HALL**: Acoustic Reverb Environment selector (Concert Hall, Large Arena, Cathedral, Live Studio, Plate Reverb) with synthetic impulse response convolution and 0–100% Wet/Dry mix slider.
-               - **CABIN**: Listening Position Alignment featuring an interactive Car Cabin Visualizer with 4 individual speaker seats (FL, FR, RL, RR) and listening mode presets (ALL SEATS, DRIVER FOCUS, PASSENGER FOCUS) driving WebAudio ChannelDelay and StereoPanner wavefront correction.
-            2. **Pure Dark Titanium & Audio Surface UI (Zero Anime Imagery)**:
-               - 100% removal of all anime character artwork, manga girl portraits, and face wallpapers.
-               - Replaced with the authentic iOS `PioneerTheme` visual identity: deep charcoal, midnight titanium, subtle acoustic wave backgrounds, neon cyan (`#00E5FF`), magenta (`#FE0979`), signature amber-orange (`#FF6B00`), and hi-fi gold (`#F2C440`).
-            3. **Modern Android Device Optimization (OnePlus Nord CE5 Safe Area)**:
-               - Safe area inset handling (`env(safe-area-inset-bottom)`), responsive bottom cockpit navigation bar, zero control clipping, minimum 44px touch targets.
-            4. **Dual DSP Architecture**:
-               - 32-bit floating point WebAudio engine for local PCM audio and online streaming.
-               - Native Android hardware `AudioEffect` routing (`Equalizer`, `BassBoost`, `PresetReverb`) synchronized with system Spotify playback sessions.
+            ### ✨ Key Upgrades & Regressions Restored in this Release:
+            1. **Seeking & Playback Glitch Permanent Fix**:
+               - Identified and eliminated the root cause where seeking stopped `AudioBufferSourceNode`, which fired its `onended` event callback and prematurely triggered `playNext()`.
+               - Implemented safe `onended = null` detachment prior to calling `stop(0)`.
+               - Guarded seek slider thumb synchronization with an `isUserSeeking` state lock so progress timer updates do not fight the user's touch/drag interaction.
+            2. **Automatic Local Music Scanning Restored**:
+               - On startup, automatically queries Android MediaStore (`MediaStore.Audio.Media.EXTERNAL_CONTENT_URI`) with dynamic Android 13/14 `READ_MEDIA_AUDIO` / `READ_EXTERNAL_STORAGE` permission checks.
+               - Indexes title, artist, album, duration, file size, content URI, and real album artwork (`content://media/external/audio/albumart/<albumId>`).
+               - Includes instant search, sorting (Title, Artist, Duration, Recent), delete track, and Storage Access Framework (SAF) folder picker.
+            3. **Spotify Integration Completely Restored & Repaired**:
+               - Implemented full OAuth Authorization Code with PKCE (`loginPKCE()`), SHA-256 verifier/challenge generation, and Android deep-link callback (`pioneerdsp://callback`).
+               - Real search querying tracks, artists, albums, and playlists via Spotify Web API.
+               - User's saved playlists explorer with real album artwork and track counts.
+               - Spotify Connect device discovery and playback transfer (`/v1/me/player/devices`).
+               - Native hardware `AudioEffect` session synchronization (`ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION`).
+            4. **Unified Online Music Discovery (YouTube Music & 24/7 Live Radio)**:
+               - Search across millions of tracks using YouTube Data API v3 and high-speed public gateway fallbacks.
+               - Streams audio through native streaming proxy (`https://pioneer.local/stream?url=...`) directly into the 32-bit floating point WebAudio DSP pipeline.
+               - 24/7 curated HD audio streams (Philharmonic Concert Hall, 808 Bass Lab, Tokyo Synthwave, Lo-Fi Chillout, Rock Antenne, Secret Agent Jazz).
+               - Custom live stream URL player for direct MP3/AAC URLs.
+               - Synchronized LRCLIB lyrics with auto-scroll highlighting.
+            5. **Legitimate Media Downloader Interface**:
+               - Dedicated download manager for direct user-provided audio URLs, podcasts, and Creative Commons open media.
+               - Real progress bar and byte counter.
+               - Saves downloaded audio into IndexedDB local storage and device storage via `PioneerBridge.saveDownloadedAudio`.
+               - Clear DRM compliance badge explaining Spotify/YouTube stream licensing restrictions.
+            6. **Audiophile Safety & Device Optimization**:
+               - 100% zero demo sounds, beeps, or artificial test tones.
+               - AudioBecomingNoisy receiver to pause audio when headphones or Bluetooth audio are disconnected.
+               - W3C MediaSession API integration for Android notification shade and lock-screen playback controls.
+               - Pure dark titanium & carbon UI with zero anime imagery, optimized for OnePlus Nord CE5.
           files: |
             Pioneer_DSP.apk
