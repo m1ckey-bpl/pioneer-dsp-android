@@ -13,18 +13,21 @@
        ========================================================================== -->
   <header class="app-header">
     <div class="brand-meta" onclick="switchTab('home')">
-      <img src="assets/logo.png" alt="Pioneer DSP" class="brand-icon">
+      <div class="brand-icon-frame">
+        <img src="assets/logo.png" alt="Pioneer DSP" class="brand-icon">
+        <span class="brand-lens-flare"></span>
+      </div>
       <div class="brand-text">
         <h1>PIONEER DSP</h1>
-        <span>SOUND TUNE Hi-Fi</span>
+        <span>COCKPIT TELEMETRY &bull; v4.0.2</span>
       </div>
     </div>
 
     <div class="header-status-group">
-      <div id="header-source-badge" class="source-badge idle">STANDBY</div>
-      <div class="status-indicator-pill" title="DSP Processing Status">
+      <span class="source-badge idle" id="header-source-badge">STANDBY</span>
+      <div class="status-indicator-pill" id="header-status-pill">
         <span class="status-dot" id="header-status-dot"></span>
-        <span id="header-status-text">Hi-Fi 32b</span>
+        <span id="header-status-text">Hi-Fi Ready</span>
       </div>
     </div>
   </header>
@@ -38,21 +41,31 @@
          TAB 1: HOME DASHBOARD
          ------------------------------------------------------------------------ -->
     <section id="tab-home" class="tab-view active">
-      <!-- Active / Now Playing Hero Card -->
+      <!-- Active / Now Playing Hero Deck -->
       <div class="hero-playback-card" id="hero-card" onclick="openNowPlaying()">
         <div class="hero-content">
-          <img src="assets/logo.png" alt="Album Cover" class="hero-cover" id="hero-cover-img">
+          <div class="hero-cover-frame">
+            <img src="assets/logo.png" alt="Album Cover" class="hero-cover" id="hero-cover-img">
+            <div class="hero-corner-bracket tl"></div>
+            <div class="hero-corner-bracket br"></div>
+          </div>
           <div class="hero-info">
+            <div class="hero-kicker-tag">
+              <span class="hero-radar-pulse"></span>
+              <span>AUDIO COCKPIT</span>
+            </div>
             <div class="hero-title" id="hero-title">Pioneer DSP Ready</div>
             <div class="hero-artist" id="hero-artist">Select a song to begin playback</div>
             <div class="hero-badge-row">
               <span class="source-badge idle" id="hero-source-badge">DSP IDLE</span>
             </div>
           </div>
-          <button class="hero-action-btn" id="hero-play-btn" onclick="event.stopPropagation(); toggleMasterPlay()">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-              <polygon points="6 4 20 12 6 20 6 4" id="hero-play-icon"/>
-            </svg>
+          <button class="hero-action-btn" id="hero-play-btn" onclick="event.stopPropagation(); toggleMasterPlay()" aria-label="Play or Pause">
+            <div class="hero-btn-tactile-rim">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <polygon points="6 4 20 12 6 20 6 4" id="hero-play-icon"/>
+              </svg>
+            </div>
           </button>
         </div>
       </div>
@@ -463,18 +476,26 @@
             <h4>Pioneer DSP Application</h4>
             <p>Version 4.0.0 Master Redesign Edition</p>
           </div>
-          <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">v4.0.1</span>
+          <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">v4.0.2</span>
         </div>
       </div>
     </section>
   </main>
 
   <!-- ==========================================================================
-       PERSISTENT MINI-PLAYER DOCK
+       PERSISTENT MINI-PLAYER DOCK (INTEGRATED ACOUSTIC DECK)
        ========================================================================== -->
   <div class="mini-player-dock" id="mini-player-dock" onclick="openNowPlaying()">
+    <!-- Top Hairline Progress Line -->
+    <div class="mini-progress-bar">
+      <div class="mini-progress-fill" id="dock-progress-fill"></div>
+    </div>
+
     <div class="mini-dock-left">
-      <img src="assets/logo.png" alt="Cover" class="mini-dock-thumb" id="dock-cover-img">
+      <div class="mini-dock-thumb-frame">
+        <img src="assets/logo.png" alt="Cover" class="mini-dock-thumb" id="dock-cover-img">
+        <div class="mini-thumb-border-glow"></div>
+      </div>
       <div class="mini-dock-meta">
         <div class="mini-dock-title" id="dock-title">No Track Playing</div>
         <div class="mini-dock-artist" id="dock-artist">
@@ -485,75 +506,81 @@
     </div>
 
     <div class="mini-dock-controls" onclick="event.stopPropagation()">
-      <button class="mini-btn" id="dock-play-btn" onclick="toggleMasterPlay()">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-          <polygon points="6 4 20 12 6 20 6 4" id="dock-play-icon"/>
-        </svg>
+      <button class="mini-btn mini-btn-play" id="dock-play-btn" onclick="toggleMasterPlay()" aria-label="Play / Pause">
+        <div class="mini-play-dial-bezel">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <polygon points="6 4 20 12 6 20 6 4" id="dock-play-icon"/>
+          </svg>
+        </div>
       </button>
 
-      <button class="mini-btn" onclick="masterStepNext()">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-          <polygon points="5 4 15 12 5 20 5 4"></polygon>
-          <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
+      <button class="mini-btn mini-btn-step" onclick="masterStepNext()" aria-label="Next Track">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 4 15 12 5 20 5 4" fill="currentColor"></polygon>
+          <line x1="19" y1="5" x2="19" y2="19"></line>
         </svg>
       </button>
-    </div>
-
-    <!-- Mini Progress Line -->
-    <div class="mini-progress-bar">
-      <div class="mini-progress-fill" id="dock-progress-fill"></div>
     </div>
   </div>
 
-  <!-- ==========================================================================
-       PRIMARY BOTTOM NAVIGATION BAR (5 TABS)
+  <!-- ========================================================================== (5 TABS)
        ========================================================================== -->
   <nav class="bottom-nav-bar">
     <button class="nav-tab-item active" id="nav-home" onclick="switchTab('home')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
+      <div class="nav-icon-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5L12 3l9 7.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <circle cx="12" cy="14" r="2.5"/>
+        </svg>
+      </div>
       <span class="nav-tab-label">Home</span>
     </button>
 
     <button class="nav-tab-item" id="nav-search" onclick="switchTab('search')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <circle cx="11" cy="11" r="8"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
+      <div class="nav-icon-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7.5"/>
+          <path d="M21 21l-4.8-4.8M8 11h6M11 8v6"/>
+        </svg>
+      </div>
       <span class="nav-tab-label">Search</span>
     </button>
 
     <button class="nav-tab-item" id="nav-library" onclick="switchTab('library')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M9 18V5l12-2v13"></path>
-        <circle cx="6" cy="18" r="3"></circle>
-        <circle cx="18" cy="16" r="3"></circle>
-      </svg>
+      <div class="nav-icon-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 11h16M4 16h10"/>
+          <circle cx="18" cy="17" r="3.5"/>
+          <circle cx="18" cy="17" r="1.2" fill="currentColor"/>
+        </svg>
+      </div>
       <span class="nav-tab-label">Library</span>
     </button>
 
     <button class="nav-tab-item" id="nav-equalizer" onclick="switchTab('equalizer')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <line x1="4" y1="21" x2="4" y2="14"></line>
-        <line x1="4" y1="10" x2="4" y2="3"></line>
-        <line x1="12" y1="21" x2="12" y2="12"></line>
-        <line x1="12" y1="8" x2="12" y2="3"></line>
-        <line x1="20" y1="21" x2="20" y2="16"></line>
-        <line x1="20" y1="12" x2="20" y2="3"></line>
-        <line x1="1" y1="14" x2="7" y2="14"></line>
-        <line x1="9" y1="8" x2="15" y2="8"></line>
-        <line x1="17" y1="16" x2="23" y2="16"></line>
-      </svg>
+      <div class="nav-icon-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="21" x2="5" y2="13"/>
+          <line x1="5" y1="7" x2="5" y2="3"/>
+          <rect x="2.5" y="7" width="5" height="6" rx="1.5" fill="currentColor"/>
+          <line x1="12" y1="21" x2="12" y2="16"/>
+          <line x1="12" y1="10" x2="12" y2="3"/>
+          <rect x="9.5" y="10" width="5" height="6" rx="1.5" fill="currentColor"/>
+          <line x1="19" y1="21" x2="19" y2="12"/>
+          <line x1="19" y1="6" x2="19" y2="3"/>
+          <rect x="16.5" y="6" width="5" height="6" rx="1.5" fill="currentColor"/>
+        </svg>
+      </div>
       <span class="nav-tab-label">Equalizer</span>
     </button>
 
     <button class="nav-tab-item" id="nav-settings" onclick="switchTab('settings')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-      </svg>
+      <div class="nav-icon-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3.5"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </div>
       <span class="nav-tab-label">Settings</span>
     </button>
   </nav>
@@ -564,116 +591,155 @@
   <div class="now-playing-overlay" id="now-playing-screen">
     <!-- Header -->
     <div class="np-header">
-      <button class="np-close-btn" onclick="closeNowPlaying()">
-        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none">
+      <button class="np-close-btn" onclick="closeNowPlaying()" aria-label="Dismiss Now Playing">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
       </button>
 
       <div class="np-header-center">
-        <div class="np-header-title">Now Playing</div>
-        <span class="source-badge idle" id="np-source-badge">STANDBY</span>
+        <div class="np-header-title">NOW PLAYING</div>
+        <div class="np-header-status-row">
+          <span class="np-status-dot"></span>
+          <span class="source-badge idle" id="np-source-badge">DSP STANDBY</span>
+        </div>
       </div>
 
-      <button class="np-close-btn" onclick="closeNowPlaying(); switchTab('equalizer')">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
-          <line x1="4" y1="21" x2="4" y2="14"></line>
-          <line x1="4" y1="10" x2="4" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="12"></line>
-          <line x1="12" y1="8" x2="12" y2="3"></line>
-          <line x1="20" y1="21" x2="20" y2="16"></line>
-          <line x1="20" y1="12" x2="20" y2="3"></line>
-          <line x1="1" y1="14" x2="7" y2="14"></line>
-          <line x1="9" y1="8" x2="15" y2="8"></line>
-          <line x1="17" y1="16" x2="23" y2="16"></line>
+      <button class="np-eq-shortcut-btn" onclick="closeNowPlaying(); switchTab('equalizer')" aria-label="Open Studio Equalizer">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <line x1="5" y1="21" x2="5" y2="13"/>
+          <line x1="5" y1="7" x2="5" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="16"/>
+          <line x1="12" y1="10" x2="12" y2="3"/>
+          <line x1="19" y1="21" x2="19" y2="11"/>
+          <line x1="19" y1="5" x2="19" y2="3"/>
+          <circle cx="5" cy="10" r="2.5" fill="var(--accent-primary)"/>
+          <circle cx="12" cy="13" r="2.5" fill="var(--accent-primary)"/>
+          <circle cx="19" cy="8" r="2.5" fill="var(--accent-primary)"/>
         </svg>
       </button>
     </div>
 
-    <!-- Album Art -->
+    <!-- Purpose-Designed Acoustic Gauge Turntable Deck -->
     <div class="np-cover-wrap">
-      <img src="assets/logo.png" alt="Now Playing Artwork" class="np-cover-art" id="np-cover-img">
+      <div class="np-turntable-deck">
+        <div class="np-turntable-bezel">
+          <div class="np-turntable-strobe-ring"></div>
+          <div class="np-cover-art-container">
+            <img src="assets/logo.png" alt="Now Playing Artwork" class="np-cover-art" id="np-cover-img">
+            <div class="np-turntable-glare"></div>
+            <div class="np-turntable-spindle">
+              <div class="np-spindle-dot"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Track Metadata -->
+    <!-- Track Metadata with Clear Hierarchy -->
     <div class="np-track-meta">
       <div class="np-title" id="np-title">No Track Playing</div>
       <div class="np-artist" id="np-artist">Pioneer DSP Ready</div>
-      <div class="np-album" id="np-album">Select a track to start</div>
+      <div class="np-album-pill-wrap">
+        <span class="np-album-pill" id="np-album">Select a track to start</span>
+      </div>
     </div>
 
-    <!-- Scrub Bar -->
+    <!-- High-Precision Audio Scrub Bar -->
     <div class="np-scrub-wrap">
-      <input type="range" class="pioneer-slider np-seek-slider" id="np-seek-slider" min="0" max="100" step="0.1" value="0" oninput="onSeekInput(this.value)" onchange="onSeekChange(this.value)">
+      <input type="range" class="pioneer-slider np-seek-slider" id="np-seek-slider" min="0" max="100" step="0.1" value="0" oninput="onSeekInput(this.value)" onchange="onSeekChange(this.value)" aria-label="Seek Scrub Bar">
       <div class="np-time-row">
         <span id="np-time-cur">00:00</span>
         <span id="np-time-dur">00:00</span>
       </div>
     </div>
 
-    <!-- Main Playback Controls -->
+    <!-- Signature Main Playback Controls -->
     <div class="np-controls-row">
-      <button class="np-btn-sub" id="np-shuffle-btn" onclick="toggleShuffle()">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+      <button class="np-btn-sub" id="np-shuffle-btn" onclick="toggleShuffle()" title="Shuffle Playback">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
           <polyline points="16 3 21 3 21 8"></polyline>
           <line x1="4" y1="20" x2="21" y2="3"></line>
           <polyline points="21 16 21 21 16 21"></polyline>
           <line x1="15" y1="15" x2="21" y2="21"></line>
           <line x1="4" y1="4" x2="9" y2="9"></line>
         </svg>
+        <span class="np-sub-active-dot"></span>
       </button>
 
-      <button class="np-btn-step" onclick="masterStepPrev()">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
-          <polygon points="19 20 9 12 19 4 19 20"></polygon>
-          <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5"></line>
+      <button class="np-btn-step" onclick="masterStepPrev()" title="Previous Track">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="19 20 9 12 19 4 19 20" fill="currentColor"></polygon>
+          <line x1="5" y1="19" x2="5" y2="5"></line>
         </svg>
       </button>
 
-      <button class="np-btn-play" onclick="toggleMasterPlay()">
-        <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor">
-          <polygon points="6 4 20 12 6 20 6 4" id="np-play-icon"/>
+      <button class="np-btn-play" onclick="toggleMasterPlay()" title="Play or Pause">
+        <div class="np-play-outer-ring">
+          <div class="np-play-inner-core">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+              <polygon points="6 4 20 12 6 20 6 4" id="np-play-icon"/>
+            </svg>
+          </div>
+        </div>
+      </button>
+
+      <button class="np-btn-step" onclick="masterStepNext()" title="Next Track">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 4 15 12 5 20 5 4" fill="currentColor"></polygon>
+          <line x1="19" y1="5" x2="19" y2="19"></line>
         </svg>
       </button>
 
-      <button class="np-btn-step" onclick="masterStepNext()">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
-          <polygon points="5 4 15 12 5 20 5 4"></polygon>
-          <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line>
-        </svg>
-      </button>
-
-      <button class="np-btn-sub" id="np-repeat-btn" onclick="toggleRepeat()">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+      <button class="np-btn-sub" id="np-repeat-btn" onclick="toggleRepeat()" title="Repeat Mode">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
           <polyline points="17 1 21 5 17 9"></polyline>
           <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
           <polyline points="7 23 3 19 7 15"></polyline>
           <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
         </svg>
+        <span class="np-sub-active-dot"></span>
       </button>
     </div>
 
-    <!-- Bottom Shortcuts -->
+    <!-- Bottom DSP Telemetry & Shortcuts -->
     <div class="np-bottom-bar">
       <div class="np-dsp-pill" id="np-hall-pill" onclick="toggleConcertHall()">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
-          <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6a3 3 0 0 1 6 0v6"/>
-        </svg>
-        <span id="np-hall-label">Concert Hall: OFF</span>
+        <div class="np-dsp-icon-box">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <path d="M2 12c0-5.5 4.5-10 10-10s10 4.5 10 10"/>
+            <path d="M5 12c0-3.9 3.1-7 7-7s7 3.1 7 7"/>
+            <path d="M8 12c0-2.2 1.8-4 4-4s4 1.8 4 4"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+          </svg>
+        </div>
+        <div class="np-dsp-label-col">
+          <span class="np-dsp-kicker">3D REVERB ENVIRONMENT</span>
+          <span id="np-hall-label" class="np-dsp-val">Concert Hall: OFF</span>
+        </div>
+        <span class="np-dsp-led"></span>
       </div>
 
       <div class="np-dsp-pill" onclick="closeNowPlaying(); switchTab('equalizer')">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
-          <circle cx="12" cy="12" r="3"></circle>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
-        <span>Open Equalizer</span>
+        <div class="np-dsp-icon-box">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <line x1="4" y1="21" x2="4" y2="14"/>
+            <line x1="4" y1="8" x2="4" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="10"/>
+            <line x1="12" y1="4" x2="12" y2="3"/>
+            <line x1="20" y1="21" x2="20" y2="16"/>
+            <line x1="20" y1="10" x2="20" y2="3"/>
+          </svg>
+        </div>
+        <div class="np-dsp-label-col">
+          <span class="np-dsp-kicker">STUDIO CONSOLE</span>
+          <span class="np-dsp-val">10-Band EQ Cockpit &rarr;</span>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ==========================================================================
-       MODAL DIALOG (For Spotify Devices / Custom Presets)
+  <!-- ========================================================================== (For Spotify Devices / Custom Presets)
        ========================================================================== -->
   <div class="modal-backdrop" id="app-modal" onclick="closeAppModal()">
     <div class="modal-window" onclick="event.stopPropagation()">
