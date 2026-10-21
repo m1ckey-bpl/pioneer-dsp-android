@@ -45,36 +45,18 @@ jobs:
           name: Pioneer-DSP-Android-APK
           path: Pioneer_DSP.apk
 
+      - name: Extract Version
+        id: get_version
+        run: |
+          VERSION=$(grep 'versionName' app/build.gradle | head -1 | awk -F '"' '{print $2}')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Publish Android Release
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: v4.0.0
-          name: "Pioneer DSP Android v4.0.0 (Master Redesign Edition)"
-          body: |
-            ## 🎵 Pioneer DSP for Android v4.0.0 — Master Redesign Edition
-            
-            ### 📦 Direct Download:
-            * 🤖 **Android APK**: `Pioneer_DSP.apk` (Direct install, 100% free)
-
-            ### 🚀 Highlights in this Release:
-            1. **Complete UI Redesign**:
-               - Modern dark obsidian aesthetic (`#080a0f`, `#10141d`, `#181d29`).
-               - Standard 5-Tab Ergonomic Navigation (`Home`, `Search`, `Library`, `Equalizer`, `Settings`).
-               - Persistent Mini-Player Dock on all tabs with seek progress line.
-               - Dedicated Full-Screen Now Playing overlay with high-res artwork, accurate timer, shuffle, repeat, and DSP shortcuts.
-            2. **Real Audible Audio DSP Engine**:
-               - Fixed Convolver bug: Disabled auto L2-normalization so Concert Hall, Room, Studio, and Arena reverbs are richly and audibly rendered.
-               - Dual-stage Todoroki Super Bass (80Hz low-shelf + 60Hz punch peaking filter).
-               - Deep Sub-Bass (35Hz foundation filter).
-               - Musical soft-knee limiter at -1.0dBFS preventing digital distortion without dynamic volume pumping.
-            3. **Spotify Integration & Search**:
-               - Debounced live search across Spotify (Tracks, Artists, Albums, Playlists) and local files.
-               - Seamless playback control via Spotify Connect devices.
-               - Defensive HTTP 204 No Content handling resolving JSON parsing exceptions.
-               - Android AudioEffect session receiver hooking into Spotify's `DISPLAY_AUDIO_EFFECT_CONTROL_PANEL`.
-            4. **Permanent Local Library**:
-               - IndexedDB and localStorage synchronization ensuring stored songs never vanish on restart.
-               - Background MediaStore discovery with modern Android permissions (`READ_MEDIA_AUDIO` / `READ_EXTERNAL_STORAGE`).
+          tag_name: v${{ env.VERSION }}
+          name: "Pioneer DSP Android v${{ env.VERSION }}"
+          generate_release_notes: true
           files: |
             Pioneer_DSP.apk
