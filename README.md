@@ -10,7 +10,9 @@
 
 **Pioneer DSP for Android** is an open-source, high-fidelity music player and real-time audio effects processing application. It combines a 32-bit floating point WebAudio DSP pipeline for local media with Android's native `android.media.audiofx` framework and Spotify Web API integration.
 
-### ✨ Key Features (v4.0.2 Master Acoustic Cockpit Edition):
+### ✨ Key Features (v4.0.3 Audio Stability & Artwork Edition):
+* **Accurate & Glitch-Free Audio Scrubbing**: Complete resolution of WebAudio onended race conditions—eliminating accidental track skips and restarts on seek. Includes drag settling guards, touch/pointer scrub protection, buffer boundary clamping, and precise timestamp synchronization across both local WebAudio DSP and Spotify Connect.
+* **Embedded Album Artwork Display**: Automatic extraction of embedded ID3 APIC / album art from downloaded local files via MediaMetadataRetriever, Android 10+ Scoped Storage thumbnail loader, and local image proxy (https://pioneer.local/artwork), rendering album covers across Hero card, Docked Mini-Player, Now Playing turntable deck, and Library song lists.
 * **Custom Bespoke Icon Suite**: Entirely custom-drawn geometric line icon family (Home, Search, Library, Studio Equalizer, Cockpit Settings, Play, Previous/Next, Shuffle, Repeat, Spatial Reverb) with uniform 1.8px stroke weight and electric cyan illumination.
 * **Ground-Up Recomposed Now Playing Deck**: Purpose-designed circular turntable gauge chassis with concentric vinyl micro-grooves, illuminated strobe ticks, and holographic spindle—completely replacing the old oversized rectangular wallpaper look.
 * **Signature Hardware Play/Pause Dial**: 76mm dual-ring tactile control dial with brushed metallic titanium rim, Electric Cyan to Neon Violet core, and high-contrast play/pause glyphs.

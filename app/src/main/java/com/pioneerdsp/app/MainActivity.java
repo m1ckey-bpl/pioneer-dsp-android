@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.media.audiofx.AudioEffect;
 import android.media.audiofx.PresetReverb;
 import android.net.ConnectivityManager;
@@ -17,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Size;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
@@ -35,6 +38,7 @@ import androidx.core.content.ContextCompat;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -135,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
                             obj.put("size", sizeBytes);
                             obj.put("albumId", albumId);
                             obj.put("contentUri", trackUri.toString());
+                            String artworkUrl = "https://pioneer.local/artwork?uri=" + Uri.encode(trackUri.toString()) + "&albumId=" + albumId;
+                            obj.put("cover", artworkUrl);
 
                             tracks.put(obj);
                         }
@@ -145,6 +151,19 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return tracks.toString();
+        }
+
+        @JavascriptInterface
+        public String getTrackArtworkBase64(String contentUriStr, long albumId) {
+            try {
+                byte[] art = extractTrackArtworkBytes(contentUriStr, albumId);
+                if (art != null && art.length > 0) {
+                    return "data:image/jpeg;base64," + Base64.encodeToString(art, Base64.NO_WRAP);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "";
         }
 
         @JavascriptInterface
@@ -282,6 +301,31 @@ public class MainActivity extends AppCompatActivity {
                 if (url != null) {
                     boolean isContentScheme = "content".equals(url.getScheme());
                     boolean isLocalMediaProxy = "pioneer.local".equals(url.getHost()) && "/media".equals(url.getPath());
+                    boolean isArtworkProxy = "pioneer.local".equals(url.getHost()) && "/artwork".equals(url.getPath());
+
+                    if (isArtworkProxy) {
+                        try {
+                            String uriParam = url.getQueryParameter("uri");
+                            String albumIdParam = url.getQueryParameter("albumId");
+                            long albumId = 0;
+                            if (albumIdParam != null && !albumIdParam.isEmpty()) {
+                                try { albumId = Long.parseLong(albumIdParam); } catch (Exception ignored) {}
+                            }
+                            byte[] artBytes = extractTrackArtworkBytes(uriParam, albumId);
+                            if (artBytes != null && artBytes.length > 0) {
+                                Map<String, String> headers = new HashMap<>();
+                                headers.put("Access-Control-Allow-Origin", "*");
+                                headers.put("Cache-Control", "public, max-age=86400");
+                                return new WebResourceResponse("image/jpeg", "UTF-8", 200, "OK", headers, new ByteArrayInputStream(artBytes));
+                            } else {
+                                Map<String, String> headers = new HashMap<>();
+                                headers.put("Access-Control-Allow-Origin", "*");
+                                return new WebResourceResponse("text/plain", "UTF-8", 404, "Not Found", headers, new ByteArrayInputStream(new byte[0]));
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                     if (isContentScheme || isLocalMediaProxy) {
                         try {
@@ -413,6 +457,58 @@ public class MainActivity extends AppCompatActivity {
                 filePathCallback = null;
             }
         }
+    }
+
+    public byte[] extractTrackArtworkBytes(String contentUriStr, long albumId) {
+        // Strategy 1: Embedded picture from audio file via MediaMetadataRetriever
+        if (contentUriStr != null && !contentUriStr.isEmpty()) {
+            MediaMetadataRetriever mmr = null;
+            try {
+                mmr = new MediaMetadataRetriever();
+                mmr.setDataSource(MainActivity.this, Uri.parse(contentUriStr));
+                byte[] art = mmr.getEmbeddedPicture();
+                if (art != null && art.length > 0) {
+                    return art;
+                }
+            } catch (Exception ignored) {
+            } finally {
+                if (mmr != null) {
+                    try { mmr.release(); } catch (Exception ignored) {}
+                }
+            }
+        }
+
+        // Strategy 2: Android 10+ (API 29+) ContentResolver.loadThumbnail
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && contentUriStr != null && !contentUriStr.isEmpty()) {
+            try {
+                Bitmap thumb = getContentResolver().loadThumbnail(Uri.parse(contentUriStr), new Size(512, 512), null);
+                if (thumb != null) {
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    thumb.compress(Bitmap.CompressFormat.JPEG, 90, bos);
+                    return bos.toByteArray();
+                }
+            } catch (Exception ignored) {}
+        }
+
+        // Strategy 3: Query MediaStore album art URI (content://media/external/audio/albumart/<albumId>)
+        if (albumId > 0) {
+            try {
+                Uri albumArtUri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId);
+                try (InputStream is = getContentResolver().openInputStream(albumArtUri)) {
+                    if (is != null) {
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        byte[] buf = new byte[8192];
+                        int r;
+                        while ((r = is.read(buf)) != -1) {
+                            bos.write(buf, 0, r);
+                        }
+                        return bos.toByteArray();
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+
+        return null;
     }
 
     @Override

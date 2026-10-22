@@ -2,6 +2,79 @@
 // Master Redesign Edition v4.0.0
 // Real-Time 32-bit Floating Point Audio Processing & Hardware-Accelerated Acoustics
 
+async function extractEmbeddedArtFromBlob(blob) {
+  try {
+    const sliceSize = Math.min(blob.size, 1024 * 1024);
+    const buffer = await blob.slice(0, sliceSize).arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
+    // ID3v2 header: 'ID3' (0x49, 0x44, 0x33)
+    if (bytes[0] === 0x49 && bytes[1] === 0x44 && bytes[2] === 0x33) {
+      const version = bytes[3];
+      let tagSize = ((bytes[6] & 0x7F) << 21) | ((bytes[7] & 0x7F) << 14) | ((bytes[8] & 0x7F) << 7) | (bytes[9] & 0x7F);
+      tagSize = Math.min(tagSize, bytes.length);
+
+      let offset = 10;
+      while (offset < tagSize - 10) {
+        let frameId = '';
+        let frameSize = 0;
+        let headerSize = 10;
+
+        if (version === 2) {
+          frameId = String.fromCharCode(bytes[offset], bytes[offset+1], bytes[offset+2]);
+          frameSize = (bytes[offset+3] << 16) | (bytes[offset+4] << 8) | bytes[offset+5];
+          headerSize = 6;
+        } else {
+          frameId = String.fromCharCode(bytes[offset], bytes[offset+1], bytes[offset+2], bytes[offset+3]);
+          if (version === 4) {
+            frameSize = ((bytes[offset+4] & 0x7F) << 21) | ((bytes[offset+5] & 0x7F) << 14) | ((bytes[offset+6] & 0x7F) << 7) | (bytes[offset+7] & 0x7F);
+          } else {
+            frameSize = (bytes[offset+4] << 24) | (bytes[offset+5] << 16) | (bytes[offset+6] << 8) | bytes[offset+7];
+          }
+        }
+
+        if (frameSize <= 0 || offset + headerSize + frameSize > bytes.length) break;
+
+        if (frameId === 'APIC' || frameId === 'PIC') {
+          const frameDataOffset = offset + headerSize;
+          let p = frameDataOffset;
+          const encoding = bytes[p++];
+          let mime = '';
+          if (frameId === 'PIC') {
+            mime = 'image/' + String.fromCharCode(bytes[p], bytes[p+1], bytes[p+2]).toLowerCase();
+            p += 3;
+          } else {
+            while (p < frameDataOffset + frameSize && bytes[p] !== 0) {
+              mime += String.fromCharCode(bytes[p++]);
+            }
+            p++;
+          }
+          const picType = bytes[p++];
+          // Skip description string
+          if (encoding === 0 || encoding === 3) {
+            while (p < frameDataOffset + frameSize && bytes[p] !== 0) p++;
+            p++;
+          } else {
+            while (p < frameDataOffset + frameSize - 1 && !(bytes[p] === 0 && bytes[p+1] === 0)) p += 2;
+            p += 2;
+          }
+
+          const imgBytes = bytes.subarray(p, frameDataOffset + frameSize);
+          if (imgBytes.length > 0) {
+            if (!mime || mime === 'image/') mime = 'image/jpeg';
+            const imgBlob = new Blob([imgBytes], { type: mime });
+            return URL.createObjectURL(imgBlob);
+          }
+        }
+        offset += headerSize + frameSize;
+      }
+    }
+  } catch(e) {
+    console.warn('ID3 APIC extraction notice:', e);
+  }
+  return null;
+}
+
 class PioneerAudioDB {
   constructor() {
     this.dbName = 'PioneerDSP_Storage_v4';
@@ -107,6 +180,7 @@ class PioneerAudioDB {
         fileSize: s.fileSize || '',
         contentUri: s.contentUri || '',
         albumId: s.albumId || 0,
+        cover: s.cover || '',
         addedAt: s.addedAt || Date.now()
       }));
       localStorage.setItem('pioneer_songs_cache_v4', JSON.stringify(stripped));
@@ -568,11 +642,13 @@ class PioneerDSPEngine {
 
   stopPlayback() {
     if (this.sourceNode) {
-      try {
-        this.sourceNode.stop();
-        this.sourceNode.disconnect();
-      } catch(e) {}
+      const oldNode = this.sourceNode;
       this.sourceNode = null;
+      try {
+        oldNode.onended = null;
+        oldNode.stop(0);
+        oldNode.disconnect();
+      } catch(e) {}
     }
 
     this.isPlaying = false;
@@ -629,13 +705,13 @@ class PioneerDSPEngine {
       this.duration = this.currentBuffer.duration;
       song.duration = Math.round(this.duration);
 
-      this.sourceNode = this.audioCtx.createBufferSource();
-      this.sourceNode.buffer = this.currentBuffer;
-      this.sourceNode.playbackRate.value = this.playbackRate;
-      this.sourceNode.connect(this.preampNode);
+      const newSource = this.audioCtx.createBufferSource();
+      newSource.buffer = this.currentBuffer;
+      newSource.playbackRate.value = this.playbackRate;
+      newSource.connect(this.preampNode);
 
-      this.sourceNode.onended = () => {
-        if (this.isPlaying && !this.isPaused) {
+      newSource.onended = () => {
+        if (this.sourceNode === newSource && this.isPlaying && !this.isPaused) {
           if (this.isRepeat === 'one') {
             this.playLocalSong(this.currentIndex);
           } else {
@@ -644,9 +720,10 @@ class PioneerDSPEngine {
         }
       };
 
+      this.sourceNode = newSource;
       this.startTime = this.audioCtx.currentTime;
       this.pauseOffset = 0;
-      this.sourceNode.start(0);
+      newSource.start(0);
       this.isPlaying = true;
       this.isPaused = false;
       return true;
@@ -671,11 +748,13 @@ class PioneerDSPEngine {
   pause() {
     if (this.sourceNode && this.isPlaying && !this.isPaused) {
       this.pauseOffset = (this.audioCtx.currentTime - this.startTime) % (this.duration || 1);
-      try {
-        this.sourceNode.stop();
-        this.sourceNode.disconnect();
-      } catch(e) {}
+      const oldNode = this.sourceNode;
       this.sourceNode = null;
+      try {
+        oldNode.onended = null;
+        oldNode.stop(0);
+        oldNode.disconnect();
+      } catch(e) {}
       this.isPlaying = false;
       this.isPaused = true;
     }
@@ -683,13 +762,16 @@ class PioneerDSPEngine {
 
   resume() {
     if (this.isPaused && this.currentBuffer && this.audioCtx) {
-      this.sourceNode = this.audioCtx.createBufferSource();
-      this.sourceNode.buffer = this.currentBuffer;
-      this.sourceNode.playbackRate.value = this.playbackRate;
-      this.sourceNode.connect(this.preampNode);
+      const dur = this.duration || this.currentBuffer.duration || 0;
+      const safeOffset = Math.max(0, Math.min(Math.max(0, dur - 0.05), this.pauseOffset));
 
-      this.sourceNode.onended = () => {
-        if (this.isPlaying && !this.isPaused) {
+      const newSource = this.audioCtx.createBufferSource();
+      newSource.buffer = this.currentBuffer;
+      newSource.playbackRate.value = this.playbackRate;
+      newSource.connect(this.preampNode);
+
+      newSource.onended = () => {
+        if (this.sourceNode === newSource && this.isPlaying && !this.isPaused) {
           if (this.isRepeat === 'one') {
             this.playLocalSong(this.currentIndex);
           } else {
@@ -698,40 +780,64 @@ class PioneerDSPEngine {
         }
       };
 
-      this.startTime = this.audioCtx.currentTime - this.pauseOffset;
-      this.sourceNode.start(0, this.pauseOffset);
-      this.isPlaying = true;
-      this.isPaused = false;
+      this.sourceNode = newSource;
+      this.startTime = this.audioCtx.currentTime - safeOffset;
+      try {
+        newSource.start(0, safeOffset);
+        this.isPlaying = true;
+        this.isPaused = false;
+      } catch(e) {
+        console.error('AudioBufferSource resume start error:', e);
+      }
     } else if (this.currentIndex >= 0) {
       this.playLocalSong(this.currentIndex);
     }
   }
 
   seek(ratio) {
-    if (!this.currentBuffer) return;
-    const targetTime = Math.max(0, Math.min(this.duration, this.duration * ratio));
+    if (!this.currentBuffer || !this.audioCtx) return;
+    const dur = this.duration || this.currentBuffer.duration || 0;
+    if (dur <= 0) return;
+
+    // Clamp ratio between 0.0 and 0.999 to guarantee offset is within audio buffer duration
+    const clampedRatio = Math.max(0, Math.min(0.999, parseFloat(ratio) || 0));
+    const targetTime = Math.max(0, Math.min(Math.max(0, dur - 0.05), dur * clampedRatio));
     this.pauseOffset = targetTime;
 
     if (this.isPlaying && this.sourceNode) {
+      const oldNode = this.sourceNode;
+      this.sourceNode = null;
       try {
-        this.sourceNode.stop();
-        this.sourceNode.disconnect();
+        // Crucial: Detach onended before stopping to prevent accidental track skip / auto-advance
+        oldNode.onended = null;
+        oldNode.stop(0);
+        oldNode.disconnect();
       } catch(e) {}
-      this.sourceNode = this.audioCtx.createBufferSource();
-      this.sourceNode.buffer = this.currentBuffer;
-      this.sourceNode.playbackRate.value = this.playbackRate;
-      this.sourceNode.connect(this.preampNode);
-      this.sourceNode.onended = () => {
-        if (this.isPlaying && !this.isPaused) {
-          if (this.isRepeat === 'one') {
-            this.playLocalSong(this.currentIndex);
-          } else {
-            this.playNext();
+
+      try {
+        const newSource = this.audioCtx.createBufferSource();
+        newSource.buffer = this.currentBuffer;
+        newSource.playbackRate.value = this.playbackRate;
+        newSource.connect(this.preampNode);
+
+        newSource.onended = () => {
+          if (this.sourceNode === newSource && this.isPlaying && !this.isPaused) {
+            if (this.isRepeat === 'one') {
+              this.playLocalSong(this.currentIndex);
+            } else {
+              this.playNext();
+            }
           }
-        }
-      };
-      this.startTime = this.audioCtx.currentTime - targetTime;
-      this.sourceNode.start(0, targetTime);
+        };
+
+        this.sourceNode = newSource;
+        this.startTime = this.audioCtx.currentTime - targetTime;
+        newSource.start(0, targetTime);
+      } catch(err) {
+        console.error('AudioBufferSource seek start error:', err);
+      }
+    } else if (this.isPaused) {
+      this.pauseOffset = targetTime;
     }
   }
 
@@ -760,7 +866,7 @@ class PioneerDSPEngine {
   getCurrentTime() {
     if (!this.isPlaying || !this.audioCtx) return this.pauseOffset;
     if (this.isPaused) return this.pauseOffset;
-    const elapsed = this.audioCtx.currentTime - this.startTime;
+    const elapsed = (this.audioCtx.currentTime - this.startTime) * (this.playbackRate || 1.0);
     return Math.min(this.duration || 0, Math.max(0, elapsed));
   }
 
@@ -773,6 +879,11 @@ class PioneerDSPEngine {
     try {
       const saved = await this.db.getAllSongs();
       this.songs = saved || [];
+      this.songs.forEach(s => {
+        if (!s.cover && s.contentUri) {
+          s.cover = "https://pioneer.local/artwork?uri=" + encodeURIComponent(s.contentUri) + "&albumId=" + (s.albumId || 0);
+        }
+      });
       return this.songs;
     } catch(e) {
       this.songs = [];
@@ -790,6 +901,11 @@ class PioneerDSPEngine {
       const title = nameParts.length > 1 ? nameParts.slice(1).join(' - ').trim() : nameParts[0].trim();
       const fileSize = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
 
+      let coverUrl = '';
+      try {
+        coverUrl = await extractEmbeddedArtFromBlob(file) || '';
+      } catch(e) {}
+
       const songObj = {
         id: id,
         title: title,
@@ -797,6 +913,7 @@ class PioneerDSPEngine {
         album: 'Imported Music',
         duration: 0,
         fileSize: fileSize,
+        cover: coverUrl,
         blob: file,
         addedAt: Date.now()
       };
@@ -809,8 +926,9 @@ class PioneerDSPEngine {
   async importMediaStoreTracks(tracks) {
     if (!tracks || !Array.isArray(tracks)) return;
     for (const t of tracks) {
-      const exists = this.songs.some(s => s.contentUri === t.contentUri || s.id === t.id);
-      if (!exists) {
+      const existing = this.songs.find(s => s.contentUri === t.contentUri || s.id === t.id);
+      const fallbackCover = t.cover || ("https://pioneer.local/artwork?uri=" + encodeURIComponent(t.contentUri) + "&albumId=" + (t.albumId || 0));
+      if (!existing) {
         const songObj = {
           id: t.id,
           title: t.title,
@@ -820,10 +938,14 @@ class PioneerDSPEngine {
           fileSize: (t.size / (1024 * 1024)).toFixed(1) + ' MB',
           contentUri: t.contentUri,
           albumId: t.albumId,
+          cover: fallbackCover,
           addedAt: Date.now()
         };
         this.songs.push(songObj);
         await this.db.saveSong(songObj);
+      } else if (!existing.cover) {
+        existing.cover = fallbackCover;
+        await this.db.saveSong(existing);
       }
     }
     this.db.syncMetadataCache();

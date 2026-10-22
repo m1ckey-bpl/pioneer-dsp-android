@@ -45,7 +45,7 @@
       <div class="hero-playback-card" id="hero-card" onclick="openNowPlaying()">
         <div class="hero-content">
           <div class="hero-cover-frame">
-            <img src="assets/logo.png" alt="Album Cover" class="hero-cover" id="hero-cover-img">
+            <img src="assets/logo.png" alt="Album Cover" class="hero-cover" id="hero-cover-img" onerror="this.onerror=null; this.src='assets/logo.png';">
             <div class="hero-corner-bracket tl"></div>
             <div class="hero-corner-bracket br"></div>
           </div>
@@ -493,7 +493,7 @@
 
     <div class="mini-dock-left">
       <div class="mini-dock-thumb-frame">
-        <img src="assets/logo.png" alt="Cover" class="mini-dock-thumb" id="dock-cover-img">
+        <img src="assets/logo.png" alt="Cover" class="mini-dock-thumb" id="dock-cover-img" onerror="this.onerror=null; this.src='assets/logo.png';">
         <div class="mini-thumb-border-glow"></div>
       </div>
       <div class="mini-dock-meta">
@@ -626,7 +626,7 @@
         <div class="np-turntable-bezel">
           <div class="np-turntable-strobe-ring"></div>
           <div class="np-cover-art-container">
-            <img src="assets/logo.png" alt="Now Playing Artwork" class="np-cover-art" id="np-cover-img">
+            <img src="assets/logo.png" alt="Now Playing Artwork" class="np-cover-art" id="np-cover-img" onerror="this.onerror=null; this.src='assets/logo.png';">
             <div class="np-turntable-glare"></div>
             <div class="np-turntable-spindle">
               <div class="np-spindle-dot"></div>
@@ -886,9 +886,16 @@
       }
     }
 
+    let seekSettleTimer = null;
+    let spotifySeekDebounceTimer = null;
+
     function onSeekInput(val) {
       isSeeking = true;
-      const ratio = parseFloat(val) / 100.0;
+      if (seekSettleTimer) {
+        clearTimeout(seekSettleTimer);
+        seekSettleTimer = null;
+      }
+      const ratio = Math.max(0, Math.min(1.0, parseFloat(val) / 100.0));
       let durSec = 0;
       if (currentSourceMode === 'spotify') {
         durSec = spotifyDurationMs / 1000.0;
@@ -897,23 +904,41 @@
       }
       const targetSec = durSec * ratio;
       document.getElementById('np-time-cur').innerText = formatTime(targetSec);
+      document.getElementById('dock-progress-fill').style.width = `${val}%`;
+
+      if (currentSourceMode === 'spotify') {
+        if (spotifySeekDebounceTimer) clearTimeout(spotifySeekDebounceTimer);
+        spotifySeekDebounceTimer = setTimeout(() => {
+          const targetMs = Math.round(spotifyDurationMs * ratio);
+          window.spotifyService.seek(targetMs).catch(() => {});
+        }, 150);
+      }
     }
 
     async function onSeekChange(val) {
-      const ratio = parseFloat(val) / 100.0;
+      const ratio = Math.max(0, Math.min(1.0, parseFloat(val) / 100.0));
       if (currentSourceMode === 'spotify') {
+        if (spotifySeekDebounceTimer) {
+          clearTimeout(spotifySeekDebounceTimer);
+          spotifySeekDebounceTimer = null;
+        }
         const targetMs = Math.round(spotifyDurationMs * ratio);
         try {
           await window.spotifyService.seek(targetMs);
           spotifyLastProgressMs = targetMs;
           spotifyLastProgressTimestamp = Date.now();
         } catch(e) {
-          alert(e.message);
+          console.warn('Spotify seek error:', e);
         }
       } else {
         window.dspEngine.seek(ratio);
       }
-      isSeeking = false;
+
+      if (seekSettleTimer) clearTimeout(seekSettleTimer);
+      seekSettleTimer = setTimeout(() => {
+        isSeeking = false;
+        seekSettleTimer = null;
+      }, 200);
     }
 
     // --- ACCURATE 100ms PLAYBACK TIMER LOOP ---
@@ -1004,24 +1029,35 @@
           const title = song.title || 'Local Audio Track';
           const artist = song.artist || 'Local Music';
           const album = song.album || 'Device Library';
+          let cover = song.cover || song.artwork;
+          if (!cover && song.contentUri && window.PioneerBridge && typeof window.PioneerBridge.getTrackArtworkBase64 === 'function') {
+            try {
+              cover = window.PioneerBridge.getTrackArtworkBase64(song.contentUri, song.albumId || 0);
+              if (cover) song.cover = cover;
+            } catch(e) {}
+          }
+          cover = cover || 'assets/logo.png';
 
           document.getElementById('hero-title').innerText = title;
           document.getElementById('hero-artist').innerText = artist;
-          document.getElementById('hero-cover-img').src = 'assets/logo.png';
+          document.getElementById('hero-cover-img').src = cover;
 
           document.getElementById('dock-title').innerText = title;
           document.getElementById('dock-artist').querySelector('span:first-child').innerText = artist;
-          document.getElementById('dock-cover-img').src = 'assets/logo.png';
+          document.getElementById('dock-cover-img').src = cover;
 
           document.getElementById('np-title').innerText = title;
           document.getElementById('np-artist').innerText = artist;
           document.getElementById('np-album').innerText = album;
-          document.getElementById('np-cover-img').src = 'assets/logo.png';
+          document.getElementById('np-cover-img').src = cover;
 
           updateSourceBadges('local');
         } else {
           document.getElementById('dock-title').innerText = 'No Track Playing';
           document.getElementById('dock-artist').querySelector('span:first-child').innerText = 'Pioneer DSP Ready';
+          document.getElementById('hero-cover-img').src = 'assets/logo.png';
+          document.getElementById('dock-cover-img').src = 'assets/logo.png';
+          document.getElementById('np-cover-img').src = 'assets/logo.png';
           updateSourceBadges('idle');
         }
       }
@@ -1094,14 +1130,23 @@
         row.className = `track-row ${isCurrent ? 'playing' : ''}`;
         row.onclick = () => playLocalSong(idx);
 
-        row.innerHTML = `
-          <div class="track-index-cover">
-            ${isCurrent ? `
+        let coverHtml = '';
+        if (song.cover && song.cover !== 'assets/logo.png') {
+          coverHtml = `<img src="${song.cover}" class="track-index-cover" alt="Cover" onerror="this.onerror=null; this.src='assets/logo.png';">`;
+        } else if (isCurrent) {
+          coverHtml = `
+            <div class="track-index-cover">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="var(--accent-pioneer)">
                 <polygon points="6 4 20 12 6 20 6 4"/>
               </svg>
-            ` : (idx + 1)}
-          </div>
+            </div>
+          `;
+        } else {
+          coverHtml = `<div class="track-index-cover">${idx + 1}</div>`;
+        }
+
+        row.innerHTML = `
+          ${coverHtml}
           <div class="track-meta">
             <div class="track-title">${escapeHtml(song.title)}</div>
             <div class="track-sub">${escapeHtml(song.artist)} • ${escapeHtml(song.album || 'Local Track')}</div>
@@ -1375,12 +1420,17 @@
           const row = document.createElement('div');
           row.className = 'track-row';
           row.onclick = () => playLocalSong(origIdx);
+          const coverHtml = (song.cover && song.cover !== 'assets/logo.png')
+            ? `<img src="${song.cover}" class="track-index-cover" alt="Cover" onerror="this.onerror=null; this.src='assets/logo.png';">`
+            : `
+              <div class="track-index-cover">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--accent-pioneer)" stroke-width="2" fill="none">
+                  <path d="M9 18V5l12-2v13"></path>
+                </svg>
+              </div>
+            `;
           row.innerHTML = `
-            <div class="track-index-cover">
-              <svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--accent-pioneer)" stroke-width="2" fill="none">
-                <path d="M9 18V5l12-2v13"></path>
-              </svg>
-            </div>
+            ${coverHtml}
             <div class="track-meta">
               <div class="track-title">${escapeHtml(song.title)}</div>
               <div class="track-sub">${escapeHtml(song.artist)} • Local File</div>
@@ -1785,6 +1835,27 @@
 
       // 7. Start Spectrum Visualizer
       requestAnimationFrame(drawSpectrumLoop);
+
+      // 8. Bind Seek Slider Touch & Pointer Guards
+      const seekSlider = document.getElementById('np-seek-slider');
+      if (seekSlider) {
+        const onStart = () => {
+          isSeeking = true;
+          if (seekSettleTimer) {
+            clearTimeout(seekSettleTimer);
+            seekSettleTimer = null;
+          }
+        };
+        const onEnd = (e) => {
+          onSeekChange(e.target.value);
+        };
+        seekSlider.addEventListener('pointerdown', onStart, { passive: true });
+        seekSlider.addEventListener('touchstart', onStart, { passive: true });
+        seekSlider.addEventListener('mousedown', onStart, { passive: true });
+        seekSlider.addEventListener('pointerup', onEnd, { passive: true });
+        seekSlider.addEventListener('touchend', onEnd, { passive: true });
+        seekSlider.addEventListener('mouseup', onEnd, { passive: true });
+      }
     });
   </script>
 </body>
