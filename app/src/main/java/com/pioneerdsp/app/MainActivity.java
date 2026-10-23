@@ -45,10 +45,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    private static MainActivity instance;
+    public static MainActivity getInstance() { return instance; }
+
     private WebView webView;
     private ValueCallback<Uri[]> filePathCallback;
     private static final int FILE_CHOOSER_REQ = 1001;
     private static final int STORAGE_PERM_REQ = 2002;
+    private static final int NOTIF_PERM_REQ = 3003;
     private String pendingAuthUrl = null;
     private boolean isPageLoaded = false;
 
@@ -232,11 +236,67 @@ public class MainActivity extends AppCompatActivity {
             else if ("arena".equalsIgnoreCase(mode)) preset = PresetReverb.PRESET_PLATE;
             PioneerAudioEffectManager.getInstance().setPresetReverb(preset);
         }
+
+        @JavascriptInterface
+        public void updatePlaybackState(
+                String title,
+                String artist,
+                String album,
+                double durationSec,
+                double currentPosSec,
+                boolean isPlaying,
+                String coverUrl,
+                boolean isConcertHall,
+                String presetName
+        ) {
+            runOnUiThread(() -> {
+                try {
+                    Intent serviceIntent = new Intent(MainActivity.this, PioneerMediaService.class);
+                    if (isPlaying) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(serviceIntent);
+                        } else {
+                            startService(serviceIntent);
+                        }
+                    }
+                    PioneerMediaService svc = PioneerMediaService.getInstance();
+                    if (svc != null) {
+                        svc.updatePlaybackState(
+                                title, artist, album,
+                                Math.round(durationSec),
+                                Math.round(currentPosSec),
+                                isPlaying,
+                                coverUrl,
+                                isConcertHall,
+                                presetName
+                        );
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void notifyPlaybackStopped() {
+            runOnUiThread(() -> {
+                try {
+                    Intent stopIntent = new Intent(MainActivity.this, PioneerMediaService.class);
+                    stopIntent.setAction(PioneerMediaService.ACTION_STOP);
+                    startService(stopIntent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
+        checkNotificationPermission();
+        setupMediaServiceListener();
 
         webView = new WebView(this);
         setContentView(webView);
@@ -433,6 +493,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == STORAGE_PERM_REQ) {
             boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
             webView.post(() -> webView.evaluateJavascript("if (window.onMediaPermissionResult) window.onMediaPermissionResult(" + granted + ");", null));
+        } else if (requestCode == NOTIF_PERM_REQ) {
+            boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            android.util.Log.d("MainActivity", "Notification permission granted: " + granted);
         }
     }
 
@@ -509,6 +572,105 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return null;
+    }
+
+    private void setupMediaServiceListener() {
+        PioneerMediaService.setActionListener(new PioneerMediaService.PlaybackActionListener() {
+            @Override
+            public void onPlayRequested() {
+                runOnUiThread(() -> {
+                    if (webView != null) {
+                        webView.evaluateJavascript("if (window.onMediaServiceAction) window.onMediaServiceAction('play');", null);
+                    }
+                });
+            }
+
+            @Override
+            public void onPauseRequested() {
+                runOnUiThread(() -> {
+                    if (webView != null) {
+                        webView.evaluateJavascript("if (window.onMediaServiceAction) window.onMediaServiceAction('pause');", null);
+                    }
+                });
+            }
+
+            @Override
+            public void onNextRequested() {
+                runOnUiThread(() -> {
+                    if (webView != null) {
+                        webView.evaluateJavascript("if (window.onMediaServiceAction) window.onMediaServiceAction('next');", null);
+                    }
+                });
+            }
+
+            @Override
+            public void onPrevRequested() {
+                runOnUiThread(() -> {
+                    if (webView != null) {
+                        webView.evaluateJavascript("if (window.onMediaServiceAction) window.onMediaServiceAction('prev');", null);
+                    }
+                });
+            }
+
+            @Override
+            public void onSeekRequested(long positionMs) {
+                runOnUiThread(() -> {
+                    if (webView != null) {
+                        webView.evaluateJavascript("if (window.onMediaServiceAction) window.onMediaServiceAction('seek', " + positionMs + ");", null);
+                    }
+                });
+            }
+
+            @Override
+            public void onConcertHallToggled() {
+                runOnUiThread(() -> {
+                    if (webView != null) {
+                        webView.evaluateJavascript("if (window.onMediaServiceAction) window.onMediaServiceAction('toggle_concert_hall');", null);
+                    }
+                });
+            }
+
+            @Override
+            public void onPresetCycled() {
+                runOnUiThread(() -> {
+                    if (webView != null) {
+                        webView.evaluateJavascript("if (window.onMediaServiceAction) window.onMediaServiceAction('cycle_preset');", null);
+                    }
+                });
+            }
+
+            @Override
+            public void onAudioDucking(boolean duck) {
+                runOnUiThread(() -> {
+                    if (webView != null) {
+                        webView.evaluateJavascript("if (window.onMediaServiceAction) window.onMediaServiceAction('duck', " + duck + ");", null);
+                    }
+                });
+            }
+        });
+    }
+
+    private void checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIF_PERM_REQ);
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Crucial: Do NOT call webView.onPause() or webView.pauseTimers() here.
+        // Pausing timers would stop JavaScript audio processing and interval updates in the background.
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (instance == this) {
+            instance = null;
+        }
     }
 
     @Override

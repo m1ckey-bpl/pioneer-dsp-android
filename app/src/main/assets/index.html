@@ -782,6 +782,175 @@
     let spotifyIsPlaying = false;
     let spotifyCurrentTrack = null;
 
+    // Native Media Notification & Background Playback State
+    let currentActivePreset = 'flat';
+    let isVisualizerRunning = false;
+    const PRESET_CYCLE_LIST = ['flat', 'bass', 'deep_bass', 'hall', 'studio', 'vocal', 'acoustic', 'rock', 'classical', 'electronic'];
+    let lastSyncedState = {
+      title: '',
+      artist: '',
+      isPlaying: null,
+      isConcertHall: null,
+      presetName: '',
+      posSec: -1,
+      lastSyncTime: 0
+    };
+
+    // --- NATIVE MEDIA SERVICE SYNCHRONIZATION ---
+    function syncStateToNativeService(force = false) {
+      if (!window.PioneerBridge || typeof window.PioneerBridge.updatePlaybackState !== 'function') {
+        return;
+      }
+
+      let title = '';
+      let artist = '';
+      let album = '';
+      let durationSec = 0;
+      let currentPosSec = 0;
+      let isPlaying = false;
+      let coverUrl = '';
+
+      if (currentSourceMode === 'spotify') {
+        if (!spotifyCurrentTrack) {
+          if (typeof window.PioneerBridge.notifyPlaybackStopped === 'function') {
+            window.PioneerBridge.notifyPlaybackStopped();
+          }
+          return;
+        }
+        title = spotifyCurrentTrack.name || 'Spotify Track';
+        artist = (spotifyCurrentTrack.artists || []).map(a => a.name).join(', ') || 'Spotify Artist';
+        album = spotifyCurrentTrack.album ? spotifyCurrentTrack.album.name : 'Spotify Stream';
+        durationSec = spotifyDurationMs > 0 ? (spotifyDurationMs / 1000.0) : 0;
+        const elapsedSincePoll = spotifyIsPlaying ? (Date.now() - spotifyLastProgressTimestamp) / 1000.0 : 0;
+        currentPosSec = Math.min(durationSec, (spotifyLastProgressMs / 1000.0) + elapsedSincePoll);
+        isPlaying = !!spotifyIsPlaying;
+        coverUrl = (spotifyCurrentTrack.album && spotifyCurrentTrack.album.images && spotifyCurrentTrack.album.images[0]) ? spotifyCurrentTrack.album.images[0].url : '';
+      } else {
+        const song = window.dspEngine.activeTrack || (window.dspEngine.songs && window.dspEngine.songs[window.dspEngine.currentIndex]);
+        if (!song) {
+          if (typeof window.PioneerBridge.notifyPlaybackStopped === 'function') {
+            window.PioneerBridge.notifyPlaybackStopped();
+          }
+          return;
+        }
+        title = song.title || 'Local Audio Track';
+        artist = song.artist || 'Local Music';
+        album = song.album || 'Device Library';
+        durationSec = window.dspEngine.getCurrentDuration() || (song.duration || 0);
+        currentPosSec = window.dspEngine.getCurrentTime() || 0;
+        isPlaying = !!window.dspEngine.isPlaying;
+        coverUrl = (song.cover && song.cover !== 'assets/logo.png') ? song.cover : (song.artwork || '');
+      }
+
+      const isConcertHall = !!(window.dspEngine && window.dspEngine.reverbMix > 0);
+      const presetName = currentActivePreset || 'flat';
+      const now = Date.now();
+
+      const stateChanged = (lastSyncedState.title !== title ||
+                            lastSyncedState.artist !== artist ||
+                            lastSyncedState.isPlaying !== isPlaying ||
+                            lastSyncedState.isConcertHall !== isConcertHall ||
+                            lastSyncedState.presetName !== presetName ||
+                            Math.abs(lastSyncedState.posSec - currentPosSec) > 3.0 ||
+                            (now - lastSyncedState.lastSyncTime > 4000));
+
+      if (force || stateChanged) {
+        lastSyncedState.title = title;
+        lastSyncedState.artist = artist;
+        lastSyncedState.isPlaying = isPlaying;
+        lastSyncedState.isConcertHall = isConcertHall;
+        lastSyncedState.presetName = presetName;
+        lastSyncedState.posSec = currentPosSec;
+        lastSyncedState.lastSyncTime = now;
+
+        try {
+          window.PioneerBridge.updatePlaybackState(
+            title,
+            artist,
+            album,
+            durationSec,
+            currentPosSec,
+            isPlaying,
+            coverUrl,
+            isConcertHall,
+            presetName
+          );
+        } catch(e) {
+          console.warn('Bridge updatePlaybackState error:', e);
+        }
+      }
+    }
+
+    function cycleDSPPreset() {
+      const curIdx = PRESET_CYCLE_LIST.indexOf(currentActivePreset);
+      const nextIdx = (curIdx + 1) % PRESET_CYCLE_LIST.length;
+      const nextPreset = PRESET_CYCLE_LIST[nextIdx];
+      applyPresetPreset(nextPreset);
+      syncStateToNativeService(true);
+    }
+
+    window.onMediaServiceAction = function(action, data) {
+      console.log('MediaService action received:', action, data);
+      switch(action) {
+        case 'play':
+          if (currentSourceMode === 'spotify') {
+            if (!spotifyIsPlaying) toggleMasterPlay();
+          } else {
+            if (window.dspEngine && !window.dspEngine.isPlaying) {
+              window.dspEngine.resume();
+              updatePlaybackUI();
+              syncStateToNativeService(true);
+            }
+          }
+          break;
+        case 'pause':
+          if (currentSourceMode === 'spotify') {
+            if (spotifyIsPlaying) toggleMasterPlay();
+          } else {
+            if (window.dspEngine && window.dspEngine.isPlaying) {
+              window.dspEngine.pause();
+              updatePlaybackUI();
+              syncStateToNativeService(true);
+            }
+          }
+          break;
+        case 'next':
+          masterStepNext();
+          break;
+        case 'prev':
+          masterStepPrev();
+          break;
+        case 'seek':
+          if (typeof data === 'number') {
+            let durMs = 0;
+            if (currentSourceMode === 'spotify') {
+              durMs = spotifyDurationMs;
+            } else if (window.dspEngine) {
+              durMs = window.dspEngine.getCurrentDuration() * 1000.0;
+            }
+            if (durMs > 0) {
+              const pct = Math.max(0, Math.min(100, (data / durMs) * 100.0));
+              onSeekChange(pct);
+              syncStateToNativeService(true);
+            }
+          }
+          break;
+        case 'toggle_concert_hall':
+          toggleConcertHall();
+          break;
+        case 'cycle_preset':
+          cycleDSPPreset();
+          break;
+        case 'duck':
+          if (window.dspEngine && typeof window.dspEngine.setMasterVolume === 'function') {
+            window.dspEngine.setMasterVolume(data ? 0.25 : 1.0);
+          }
+          break;
+        default:
+          console.warn('Unknown media action:', action);
+      }
+    };
+
     // --- TAB SWITCHING (Strictly 5 Tabs) ---
     function switchTab(tabId) {
       currentActiveTab = tabId;
@@ -827,6 +996,7 @@
         const playing = window.dspEngine.togglePlay();
         updatePlaybackUI();
       }
+      syncStateToNativeService(true);
     }
 
     async function masterStepNext() {
@@ -841,6 +1011,7 @@
         await window.dspEngine.playNext();
         updatePlaybackUI();
       }
+      syncStateToNativeService(true);
     }
 
     async function masterStepPrev() {
@@ -855,6 +1026,7 @@
         await window.dspEngine.playPrev();
         updatePlaybackUI();
       }
+      syncStateToNativeService(true);
     }
 
     function toggleShuffle() {
@@ -938,6 +1110,7 @@
       seekSettleTimer = setTimeout(() => {
         isSeeking = false;
         seekSettleTimer = null;
+        syncStateToNativeService(true);
       }, 200);
     }
 
@@ -1063,6 +1236,7 @@
       }
 
       renderLocalSongList();
+      syncStateToNativeService(false);
     }
 
     function updateSourceBadges(mode) {
@@ -1500,6 +1674,7 @@
     }
 
     function applyPresetPreset(presetName) {
+      currentActivePreset = presetName;
       window.dspEngine.applyPreset(presetName);
 
       // Sync EQ faders UI
@@ -1623,6 +1798,7 @@
         updateReverbMix(65);
         document.getElementById('slider-reverb-mix').value = 65;
       }
+      syncStateToNativeService(true);
     }
 
     function saveCustomPresetPrompt() {
@@ -1635,6 +1811,11 @@
 
     // --- 60FPS ACOUSTIC SPECTRUM VISUALIZER ---
     function drawSpectrumLoop() {
+      if (document.hidden) {
+        isVisualizerRunning = false;
+        return;
+      }
+      isVisualizerRunning = true;
       const engine = window.dspEngine;
       const homeCanvas = document.getElementById('homeSpectrumCanvas');
       const eqCanvas = document.getElementById('eqSpectrumCanvas');
@@ -1835,6 +2016,41 @@
 
       // 7. Start Spectrum Visualizer
       requestAnimationFrame(drawSpectrumLoop);
+
+      // 9. Background Audio Resilience & Visibility Listener
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          if (window.dspEngine && window.dspEngine.audioCtx && window.dspEngine.isPlaying) {
+            if (window.dspEngine.audioCtx.state === 'suspended') {
+              window.dspEngine.audioCtx.resume();
+            }
+          }
+          if (!isVisualizerRunning) {
+            requestAnimationFrame(drawSpectrumLoop);
+          }
+          updatePlaybackUI();
+        }
+      });
+
+      // 10. Auto-Advance & Playback Hooking for Background Service
+      if (window.dspEngine) {
+        const origPlayLocal = window.dspEngine.playLocalSong.bind(window.dspEngine);
+        window.dspEngine.playLocalSong = async function(idx) {
+          const res = await origPlayLocal(idx);
+          updatePlaybackUI();
+          syncStateToNativeService(true);
+          return res;
+        };
+
+        const origStopPlayback = window.dspEngine.stopPlayback.bind(window.dspEngine);
+        window.dspEngine.stopPlayback = function() {
+          origStopPlayback();
+          updatePlaybackUI();
+          if (window.PioneerBridge && typeof window.PioneerBridge.notifyPlaybackStopped === 'function') {
+            window.PioneerBridge.notifyPlaybackStopped();
+          }
+        };
+      }
 
       // 8. Bind Seek Slider Touch & Pointer Guards
       const seekSlider = document.getElementById('np-seek-slider');

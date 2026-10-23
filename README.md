@@ -1,4 +1,4 @@
-# Pioneer DSP for Android 🎵
+# Pioneer DSP for Android 🎛️
 **Audiophile Audio Effects Engine, 10-Band Graphic Equalizer, Spotify Integration & Local Music Player**
 
 [![Build Android APK](https://github.com/m1ckey-bpl/pioneer-dsp-android/actions/workflows/build-android.yml/badge.svg)](https://github.com/m1ckey-bpl/pioneer-dsp-android/actions/workflows/build-android.yml)
@@ -10,9 +10,15 @@
 
 **Pioneer DSP for Android** is an open-source, high-fidelity music player and real-time audio effects processing application. It combines a 32-bit floating point WebAudio DSP pipeline for local media with Android's native `android.media.audiofx` framework and Spotify Web API integration.
 
-### ✨ Key Features (v4.0.3 Audio Stability & Artwork Edition):
+### ✨ Key Features (v4.0.4 Background Playback & Lock-Screen Controller Edition):
+* **Native Android Foreground Audio Service**: Full Android `ForegroundService` with `foregroundServiceType="mediaPlayback"`, keeping the audio engine alive with high process priority when minimized or switching apps.
+* **System Media Notification & Lock-Screen Controller**: Native `NotificationCompat.MediaStyle` media controls featuring Play, Pause, Next, Previous, seeking, and live track metadata/album artwork display on lock screen and notification shade.
+* **Direct DSP Effect Quick Toggles**: Custom notification action buttons allowing immediate toggling of Concert Hall spatial reverb and cycling through 10 DSP equalizer presets without unlocking or opening the app.
+* **Audio Focus & Headset Disconnect Protection**: Graceful audio focus handling (`AUDIOFOCUS_GAIN`, `AUDIOFOCUS_LOSS`, and transient ducking), plus automatic pause on headphone or Bluetooth disconnect (`ACTION_AUDIO_BECOMING_NOISY`).
+* **Doze Mode & CPU Sleep Prevention**: High-efficiency CPU `PARTIAL_WAKE_LOCK` active strictly while music is playing, preventing stutter, glitching, or buffer underruns when the screen is locked.
+* **Intelligent Background Visualizer Throttling**: 60 FPS spectrum analyzer canvas rendering automatically pauses when the screen turns off or the app is minimized, dropping background CPU usage by >90% while keeping audio processing at 100% fidelity.
 * **Accurate & Glitch-Free Audio Scrubbing**: Complete resolution of WebAudio onended race conditions—eliminating accidental track skips and restarts on seek. Includes drag settling guards, touch/pointer scrub protection, buffer boundary clamping, and precise timestamp synchronization across both local WebAudio DSP and Spotify Connect.
-* **Embedded Album Artwork Display**: Automatic extraction of embedded ID3 APIC / album art from downloaded local files via MediaMetadataRetriever, Android 10+ Scoped Storage thumbnail loader, and local image proxy (https://pioneer.local/artwork), rendering album covers across Hero card, Docked Mini-Player, Now Playing turntable deck, and Library song lists.
+* **Embedded Album Artwork Display**: Automatic extraction of embedded ID3 APIC / album art from downloaded local files via MediaMetadataRetriever, Android 10+ Scoped Storage thumbnail loader, and local image proxy (`https://pioneer.local/artwork`), rendering album covers across Hero card, Docked Mini-Player, Now Playing turntable deck, and Library song lists.
 * **Custom Bespoke Icon Suite**: Entirely custom-drawn geometric line icon family (Home, Search, Library, Studio Equalizer, Cockpit Settings, Play, Previous/Next, Shuffle, Repeat, Spatial Reverb) with uniform 1.8px stroke weight and electric cyan illumination.
 * **Ground-Up Recomposed Now Playing Deck**: Purpose-designed circular turntable gauge chassis with concentric vinyl micro-grooves, illuminated strobe ticks, and holographic spindle—completely replacing the old oversized rectangular wallpaper look.
 * **Signature Hardware Play/Pause Dial**: 76mm dual-ring tactile control dial with brushed metallic titanium rim, Electric Cyan to Neon Violet core, and high-contrast play/pause glyphs.
@@ -42,10 +48,10 @@ cd pioneer-dsp-android
 ./gradlew assembleRelease
 ```
 The compiled APK will be located at:
-`app/build/outputs/apk/release/app-release-unsigned.apk` (or `Pioneer_DSP.apk`).
+`app/build/outputs/apk/release/Pioneer_DSP.apk`.
 
 ---
 
-## 📥 Download
+## 📲 Download
 Download the latest installable APK from the [Releases](https://github.com/m1ckey-bpl/pioneer-dsp-android/releases) tab:
-* **[Pioneer DSP v4.0.2 Release](https://github.com/m1ckey-bpl/pioneer-dsp-android/releases/tag/v4.0.2)** — Direct install APK: `Pioneer_DSP_v4.0.2.apk`
+* **[Pioneer DSP v4.0.4 Release](https://github.com/m1ckey-bpl/pioneer-dsp-android/releases/tag/v4.0.4)** — Direct install APK: `Pioneer_DSP.apk`
