@@ -72,7 +72,7 @@ public class PioneerMediaService extends Service {
     private final ExecutorService artworkExecutor = Executors.newSingleThreadExecutor();
 
     // Current State
-    private String currentTitle = "Pioneer DSP Ready";
+    private String currentTitle = "NOIR Ready";
     private String currentArtist = "Audiophile Processing Active";
     private String currentAlbum = "";
     private long currentDurationMs = 0;
@@ -168,7 +168,7 @@ public class PioneerMediaService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
-                    "Pioneer DSP Playback",
+                    "NOIR Playback",
                     NotificationManager.IMPORTANCE_LOW
             );
             channel.setDescription("High-Fidelity Audio Playback Controls & Status");
@@ -182,7 +182,7 @@ public class PioneerMediaService extends Service {
     }
 
     private void initMediaSession() {
-        mediaSession = new MediaSessionCompat(this, "PioneerDSP");
+        mediaSession = new MediaSessionCompat(this, "NOIR");
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
         Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
@@ -302,8 +302,8 @@ public class PioneerMediaService extends Service {
             boolean concertHallActive,
             String presetName
     ) {
-        this.currentTitle = (title != null && !title.isEmpty()) ? title : "Pioneer Audio Track";
-        this.currentArtist = (artist != null && !artist.isEmpty()) ? artist : "Pioneer DSP";
+        this.currentTitle = (title != null && !title.isEmpty()) ? title : "NOIR Audio Track";
+        this.currentArtist = (artist != null && !artist.isEmpty()) ? artist : "NOIR";
         this.currentAlbum = album != null ? album : "";
         this.currentDurationMs = durationSec * 1000L;
         this.currentPositionMs = currentPosSec * 1000L;

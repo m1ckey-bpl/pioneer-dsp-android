@@ -1,4 +1,4 @@
-# Pioneer DSP for Android 🎛️
+# NOIR for Android 🎛️
 **Audiophile Audio Effects Engine, 10-Band Graphic Equalizer, Spotify Integration & Local Music Player**
 
 [![Build Android APK](https://github.com/m1ckey-bpl/pioneer-dsp-android/actions/workflows/build-android.yml/badge.svg)](https://github.com/m1ckey-bpl/pioneer-dsp-android/actions/workflows/build-android.yml)
@@ -8,9 +8,10 @@
 
 ## 🎧 Overview
 
-**Pioneer DSP for Android** is an open-source, high-fidelity music player and real-time audio effects processing application. It combines a 32-bit floating point WebAudio DSP pipeline for local media with Android's native `android.media.audiofx` framework and Spotify Web API integration.
+**NOIR for Android** is an open-source, high-fidelity music player and real-time audio effects processing application. It combines a 32-bit floating point WebAudio DSP pipeline for local media with Android's native `android.media.audiofx` framework and Spotify Web API integration.
 
-### ✨ Key Features (v4.0.5 Live 10-Band EQ & Hardware Play Glyph Edition):
+### ✨ Key Features (v4.0.6 Official NOIR Branding Edition):
+* **New App Identity & Visual Branding**: Full rebrand to **NOIR** with bespoke vinyl record & tone arm insignia, high-resolution launcher icons across all screen densities (mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi), and updated system notifications.
 * **Crisp Dual-Bar Hardware Pause Glyphs**: Completely resolved the central play/pause icon glitch where pause bars merged into a solid black block. Redesigned with two distinct, perfectly proportioned rounded vertical bars (`rx="1.2"`) separated by a wide 4-unit gap, eliminating stroke bleeding and letting the electric cyan-violet gradient shine cleanly between the bars.
 * **Live 10-Band Graphic Equalizer DSP Engine**: Fully operational real-time audio equalization across all 10 standard ISO bands (31Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz, 8kHz, 16kHz). Moving any fader instantly modifies the 32-bit floating-point WebAudio BiquadFilter pipeline and dispatches real-time updates to native Android `AudioEffect` / `Equalizer` sessions (`syncNativeEQBand`) without lag or parameter queue contention.
 * **Custom EQ Presets & Persistent Memory**: Complete support for creating, naming, and saving custom EQ curves via the "Save Custom" interface. Custom presets dynamically appear as interactive chips in both the Acoustic Profiles deck and the Equalizer tab, persist across app restarts via local storage, and can be removed with dedicated one-tap delete chips.
@@ -57,4 +58,4 @@ The compiled APK will be located at:
 
 ## 📲 Download
 Download the latest installable APK from the [Releases](https://github.com/m1ckey-bpl/pioneer-dsp-android/releases) tab:
-* **[Pioneer DSP v4.0.5 Release](https://github.com/m1ckey-bpl/pioneer-dsp-android/releases/tag/v4.0.5)** — Direct install APK: `Pioneer_DSP.apk`
+* **[NOIR v4.0.6 Release](https://github.com/m1ckey-bpl/pioneer-dsp-android/releases/tag/v4.0.6)** — Direct install APK: `NOIR.apk` (or `Pioneer_DSP.apk`)

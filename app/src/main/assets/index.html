@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Pioneer DSP - Sound Tune Audio Engine</title>
+  <title>NOIR - Audio Console</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,12 +14,12 @@
   <header class="app-header">
     <div class="brand-meta" onclick="switchTab('home')">
       <div class="brand-icon-frame">
-        <img src="assets/logo.png" alt="Pioneer DSP" class="brand-icon">
+        <img src="assets/logo.png" alt="NOIR" class="brand-icon">
         <span class="brand-lens-flare"></span>
       </div>
       <div class="brand-text">
-        <h1>PIONEER DSP</h1>
-        <span>COCKPIT TELEMETRY &bull; v4.0.2</span>
+        <h1>NOIR</h1>
+        <span>AUDIO CONSOLE &bull; v4.0.6</span>
       </div>
     </div>
 
@@ -54,7 +54,7 @@
               <span class="hero-radar-pulse"></span>
               <span>AUDIO COCKPIT</span>
             </div>
-            <div class="hero-title" id="hero-title">Pioneer DSP Ready</div>
+            <div class="hero-title" id="hero-title">NOIR Ready</div>
             <div class="hero-artist" id="hero-artist">Select a song to begin playback</div>
             <div class="hero-badge-row">
               <span class="source-badge idle" id="hero-source-badge">DSP IDLE</span>
@@ -382,7 +382,7 @@
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
           </svg>
           <p style="font-size: 11px; color: var(--text-muted); line-height: 1.5;">
-            <strong style="color: var(--text-secondary);">Pioneer Hi-Fi DSP Processing:</strong>
+            <strong style="color: var(--text-secondary);">NOIR Hi-Fi DSP Processing:</strong>
             The 10-Band Graphic EQ, Todoroki Bass, and Reverb engine actively process all local device audio and imported files at 32-bit floating point precision. Spotify Connect streams play directly on Spotify devices in accordance with Spotify DRM policies.
           </p>
         </div>
@@ -470,15 +470,15 @@
         </div>
       </div>
 
-      <!-- About Pioneer DSP -->
+      <!-- About NOIR -->
       <div class="settings-group">
-        <div class="settings-group-title">About Pioneer DSP</div>
+        <div class="settings-group-title">About NOIR</div>
         <div class="settings-item">
           <div class="settings-item-info">
-            <h4>Pioneer DSP Application</h4>
-            <p>Version 4.0.0 Master Redesign Edition</p>
+            <h4>NOIR Audio Application</h4>
+            <p>Version 4.0.6 Master Edition</p>
           </div>
-          <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">v4.0.2</span>
+          <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">v4.0.6</span>
         </div>
       </div>
     </section>
@@ -501,7 +501,7 @@
       <div class="mini-dock-meta">
         <div class="mini-dock-title" id="dock-title">No Track Playing</div>
         <div class="mini-dock-artist" id="dock-artist">
-          <span>Pioneer DSP Ready</span>
+          <span>NOIR Ready</span>
           <span class="source-badge idle" id="dock-source-badge" style="font-size: 8px; padding: 1px 5px;">IDLE</span>
         </div>
       </div>
@@ -643,7 +643,7 @@
     <!-- Track Metadata with Clear Hierarchy -->
     <div class="np-track-meta">
       <div class="np-title" id="np-title">No Track Playing</div>
-      <div class="np-artist" id="np-artist">Pioneer DSP Ready</div>
+      <div class="np-artist" id="np-artist">NOIR Ready</div>
       <div class="np-album-pill-wrap">
         <span class="np-album-pill" id="np-album">Select a track to start</span>
       </div>
@@ -1230,7 +1230,7 @@
           updateSourceBadges('local');
         } else {
           document.getElementById('dock-title').innerText = 'No Track Playing';
-          document.getElementById('dock-artist').querySelector('span:first-child').innerText = 'Pioneer DSP Ready';
+          document.getElementById('dock-artist').querySelector('span:first-child').innerText = 'NOIR Ready';
           document.getElementById('hero-cover-img').src = 'assets/logo.png';
           document.getElementById('dock-cover-img').src = 'assets/logo.png';
           document.getElementById('np-cover-img').src = 'assets/logo.png';
