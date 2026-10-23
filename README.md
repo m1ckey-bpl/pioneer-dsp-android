@@ -10,8 +10,12 @@
 
 **NOIR for Android** is an open-source, high-fidelity music player and real-time audio effects processing application. It combines a 32-bit floating point WebAudio DSP pipeline for local media with Android's native `android.media.audiofx` framework and Spotify Web API integration.
 
-### ✨ Key Features (v4.0.6 Official NOIR Branding Edition):
-* **New App Identity & Visual Branding**: Full rebrand to **NOIR** with bespoke vinyl record & tone arm insignia, high-resolution launcher icons across all screen densities (mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi), and updated system notifications.
+### ✨ Key Features (v4.0.7 Complete NOIR UI Redesign & Fluid Animation Edition):
+* **Monochrome Analog Luxury Aesthetic**: Pure velvet noir (`#08090C`), charcoal graphite, titanium silver, and platinum off-white visual system. Subtle analog film grain texture, refined specular reflections, and elimination of excessive neon or cartoon gradients.
+* **Fluid Animation & Physical Vinyl Interaction**: Hardware-accelerated 24-second physical vinyl record turntable animation that smoothly spins during active playback and pauses when idle. Silky 260ms tab transitions with micro-slides, smooth slide-up Now Playing sheet, and tactile button press-scale feedback (`transform: scale(0.92-0.94)`).
+* **Studio Monochrome Oscilloscope Spectrum**: Real-time 60 FPS canvas spectrum analyzer visualizer rendered with analog oscilloscope grid and a high-contrast platinum silver-to-graphite gradient.
+* **Precision Hardware Faders & Tactile Dials**: 76mm dual-ring tactile master play dial with brushed graphite rim and high-contrast platinum core; precision vertical studio console fader caps with center notches and decibel readouts.
+* **New App Identity & Visual Branding**: Full rebrand to **NOIR** with bespoke vinyl record & tonearm insignia, high-resolution launcher icons across all screen densities (mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi), and updated system notifications.
 * **Crisp Dual-Bar Hardware Pause Glyphs**: Completely resolved the central play/pause icon glitch where pause bars merged into a solid black block. Redesigned with two distinct, perfectly proportioned rounded vertical bars (`rx="1.2"`) separated by a wide 4-unit gap, eliminating stroke bleeding and letting the electric cyan-violet gradient shine cleanly between the bars.
 * **Live 10-Band Graphic Equalizer DSP Engine**: Fully operational real-time audio equalization across all 10 standard ISO bands (31Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz, 8kHz, 16kHz). Moving any fader instantly modifies the 32-bit floating-point WebAudio BiquadFilter pipeline and dispatches real-time updates to native Android `AudioEffect` / `Equalizer` sessions (`syncNativeEQBand`) without lag or parameter queue contention.
 * **Custom EQ Presets & Persistent Memory**: Complete support for creating, naming, and saving custom EQ curves via the "Save Custom" interface. Custom presets dynamically appear as interactive chips in both the Acoustic Profiles deck and the Equalizer tab, persist across app restarts via local storage, and can be removed with dedicated one-tap delete chips.
@@ -58,4 +62,4 @@ The compiled APK will be located at:
 
 ## 📲 Download
 Download the latest installable APK from the [Releases](https://github.com/m1ckey-bpl/pioneer-dsp-android/releases) tab:
-* **[NOIR v4.0.6 Release](https://github.com/m1ckey-bpl/pioneer-dsp-android/releases/tag/v4.0.6)** — Direct install APK: `NOIR.apk` (or `Pioneer_DSP.apk`)
+* **[NOIR v4.0.7 Release](https://github.com/m1ckey-bpl/pioneer-dsp-android/releases/tag/v4.0.7)** — Direct install APK: `NOIR.apk` (or `Pioneer_DSP.apk`)

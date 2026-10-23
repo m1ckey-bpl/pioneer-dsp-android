@@ -478,7 +478,7 @@ public class PioneerMediaService extends Service {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setOngoing(isPlaying)
                 .setShowWhen(false)
-                .setColor(0xFF00D9FF) // Pioneer Electric Cyan Accent
+                .setColor(0xFFE4E4E7) // NOIR Sterling Platinum Accent
                 .addAction(R.drawable.ic_media_prev, "Previous", prevIntent)
                 .addAction(isPlaying ? R.drawable.ic_media_pause : R.drawable.ic_media_play, isPlaying ? "Pause" : "Play", playPauseIntent)
                 .addAction(R.drawable.ic_media_next, "Next", nextIntent)

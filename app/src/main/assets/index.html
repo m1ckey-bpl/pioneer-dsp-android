@@ -1178,6 +1178,21 @@
       if (dockIcon) dockIcon.innerHTML = targetContent;
       if (npIcon) npIcon.innerHTML = targetContent;
 
+      // NOIR Vinyl & Deck animation hooks
+      const turntableBezel = document.querySelector('.np-turntable-bezel');
+      const heroCard = document.getElementById('hero-card');
+      const miniDock = document.getElementById('mini-player-dock');
+
+      if (isPlaying) {
+        if (turntableBezel) turntableBezel.classList.add('is-playing');
+        if (heroCard) heroCard.classList.add('is-playing');
+        if (miniDock) miniDock.classList.add('is-playing');
+      } else {
+        if (turntableBezel) turntableBezel.classList.remove('is-playing');
+        if (heroCard) heroCard.classList.remove('is-playing');
+        if (miniDock) miniDock.classList.remove('is-playing');
+      }
+
       // Update Metadata
       if (currentSourceMode === 'spotify' && spotifyCurrentTrack) {
         const title = spotifyCurrentTrack.name || 'Spotify Track';
@@ -1901,10 +1916,11 @@
           const x = i * (barW + 2);
           const y = h - barH;
 
-          // Pioneer gradient bar
+          // NOIR monochrome analog spectrum
           const grad = ctx.createLinearGradient(0, y, 0, h);
-          grad.addColorStop(0, '#00D9FF');
-          grad.addColorStop(1, '#A875FF');
+          grad.addColorStop(0, '#FFFFFF');
+          grad.addColorStop(0.5, '#D4D4D8');
+          grad.addColorStop(1, '#3F3F46');
           ctx.fillStyle = grad;
           ctx.fillRect(x, y, barW, barH);
         }
