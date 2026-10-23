@@ -658,6 +658,27 @@ body {
   box-shadow: 0 0 10px rgba(0, 217, 255, 0.25);
 }
 
+.chip-del-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255, 80, 80, 0.25);
+  color: #FF5555;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  vertical-align: middle;
+  transition: all 0.15s ease;
+}
+.chip-del-icon:hover, .chip-del-icon:active {
+  background: rgba(255, 80, 80, 0.6);
+  color: #FFFFFF;
+}
+
 /* ==========================================================================
    TAB 2: SEARCH
    ========================================================================== */
@@ -1706,7 +1727,7 @@ body {
 }
 .np-play-inner-core svg {
   fill: #080A10;
-  stroke: #080A10;
+  stroke: none;
 }
 .np-btn-play:active .np-play-outer-ring {
   transform: scale(0.94);

@@ -261,13 +261,16 @@ class PioneerDSPEngine {
 
     // Impulse Cache
     this.impulseBuffers = {};
+
+    // Load Persisted EQ State
+    this.loadSavedEQState();
   }
 
   // Initialize Web Audio Processing Pipeline
   async initAudioContext() {
     if (this.audioCtx && this.audioCtx.state !== 'closed') {
       if (this.audioCtx.state === 'suspended') {
-        await this.audioCtx.resume();
+        try { await this.audioCtx.resume(); } catch(e) {}
       }
       return;
     }
@@ -388,6 +391,10 @@ class PioneerDSPEngine {
 
     // 13. Final Audio Destination (Headphones / Speakers / DAC)
     this.analyser.connect(this.audioCtx.destination);
+
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      try { await this.audioCtx.resume(); } catch(e) {}
+    }
   }
 
   dbToLinear(db) {
@@ -458,10 +465,27 @@ class PioneerDSPEngine {
   }
 
   setEQBand(index, gainDB) {
-    this.eqGains[index] = parseFloat(gainDB);
-    if (this.eqFilters[index] && this.audioCtx) {
-      this.eqFilters[index].gain.setTargetAtTime(this.eqGains[index], this.audioCtx.currentTime, 0.02);
+    const val = Math.max(-12, Math.min(12, parseFloat(gainDB) || 0));
+    this.eqGains[index] = val;
+    if (this.eqFilters && this.eqFilters[index]) {
+      const filter = this.eqFilters[index];
+      if (this.audioCtx) {
+        try {
+          filter.gain.cancelScheduledValues(this.audioCtx.currentTime);
+          filter.gain.setValueAtTime(val, this.audioCtx.currentTime);
+        } catch(e) {
+          filter.gain.value = val;
+        }
+      } else {
+        filter.gain.value = val;
+      }
     }
+    if (window.PioneerBridge && typeof window.PioneerBridge.syncNativeEQBand === 'function') {
+      try {
+        window.PioneerBridge.syncNativeEQBand(index, val);
+      } catch(e) {}
+    }
+    this.saveCurrentEQState();
   }
 
   setSuperBass(gainDB) {
@@ -561,53 +585,41 @@ class PioneerDSPEngine {
       electronic: [7, 7, 4, 1, -1, 1, 3, 5, 6, 6]
     };
 
-    const targetGains = presets[presetName] || presets.flat;
-    targetGains.forEach((g, idx) => this.setEQBand(idx, g));
-
-    if (presetName === 'bass') {
-      this.setSuperBass(9);
-      this.setDeepBass(4);
-      this.setReverbMix(0);
-    } else if (presetName === 'deep_bass') {
-      this.setSuperBass(5);
-      this.setDeepBass(8);
-      this.setReverbMix(0);
-    } else if (presetName === 'hall') {
-      this.setSuperBass(0);
-      this.setDeepBass(0);
-      this.setAmbienceMode('hall');
-      this.setReverbMix(65);
-    } else if (presetName === 'studio') {
-      this.setSuperBass(0);
-      this.setDeepBass(0);
-      this.setAmbienceMode('studio');
-      this.setReverbMix(30);
-    } else {
-      this.setSuperBass(0);
-      this.setDeepBass(0);
-      this.setReverbMix(0);
+    let targetGains = presets[presetName];
+    if (!targetGains) {
+      const customPresets = this.getCustomPresets();
+      if (customPresets && customPresets[presetName]) {
+        targetGains = customPresets[presetName].eq || customPresets[presetName].gains;
+      }
     }
+    if (!targetGains) {
+      targetGains = presets.flat;
+    }
+
+    // Apply 10 EQ bands cleanly without modifying independent tone/reverb controls
+    targetGains.forEach((g, idx) => this.setEQBand(idx, g));
+    this.currentPreset = presetName;
+    this.saveCurrentEQState();
+    return true;
   }
 
   resetEQ() {
     this.applyPreset('flat');
-    this.setPreamp(0);
   }
 
   saveCustomPreset(name) {
+    if (!name || !name.trim()) return false;
+    const cleanName = name.trim();
     try {
       const presets = this.getCustomPresets();
-      presets[name] = {
+      presets[cleanName] = {
+        name: cleanName,
         eq: [...this.eqGains],
-        preamp: this.preampGain,
-        superBass: this.superBassGain,
-        deepBass: this.deepBassGain,
-        mid: this.midGain,
-        treble: this.trebleGain,
-        reverbMix: this.reverbMix,
-        ambienceMode: this.ambienceMode
+        updatedAt: Date.now()
       };
       localStorage.setItem('pioneer_custom_presets_v4', JSON.stringify(presets));
+      this.currentPreset = cleanName;
+      this.saveCurrentEQState();
       return true;
     } catch(e) {
       return false;
@@ -623,19 +635,44 @@ class PioneerDSPEngine {
     }
   }
 
-  applyCustomPreset(name) {
-    const presets = this.getCustomPresets();
-    const p = presets[name];
-    if (!p) return false;
-    if (p.eq) p.eq.forEach((g, idx) => this.setEQBand(idx, g));
-    if (p.preamp !== undefined) this.setPreamp(p.preamp);
-    if (p.superBass !== undefined) this.setSuperBass(p.superBass);
-    if (p.deepBass !== undefined) this.setDeepBass(p.deepBass);
-    if (p.mid !== undefined) this.setMid(p.mid);
-    if (p.treble !== undefined) this.setTreble(p.treble);
-    if (p.reverbMix !== undefined) this.setReverbMix(p.reverbMix);
-    if (p.ambienceMode) this.setAmbienceMode(p.ambienceMode);
-    return true;
+  deleteCustomPreset(name) {
+    try {
+      const presets = this.getCustomPresets();
+      if (presets[name]) {
+        delete presets[name];
+        localStorage.setItem('pioneer_custom_presets_v4', JSON.stringify(presets));
+        if (this.currentPreset === name) {
+          this.currentPreset = 'flat';
+          this.saveCurrentEQState();
+        }
+        return true;
+      }
+    } catch(e) {}
+    return false;
+  }
+
+  saveCurrentEQState() {
+    try {
+      localStorage.setItem('pioneer_current_eq_state', JSON.stringify({
+        gains: this.eqGains,
+        preset: this.currentPreset || 'flat'
+      }));
+    } catch(e) {}
+  }
+
+  loadSavedEQState() {
+    try {
+      const raw = localStorage.getItem('pioneer_current_eq_state');
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (Array.isArray(data.gains) && data.gains.length === 10) {
+          this.eqGains = data.gains.map(g => Math.max(-12, Math.min(12, parseFloat(g) || 0)));
+        }
+        if (data.preset) {
+          this.currentPreset = data.preset;
+        }
+      }
+    } catch(e) {}
   }
 
   // --- Real Media Playback Pipeline ---

@@ -63,7 +63,9 @@
           <button class="hero-action-btn" id="hero-play-btn" onclick="event.stopPropagation(); toggleMasterPlay()" aria-label="Play or Pause">
             <div class="hero-btn-tactile-rim">
               <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-                <polygon points="6 4 20 12 6 20 6 4" id="hero-play-icon"/>
+                <g id="hero-play-icon">
+                  <polygon points="8 5 19 12 8 19"/>
+                </g>
               </svg>
             </div>
           </button>
@@ -133,7 +135,7 @@
           </div>
           <span class="card-subtitle">INSTANT DSP CURVES</span>
         </div>
-        <div class="preset-chips-scroll">
+        <div class="preset-chips-scroll" id="home-preset-chips-scroll">
           <button class="chip-btn active" id="chip-flat" onclick="applyPresetPreset('flat')">Flat Reference</button>
           <button class="chip-btn" id="chip-bass" onclick="applyPresetPreset('bass')">Todoroki Bass</button>
           <button class="chip-btn" id="chip-deep_bass" onclick="applyPresetPreset('deep_bass')">Sub-Bass Depth</button>
@@ -247,7 +249,7 @@
             <button class="chip-btn" onclick="saveCustomPresetPrompt()" style="padding: 4px 10px; font-size: 10px;">Save Custom</button>
           </div>
         </div>
-        <div class="preset-chips-scroll">
+        <div class="preset-chips-scroll" id="eq-preset-chips-scroll">
           <button class="chip-btn active" id="eqchip-flat" onclick="applyPresetPreset('flat')">Flat</button>
           <button class="chip-btn" id="eqchip-bass" onclick="applyPresetPreset('bass')">Todoroki Bass</button>
           <button class="chip-btn" id="eqchip-deep_bass" onclick="applyPresetPreset('deep_bass')">Sub-Bass</button>
@@ -509,7 +511,9 @@
       <button class="mini-btn mini-btn-play" id="dock-play-btn" onclick="toggleMasterPlay()" aria-label="Play / Pause">
         <div class="mini-play-dial-bezel">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-            <polygon points="6 4 20 12 6 20 6 4" id="dock-play-icon"/>
+            <g id="dock-play-icon">
+              <polygon points="8 5 19 12 8 19"/>
+            </g>
           </svg>
         </div>
       </button>
@@ -678,7 +682,9 @@
         <div class="np-play-outer-ring">
           <div class="np-play-inner-core">
             <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-              <polygon points="6 4 20 12 6 20 6 4" id="np-play-icon"/>
+              <g id="np-play-icon">
+                <polygon points="8 5 19 12 8 19"/>
+              </g>
             </svg>
           </div>
         </div>
@@ -882,9 +888,11 @@
     }
 
     function cycleDSPPreset() {
-      const curIdx = PRESET_CYCLE_LIST.indexOf(currentActivePreset);
-      const nextIdx = (curIdx + 1) % PRESET_CYCLE_LIST.length;
-      const nextPreset = PRESET_CYCLE_LIST[nextIdx];
+      const customKeys = Object.keys(window.dspEngine.getCustomPresets() || {});
+      const allPresets = [...PRESET_CYCLE_LIST, ...customKeys];
+      const curIdx = allPresets.indexOf(currentActivePreset);
+      const nextIdx = (curIdx + 1) % allPresets.length;
+      const nextPreset = allPresets[nextIdx];
       applyPresetPreset(nextPreset);
       syncStateToNativeService(true);
     }
@@ -1158,22 +1166,17 @@
       const isPlaying = (currentSourceMode === 'spotify') ? spotifyIsPlaying : window.dspEngine.isPlaying;
 
       // Update Play Icons (Home, Dock, Now Playing)
-      const playSvgPath = 'polygon points="6 4 20 12 6 20 6 4"';
-      const pauseSvgPath = 'rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+      const playSvgContent = '<polygon points="8 5 19 12 8 19"/>';
+      const pauseSvgContent = '<rect x="6.5" y="5" width="3.5" height="14" rx="1.2"></rect><rect x="14" y="5" width="3.5" height="14" rx="1.2"></rect>';
 
       const heroIcon = document.getElementById('hero-play-icon');
       const dockIcon = document.getElementById('dock-play-icon');
       const npIcon = document.getElementById('np-play-icon');
 
-      if (isPlaying) {
-        if (heroIcon) heroIcon.outerHTML = `<g id="hero-play-icon">${pauseSvgPath}</g>`;
-        if (dockIcon) dockIcon.outerHTML = `<g id="dock-play-icon">${pauseSvgPath}</g>`;
-        if (npIcon) npIcon.outerHTML = `<g id="np-play-icon">${pauseSvgPath}</g>`;
-      } else {
-        if (heroIcon) heroIcon.outerHTML = `<${playSvgPath} id="hero-play-icon"/>`;
-        if (dockIcon) dockIcon.outerHTML = `<${playSvgPath} id="dock-play-icon"/>`;
-        if (npIcon) npIcon.outerHTML = `<${playSvgPath} id="np-play-icon"/>`;
-      }
+      const targetContent = isPlaying ? pauseSvgContent : playSvgContent;
+      if (heroIcon) heroIcon.innerHTML = targetContent;
+      if (dockIcon) dockIcon.innerHTML = targetContent;
+      if (npIcon) npIcon.innerHTML = targetContent;
 
       // Update Metadata
       if (currentSourceMode === 'spotify' && spotifyCurrentTrack) {
@@ -1671,6 +1674,14 @@
       window.dspEngine.setEQBand(index, num);
       const tag = document.getElementById(`eq-tag-${index}`);
       if (tag) tag.innerText = (num > 0 ? '+' : '') + num;
+
+      // User modified curve manually -> switch active preset to custom
+      currentActivePreset = 'custom';
+      window.dspEngine.currentPreset = 'custom';
+      document.querySelectorAll('.preset-chips-scroll .chip-btn').forEach(b => {
+        b.classList.remove('active');
+      });
+      syncStateToNativeService(false);
     }
 
     function applyPresetPreset(presetName) {
@@ -1682,23 +1693,67 @@
         const slider = document.getElementById(`eq-slider-${idx}`);
         const tag = document.getElementById(`eq-tag-${idx}`);
         if (slider) slider.value = g;
-        if (tag) tag.innerText = (g > 0 ? '+' : '') + g;
+        if (tag) tag.innerText = (g > 0 ? '+' : '') + (Math.round(g * 10) / 10);
       });
 
-      // Sync Sound Tune Sliders
-      syncToneSlidersUI();
-
-      // Highlight chips
+      // Highlight active chip in both Tab 1 and Tab 4
       document.querySelectorAll('.preset-chips-scroll .chip-btn').forEach(b => {
         b.classList.remove('active');
-        if (b.id === `chip-${presetName}` || b.id === `eqchip-${presetName}`) {
+        if (b.dataset.preset === presetName || b.id === `chip-${presetName}` || b.id === `eqchip-${presetName}`) {
           b.classList.add('active');
         }
       });
+      syncStateToNativeService(true);
     }
 
     function resetEQFlat() {
       applyPresetPreset('flat');
+    }
+
+    function renderCustomPresetChips() {
+      document.querySelectorAll('.custom-preset-chip').forEach(el => el.remove());
+
+      const homeScroll = document.getElementById('home-preset-chips-scroll');
+      const eqScroll = document.getElementById('eq-preset-chips-scroll');
+      const customPresets = window.dspEngine.getCustomPresets();
+
+      Object.keys(customPresets).forEach(name => {
+        const safeName = escapeHtml(name);
+        const isActive = (currentActivePreset === name);
+
+        if (homeScroll) {
+          const btn = document.createElement('button');
+          btn.className = `chip-btn custom-preset-chip ${isActive ? 'active' : ''}`;
+          btn.dataset.preset = name;
+          btn.innerHTML = `${safeName} <span class="chip-del-icon" onclick="event.stopPropagation(); deleteCustomPresetPrompt('${escapeJs(name)}')" title="Delete preset">✕</span>`;
+          btn.onclick = () => applyPresetPreset(name);
+          homeScroll.appendChild(btn);
+        }
+
+        if (eqScroll) {
+          const btn = document.createElement('button');
+          btn.className = `chip-btn custom-preset-chip ${isActive ? 'active' : ''}`;
+          btn.dataset.preset = name;
+          btn.innerHTML = `${safeName} <span class="chip-del-icon" onclick="event.stopPropagation(); deleteCustomPresetPrompt('${escapeJs(name)}')" title="Delete preset">✕</span>`;
+          btn.onclick = () => applyPresetPreset(name);
+          eqScroll.appendChild(btn);
+        }
+      });
+    }
+
+    function deleteCustomPresetPrompt(name) {
+      if (confirm(`Delete custom preset "${name}"?`)) {
+        window.dspEngine.deleteCustomPreset(name);
+        renderCustomPresetChips();
+        if (currentActivePreset === name) {
+          applyPresetPreset('flat');
+        }
+      }
+    }
+
+    function escapeJs(str) {
+      if (!str) return '';
+      return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
     }
 
     function syncToneSlidersUI() {
@@ -1804,8 +1859,11 @@
     function saveCustomPresetPrompt() {
       const name = prompt('Enter a name for your custom DSP preset:');
       if (name && name.trim()) {
-        window.dspEngine.saveCustomPreset(name.trim());
-        alert(`Preset "${name.trim()}" saved successfully!`);
+        const cleanName = name.trim();
+        window.dspEngine.saveCustomPreset(cleanName);
+        renderCustomPresetChips();
+        applyPresetPreset(cleanName);
+        alert(`Preset "${cleanName}" saved successfully!`);
       }
     }
 
@@ -1985,8 +2043,13 @@
       renderLocalSongList();
       updatePlaybackUI();
 
-      // 3. Render 10-Band EQ
+      // 3. Render 10-Band EQ & Presets
       renderEQFaders();
+      renderCustomPresetChips();
+      if (window.dspEngine.currentPreset) {
+        currentActivePreset = window.dspEngine.currentPreset;
+        applyPresetPreset(currentActivePreset);
+      }
 
       // 4. Load Spotify Configuration
       const cfg = window.spotifyService.loadConfig();

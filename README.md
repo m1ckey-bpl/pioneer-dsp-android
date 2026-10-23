@@ -10,10 +10,14 @@
 
 **Pioneer DSP for Android** is an open-source, high-fidelity music player and real-time audio effects processing application. It combines a 32-bit floating point WebAudio DSP pipeline for local media with Android's native `android.media.audiofx` framework and Spotify Web API integration.
 
-### ✨ Key Features (v4.0.4 Background Playback & Lock-Screen Controller Edition):
+### ✨ Key Features (v4.0.5 Live 10-Band EQ & Hardware Play Glyph Edition):
+* **Crisp Dual-Bar Hardware Pause Glyphs**: Completely resolved the central play/pause icon glitch where pause bars merged into a solid black block. Redesigned with two distinct, perfectly proportioned rounded vertical bars (`rx="1.2"`) separated by a wide 4-unit gap, eliminating stroke bleeding and letting the electric cyan-violet gradient shine cleanly between the bars.
+* **Live 10-Band Graphic Equalizer DSP Engine**: Fully operational real-time audio equalization across all 10 standard ISO bands (31Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz, 8kHz, 16kHz). Moving any fader instantly modifies the 32-bit floating-point WebAudio BiquadFilter pipeline and dispatches real-time updates to native Android `AudioEffect` / `Equalizer` sessions (`syncNativeEQBand`) without lag or parameter queue contention.
+* **Custom EQ Presets & Persistent Memory**: Complete support for creating, naming, and saving custom EQ curves via the "Save Custom" interface. Custom presets dynamically appear as interactive chips in both the Acoustic Profiles deck and the Equalizer tab, persist across app restarts via local storage, and can be removed with dedicated one-tap delete chips.
+* **Decoupled Tone & Reverb Architecture**: Presets now strictly modulate frequency equalization without wiping out or resetting independent tone enhancements (Todoroki Super Bass, Deep Bass punch, Treble clarity, and Concert Hall spatial reverb remain under independent user control).
 * **Native Android Foreground Audio Service**: Full Android `ForegroundService` with `foregroundServiceType="mediaPlayback"`, keeping the audio engine alive with high process priority when minimized or switching apps.
 * **System Media Notification & Lock-Screen Controller**: Native `NotificationCompat.MediaStyle` media controls featuring Play, Pause, Next, Previous, seeking, and live track metadata/album artwork display on lock screen and notification shade.
-* **Direct DSP Effect Quick Toggles**: Custom notification action buttons allowing immediate toggling of Concert Hall spatial reverb and cycling through 10 DSP equalizer presets without unlocking or opening the app.
+* **Direct DSP Effect Quick Toggles**: Custom notification action buttons allowing immediate toggling of Concert Hall spatial reverb and cycling through all 10 DSP equalizer presets (including saved custom presets) without unlocking or opening the app.
 * **Audio Focus & Headset Disconnect Protection**: Graceful audio focus handling (`AUDIOFOCUS_GAIN`, `AUDIOFOCUS_LOSS`, and transient ducking), plus automatic pause on headphone or Bluetooth disconnect (`ACTION_AUDIO_BECOMING_NOISY`).
 * **Doze Mode & CPU Sleep Prevention**: High-efficiency CPU `PARTIAL_WAKE_LOCK` active strictly while music is playing, preventing stutter, glitching, or buffer underruns when the screen is locked.
 * **Intelligent Background Visualizer Throttling**: 60 FPS spectrum analyzer canvas rendering automatically pauses when the screen turns off or the app is minimized, dropping background CPU usage by >90% while keeping audio processing at 100% fidelity.
@@ -25,7 +29,6 @@
 * **Sculpted Step & Telemetry Controls**: Chamfered capsule step buttons, shuffle/repeat micro-controls with active cyan indicator LEDs, and modular 3D Concert Hall & 10-band EQ quick switches.
 * **Integrated Cockpit Dashboard**: Recomposed Home telemetry deck with framed artwork, 60 FPS oscilloscope spectrum analyzer, dual-meter tone faders, and tactile push-button acoustic presets.
 * **Persistent Docked Mini-Player**: Hairline Electric Cyan progress rail, framed artwork with neon corner brackets, and tactile mini play dial sitting flush above the bottom navigation bar.
-* **10-Band Graphic Equalizer**: Studio-console ISO standard frequency bands (31Hz, 63Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz, 8kHz, 16kHz) with precision fader rails, illuminated studio fader caps, and real-time canvas spectrum visualization.
 * **Todoroki Super Bass & Spatial Reverb**: Dual-stage bass architecture (80Hz low-shelf + 60Hz punch peaking filter up to +14 dB) and 3D synthetic impulse convolution reverb.
 * **OnePlus Nord CE5 Responsive Architecture**: `100dvh` viewport with safe-area display inset handling (`env(safe-area-inset-top)` / `bottom`).
 
@@ -54,4 +57,4 @@ The compiled APK will be located at:
 
 ## 📲 Download
 Download the latest installable APK from the [Releases](https://github.com/m1ckey-bpl/pioneer-dsp-android/releases) tab:
-* **[Pioneer DSP v4.0.4 Release](https://github.com/m1ckey-bpl/pioneer-dsp-android/releases/tag/v4.0.4)** — Direct install APK: `Pioneer_DSP.apk`
+* **[Pioneer DSP v4.0.5 Release](https://github.com/m1ckey-bpl/pioneer-dsp-android/releases/tag/v4.0.5)** — Direct install APK: `Pioneer_DSP.apk`
