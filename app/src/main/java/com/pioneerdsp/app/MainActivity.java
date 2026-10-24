@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.media.audiofx.AudioEffect;
 import android.media.audiofx.PresetReverb;
@@ -297,6 +298,9 @@ public class MainActivity extends AppCompatActivity {
         instance = this;
         checkNotificationPermission();
         setupMediaServiceListener();
+
+        getWindow().setStatusBarColor(Color.rgb(8, 11, 15));
+        getWindow().setNavigationBarColor(Color.rgb(8, 11, 15));
 
         webView = new WebView(this);
         setContentView(webView);
